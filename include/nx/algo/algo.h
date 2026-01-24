@@ -1,0 +1,37 @@
+#pragma once
+
+#include <stddef.h>
+#include <stdbool.h>
+
+#include "nx/core/span.h"
+#include "nx/core/cmp.h"
+
+/* ---------- sort/order ---------- */
+
+void nx_sort(nx_span s, nx_cmp cmp);
+bool nx_is_sorted(nx_cspan s, nx_cmp cmp);
+
+/* ---------- search ---------- */
+
+ptrdiff_t nx_find(nx_cspan s, const void *key, nx_cmp cmp);
+bool nx_contains(nx_cspan s, const void *key, nx_cmp cmp);
+size_t nx_count(nx_cspan s, const void *key, nx_cmp cmp);
+
+// requires sorted range by the same cmp
+ptrdiff_t nx_lower_bound(nx_cspan s, const void *key, nx_cmp cmp);
+ptrdiff_t nx_upper_bound(nx_cspan s, const void *key, nx_cmp cmp);
+ptrdiff_t nx_bsearch(nx_cspan s, const void *key, nx_cmp cmp);
+
+/* ---------- min/max ---------- */
+
+ptrdiff_t nx_min_element(nx_cspan s, nx_cmp cmp);
+ptrdiff_t nx_max_element(nx_cspan s, nx_cmp cmp);
+
+/* ---------- comparison ---------- */
+
+bool nx_equal(nx_cspan a, nx_cspan b, nx_cmp cmp);
+bool nx_not_equal(nx_cspan a, nx_cspan b, nx_cmp cmp);
+
+/* ---------- ? ---------- */
+
+void nx_fill(nx_span s, const void *elem);
