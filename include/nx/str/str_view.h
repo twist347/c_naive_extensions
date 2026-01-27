@@ -12,7 +12,7 @@ typedef struct nx_str_view {
     size_t len;
 } nx_str_view;
 
-nx_str_view nx_str_view_make(const char *data, size_t len);
+nx_str_view nx_str_view_create(const char *data, size_t len);
 nx_str_view nx_str_view_from_cstr(const char *cstr);
 
 /* ---------- comparisons ---------- */

@@ -1,5 +1,6 @@
 #pragma once
 
+// must be expression-like
 #if defined(NX_NO_ASSERT)
     #define NX_ASSERT(expr)    ((void) 0)
 #else

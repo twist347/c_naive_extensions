@@ -9,14 +9,18 @@
 /* ---------- sort/order ---------- */
 
 void nx_sort(nx_span s, nx_cmp cmp) {
-    NX_SPAN_ASSERT(s);
+    NX_ANY_SPAN_ASSERT(s);
     NX_ASSERT(cmp);
+
+    if (s.len < 2) {
+        return;
+    }
 
     qsort(s.data, s.len, s.elem_size, cmp);
 }
 
 bool nx_is_sorted(nx_cspan s, nx_cmp cmp) {
-    NX_SPAN_ASSERT(s);
+    NX_ANY_SPAN_ASSERT(s);
     NX_ASSERT(cmp);
 
     if (s.len < 2) {
@@ -24,8 +28,8 @@ bool nx_is_sorted(nx_cspan s, nx_cmp cmp) {
     }
 
     for (size_t i = 1; i < s.len; ++i) {
-        const void *prev = nx_cspan_get(s, i - 1);
-        const void *cur = nx_cspan_get(s, i);
+        const void *prev = nx_cspan_get_c(s, i - 1);
+        const void *cur = nx_cspan_get_c(s, i);
         if (cmp(prev, cur) > 0) {
             return false;
         }
@@ -36,12 +40,12 @@ bool nx_is_sorted(nx_cspan s, nx_cmp cmp) {
 /* ---------- search ---------- */
 
 ptrdiff_t nx_find(nx_cspan s, const void *key, nx_cmp cmp) {
-    NX_SPAN_ASSERT(s);
+    NX_ANY_SPAN_ASSERT(s);
     NX_ASSERT(key);
     NX_ASSERT(cmp);
 
     for (size_t i = 0; i < s.len; ++i) {
-        const void *elem = nx_cspan_get(s, i);
+        const void *elem = nx_cspan_get_c(s, i);
         if (cmp(elem, key) == 0) {
             return (ptrdiff_t) i;
         }
@@ -54,13 +58,13 @@ bool nx_contains(nx_cspan s, const void *key, nx_cmp cmp) {
 }
 
 size_t nx_count(nx_cspan s, const void *key, nx_cmp cmp) {
-    NX_SPAN_ASSERT(s);
+    NX_ANY_SPAN_ASSERT(s);
     NX_ASSERT(key);
     NX_ASSERT(cmp);
 
     size_t count = 0;
     for (size_t i = 0; i < s.len; ++i) {
-        const void *elem = nx_cspan_get(s, i);
+        const void *elem = nx_cspan_get_c(s, i);
         if (cmp(elem, key) == 0) {
             ++count;
         }
@@ -69,7 +73,7 @@ size_t nx_count(nx_cspan s, const void *key, nx_cmp cmp) {
 }
 
 ptrdiff_t nx_lower_bound(nx_cspan s, const void *key, nx_cmp cmp) {
-    NX_SPAN_ASSERT(s);
+    NX_ANY_SPAN_ASSERT(s);
     NX_ASSERT(key);
     NX_ASSERT(cmp);
 
@@ -78,7 +82,7 @@ ptrdiff_t nx_lower_bound(nx_cspan s, const void *key, nx_cmp cmp) {
 
     while (lo < hi) {
         const size_t mid = lo + (hi - lo) / 2;
-        const void *midp = nx_cspan_get(s, mid);
+        const void *midp = nx_cspan_get_c(s, mid);
 
         if (cmp(midp, key) < 0) {
             lo = mid + 1;
@@ -91,7 +95,7 @@ ptrdiff_t nx_lower_bound(nx_cspan s, const void *key, nx_cmp cmp) {
 }
 
 ptrdiff_t nx_upper_bound(nx_cspan s, const void *key, nx_cmp cmp) {
-    NX_SPAN_ASSERT(s);
+    NX_ANY_SPAN_ASSERT(s);
     NX_ASSERT(key);
     NX_ASSERT(cmp);
 
@@ -100,7 +104,7 @@ ptrdiff_t nx_upper_bound(nx_cspan s, const void *key, nx_cmp cmp) {
 
     while (lo < hi) {
         const size_t mid = lo + (hi - lo) / 2;
-        const void *midp = nx_cspan_get(s, mid);
+        const void *midp = nx_cspan_get_c(s, mid);
 
         if (cmp(midp, key) <= 0) {
             lo = mid + 1;
@@ -113,7 +117,7 @@ ptrdiff_t nx_upper_bound(nx_cspan s, const void *key, nx_cmp cmp) {
 }
 
 ptrdiff_t nx_bsearch(nx_cspan s, const void *key, nx_cmp cmp) {
-    NX_SPAN_ASSERT(s);
+    NX_ANY_SPAN_ASSERT(s);
     NX_ASSERT(key);
     NX_ASSERT(cmp);
 
@@ -122,24 +126,65 @@ ptrdiff_t nx_bsearch(nx_cspan s, const void *key, nx_cmp cmp) {
         return -1;
     }
 
-    const void *p = nx_cspan_get(s, pos);
+    const void *p = nx_cspan_get_c(s, pos);
     return cmp(p, key) == 0 ? pos : -1;
 }
 
 /* ---------- min/max ---------- */
 
 ptrdiff_t nx_min_element(nx_cspan s, nx_cmp cmp) {
-    NX_UNIMPLEMENTED();
+    NX_ANY_SPAN_ASSERT(s);
+    NX_ASSERT(cmp);
+
+    if (s.len == 0) {
+        return -1;
+    }
+
+    size_t best = 0;
+    const void *best_p = nx_cspan_get_c(s, 0);
+
+    for (size_t i = 1; i < s.len; ++i) {
+        const void *cur = nx_cspan_get_c(s, i);
+        if (cmp(cur, best_p) < 0) {
+            best = i;
+            best_p = cur;
+        }
+    }
+
+    return (ptrdiff_t) best;
 }
+
 ptrdiff_t nx_max_element(nx_cspan s, nx_cmp cmp) {
+    NX_ANY_SPAN_ASSERT(s);
+    NX_ASSERT(cmp);
+
+    if (s.len == 0) {
+        return -1;
+    }
+
+    size_t best = 0;
+    const void *best_p = nx_cspan_get_c(s, 0);
+
+    for (size_t i = 1; i < s.len; ++i) {
+        const void *cur = nx_cspan_get_c(s, i);
+        if (cmp(cur, best_p) > 0) {
+            best = i;
+            best_p = cur;
+        }
+    }
+
+    return (ptrdiff_t) best;
+}
+
+nx_minmax nx_minmax_element(nx_cspan s, nx_cmp cmp) {
     NX_UNIMPLEMENTED();
 }
 
 /* ---------- comparison ---------- */
 
 bool nx_equal(nx_cspan a, nx_cspan b, nx_cmp cmp) {
-    NX_SPAN_ASSERT(a);
-    NX_SPAN_ASSERT(b);
+    NX_ANY_SPAN_ASSERT(a);
+    NX_ANY_SPAN_ASSERT(b);
     NX_ASSERT(a.elem_size == b.elem_size);
     NX_ASSERT(cmp);
 
@@ -148,8 +193,8 @@ bool nx_equal(nx_cspan a, nx_cspan b, nx_cmp cmp) {
     }
 
     for (size_t i = 0; i < a.len; ++i) {
-        const void *ea = nx_cspan_get(a, i);
-        const void *eb = nx_cspan_get(b, i);
+        const void *ea = nx_cspan_get_c(a, i);
+        const void *eb = nx_cspan_get_c(b, i);
         if (cmp(ea, eb) != 0) {
             return false;
         }
@@ -162,7 +207,7 @@ bool nx_not_equal(nx_cspan a, nx_cspan b, nx_cmp cmp) {
 }
 
 void nx_fill(nx_span s, const void *elem) {
-    NX_SPAN_ASSERT(s);
+    NX_ANY_SPAN_ASSERT(s);
     NX_ASSERT(elem);
 
     if (s.len == 0) {
@@ -177,4 +222,12 @@ void nx_fill(nx_span s, const void *elem) {
     for (size_t i = 0; i < s.len; ++i) {
         memmove(nx_span_get(s, i), elem, s.elem_size);
     }
+}
+
+void nx_reverse(nx_span s) {
+    NX_UNIMPLEMENTED();
+}
+
+void nx_swap_elements(nx_span s, size_t i, size_t j) {
+    NX_UNIMPLEMENTED();
 }

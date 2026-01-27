@@ -11,6 +11,7 @@ set(NX_CORE_SOURCES
         src/core/print.c
         src/core/span.c
         src/core/status.c
+        src/core/checked_arith.c
 )
 
 set(NX_DS_SOURCES
@@ -27,11 +28,16 @@ set(NX_STRING_SOURCES
         src/str/str_view.c
 )
 
+set(NX_MEM_SOURCES
+        src/mem/byte.c
+)
+
 set(NX_SOURCES
         ${NX_CORE_SOURCES}
         ${NX_DS_SOURCES}
         ${NX_ALGO_SOURCES}
         ${NX_STRING_SOURCES}
+        ${NX_MEM_SOURCES}
 )
 
 add_library(c_naive_extension_static STATIC
@@ -53,7 +59,7 @@ set_target_properties(c_naive_extension_shared PROPERTIES
 foreach(tgt IN ITEMS c_naive_extension_static c_naive_extension_shared)
     target_include_directories(${tgt} PUBLIC ${CMAKE_SOURCE_DIR}/include)
     target_compile_options(${tgt} PRIVATE -Wall -Wextra -pedantic)
-    target_link_libraries(${tgt} PRIVATE m)
+    target_link_libraries(${tgt} PUBLIC m)
 endforeach()
 
 option(BUILD_TESTS "Build unit tests" ON)

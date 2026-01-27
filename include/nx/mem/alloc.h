@@ -1,5 +1,7 @@
 #pragma once
 
+// TODO: unused
+
 #include <stddef.h>
 
 typedef struct nx_allocator {
