@@ -7,12 +7,12 @@ extern "C" {
 #endif
 
 typedef struct nx_str_view {
-    const char *data;
+    const nx_char *data;
     nx_usize len;
 } nx_str_view;
 
-nx_str_view nx_str_view_create(const char *data, nx_usize len);
-nx_str_view nx_str_view_from_cstr(const char *cstr);
+nx_str_view nx_str_view_new(const nx_char *data, nx_usize len);
+nx_str_view nx_str_view_from_cstr(const nx_char *cstr);
 
 /* ---------- comparisons ---------- */
 

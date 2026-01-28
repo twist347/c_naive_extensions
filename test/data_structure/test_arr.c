@@ -5,8 +5,8 @@
 #include "nx/data_structure/arr.h"
 
 Test(A, B) {
-    nx_arr *arr = NULL;
-    const nx_status st = NX_ARR_MAKE(&arr, nx_i32, 5);
+    nx_arr *arr = nx_null;
+    const nx_status st = NX_ARR_NEW(&arr, nx_i32, 5);
     cr_assert_eq(st, NX_STATUS_OK);
 
     const int val = 69;

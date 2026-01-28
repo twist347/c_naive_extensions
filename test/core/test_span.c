@@ -14,5 +14,5 @@ Test(A, B) {
     const nx_i32 x = 100;
     nx_span_set(s, 0, &x);
 
-    nx_fprint_span(stdout, s, nx_fprint_i32);
+    nx_fprintln_span(stdout, s, nx_fprint_i32);
 }

@@ -5,9 +5,9 @@
 #include "nx/data_structure/vec.h"
 
 Test(A, B) {
-    nx_vec *vec = NULL;
+    nx_vec *vec = nx_null;
 
-    nx_status st = NX_VEC_MAKE(&vec, nx_i32, 0);
+    nx_status st = NX_VEC_NEW(&vec, nx_i32, 0);
     cr_assert_eq(st, NX_STATUS_OK);
     cr_assert_eq(nx_vec_len(vec), 0);
     cr_assert_eq(nx_vec_cap(vec), 0);

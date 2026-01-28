@@ -18,17 +18,17 @@ extern "C" {
 
 typedef struct nx_arr nx_arr;
 
-/* ---------- make/drop ---------- */
+/* ---------- new/drop ---------- */
 
-nx_status nx_arr_make(nx_arr **out, nx_usize len, nx_usize elem_size);
+nx_status nx_arr_new(nx_arr **out, nx_usize len, nx_usize elem_size);
 void nx_arr_drop(nx_arr *self);
 
 /* ---------- copy/move semantic ---------- */
 
 nx_status nx_arr_copy(nx_arr **out, const nx_arr *src);
-nx_status nx_arr_move(nx_arr **out, nx_arr *src);
+nx_arr *nx_arr_move(nx_arr **src);
 nx_status nx_arr_copy_assign(nx_arr *self, const nx_arr *src);
-nx_status nx_arr_move_assign(nx_arr *self, nx_arr *src);
+void nx_arr_move_assign(nx_arr *self, nx_arr *src);
 
 /* ---------- info ---------- */
 
@@ -55,8 +55,8 @@ nx_cspan nx_arr_to_cspan(const nx_arr *self);
 
 /* ---------- macros ---------- */
 
-#define NX_ARR_MAKE(out, T, len)    \
-    nx_arr_make((out), (len), sizeof(T))
+#define NX_ARR_NEW(out, T, len)    \
+    nx_arr_new((out), (len), sizeof(T))
 
 #define NX_ARR_GET_AS(T, self, idx)                       \
     (NX_ASSERT(nx_arr_elem_size((self)) == sizeof(T)),    \

@@ -2,11 +2,11 @@
 
 #include <string.h>
 
-#include "nx/mem/byte.h"
+#include "nx/mem/ptr.h"
 
-/* ---------- make ---------- */
+/* ---------- new ---------- */
 
-nx_span nx_span_make(void *data, nx_usize len, nx_usize elem_size) {
+nx_span nx_span_new(void *data, nx_usize len, nx_usize elem_size) {
     const nx_span s = {.data = data, .len = len, .elem_size = elem_size};
 
     NX_ANY_SPAN_ASSERT(s);
@@ -14,7 +14,7 @@ nx_span nx_span_make(void *data, nx_usize len, nx_usize elem_size) {
     return s;
 }
 
-nx_cspan nx_cspan_make(const void *data, nx_usize len, nx_usize elem_size) {
+nx_cspan nx_cspan_new(const void *data, nx_usize len, nx_usize elem_size) {
     const nx_cspan s = {.data = data, .len = len, .elem_size = elem_size};
 
     NX_ANY_SPAN_ASSERT(s);
@@ -22,10 +22,10 @@ nx_cspan nx_cspan_make(const void *data, nx_usize len, nx_usize elem_size) {
     return s;
 }
 
-nx_cspan nx_cspan_make_from_span(nx_span s) {
+nx_cspan nx_cspan_from_span(nx_span s) {
     NX_ANY_SPAN_ASSERT(s);
 
-    return nx_cspan_make(s.data, s.len, s.elem_size);
+    return nx_cspan_new(s.data, s.len, s.elem_size);
 }
 
 /* ---------- access ---------- */
@@ -93,7 +93,7 @@ nx_span nx_span_sub(nx_span s, nx_usize offset, nx_usize count) {
 
     void *p = s.data == nx_null ? nx_null : nx_byte_offset(s.data, s.elem_size, offset);
 
-    return nx_span_make(p, count, s.elem_size);
+    return nx_span_new(p, count, s.elem_size);
 }
 
 nx_cspan nx_cspan_sub(nx_cspan s, nx_usize offset, nx_usize count) {
@@ -103,7 +103,7 @@ nx_cspan nx_cspan_sub(nx_cspan s, nx_usize offset, nx_usize count) {
 
     const void *p = s.data == nx_null ? nx_null : nx_byte_offset_c(s.data, s.elem_size, offset);
 
-    return nx_cspan_make(p, count, s.elem_size);
+    return nx_cspan_new(p, count, s.elem_size);
 }
 
 nx_span nx_span_tail(nx_span s, nx_usize offset) {

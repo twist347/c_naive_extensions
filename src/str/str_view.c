@@ -9,12 +9,12 @@
         NX_ASSERT((sv_).len == 0 || (sv_).data != nx_null);    \
     } while (0)
 
-nx_str_view nx_str_view_create(const char *data, nx_usize len) {
+nx_str_view nx_str_view_new(const nx_char *data, nx_usize len) {
     return (nx_str_view){.data = data, .len = len};
 }
 
-nx_str_view nx_str_view_from_cstr(const char *cstr) {
-    return nx_str_view_create(cstr, strlen(cstr));
+nx_str_view nx_str_view_from_cstr(const nx_char *cstr) {
+    return nx_str_view_new(cstr, strlen(cstr));
 }
 
 nx_bool nx_str_view_eq(nx_str_view a, nx_str_view b) {

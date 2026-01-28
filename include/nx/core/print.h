@@ -34,8 +34,8 @@ void nx_fprint_dbl(FILE *stream, const void *data);
 void nx_fprint_f32(FILE *stream, const void *data);
 void nx_fprint_f64(FILE *stream, const void *data);
 
-void nx_fprint_span(FILE *stream, nx_span s, nx_fprint_func f);
-void nx_fprint_cspan(FILE *stream, nx_cspan s, nx_fprint_func f);
+void nx_fprintln_span(FILE *stream, nx_span s, nx_fprint_func f);
+void nx_fprintln_cspan(FILE *stream, nx_cspan s, nx_fprint_func f);
 
 #ifdef __cplusplus
 }

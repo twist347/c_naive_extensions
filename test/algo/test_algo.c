@@ -9,10 +9,10 @@ Test(A, B) {
     const nx_span s = NX_SPAN_FROM_PTR(arr, 5);
     const nx_cspan cs = NX_CSPAN_FROM_PTR(arr, 5);
 
-    nx_fprint_cspan(stdout, cs, nx_fprint_i32);
+    nx_fprintln_cspan(stdout, cs, nx_fprint_i32);
 
     nx_sort(s, nx_cmp_i32);
-    nx_fprint_cspan(stdout, cs, nx_fprint_i32);
+    nx_fprintln_cspan(stdout, cs, nx_fprint_i32);
 
     cr_assert(nx_is_sorted(cs, nx_cmp_i32));
 

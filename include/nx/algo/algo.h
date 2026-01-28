@@ -9,6 +9,13 @@ typedef struct {
     nx_isize max;
 } nx_minmax;
 
+#define NX_SWAP(T, a, b)          \
+    do {                          \
+        const T nx_tmp_ = (a);    \
+        (a) = (b);                \
+        (b) = nx_tmp_;            \
+    } while (0)
+
 /* ---------- sort/order ---------- */
 
 void nx_sort(nx_span s, nx_cmp cmp);

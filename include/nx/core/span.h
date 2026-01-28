@@ -28,11 +28,11 @@ typedef struct nx_cspan {
         NX_ASSERT((s).len <= SIZE_MAX / (s).elem_size);    \
     } while (0)
 
-/* ---------- make ---------- */
+/* ---------- new ---------- */
 
-nx_span nx_span_make(void *data, nx_usize len, nx_usize elem_size);
-nx_cspan nx_cspan_make(const void *data, nx_usize len, nx_usize elem_size);
-nx_cspan nx_cspan_make_from_span(nx_span s);
+nx_span nx_span_new(void *data, nx_usize len, nx_usize elem_size);
+nx_cspan nx_cspan_new(const void *data, nx_usize len, nx_usize elem_size);
+nx_cspan nx_cspan_from_span(nx_span s);
 
 /* ---------- access ---------- */
 
@@ -60,10 +60,10 @@ nx_cspan nx_cspan_tail(nx_cspan s, nx_usize offset);
 /* ---------- macros ---------- */
 
 #define NX_SPAN_FROM_PTR(ptr, len) \
-    nx_span_make((ptr), (len), sizeof((ptr)[0]))
+    nx_span_new((ptr), (len), sizeof((ptr)[0]))
 
 #define NX_CSPAN_FROM_PTR(ptr, len) \
-    nx_cspan_make((ptr), (len), sizeof((ptr)[0]))
+    nx_cspan_new((ptr), (len), sizeof((ptr)[0]))
 
 #define NX_SPAN_GET_AS(T, s, idx)              \
     (NX_ASSERT((s).elem_size == sizeof(T)),    \

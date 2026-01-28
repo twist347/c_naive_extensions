@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "nx/core/checked_arith.h"
-#include "nx/mem/byte.h"
+#include "nx/mem/ptr.h"
 
 struct nx_vec {
     void *data;
@@ -25,31 +25,30 @@ struct nx_vec {
 
 // internals decls
 
-static nx_status create(nx_vec **out, nx_usize len, nx_usize cap, nx_usize elem_size);
+static nx_status new_impl(nx_vec **out, nx_usize len, nx_usize cap, nx_usize elem_size);
 
 static nx_status grow_if_needed(nx_vec *self);
 static nx_status alloc_and_copy_data(void **out, const nx_vec *src);
 
 static void set_fields(nx_vec *self, void *data, nx_usize len, nx_usize cap, nx_usize elem_size);
-static void reset_fields(nx_vec *self);
 
 static void shift_left(nx_vec *self, nx_usize idx);
 static void shift_right(nx_vec *self, nx_usize idx);
 
-/* ---------- create/destroy ---------- */
+/* ---------- new/drop ---------- */
 
-nx_status nx_vec_make(nx_vec **out, nx_usize len, nx_usize elem_size) {
+nx_status nx_vec_new(nx_vec **out, nx_usize len, nx_usize elem_size) {
     NX_ASSERT(out);
     NX_ASSERT(elem_size > 0);
 
-    return create(out, len, len, elem_size);
+    return new_impl(out, len, len, elem_size);
 }
 
-nx_status nx_vec_make_cap(nx_vec **out, nx_usize cap, nx_usize elem_size) {
+nx_status nx_vec_new_cap(nx_vec **out, nx_usize cap, nx_usize elem_size) {
     NX_ASSERT(out);
     NX_ASSERT(elem_size > 0);
 
-    return create(out, 0, cap, elem_size);
+    return new_impl(out, 0, cap, elem_size);
 }
 
 void nx_vec_drop(nx_vec *self) {
@@ -94,22 +93,15 @@ nx_status nx_vec_copy(nx_vec **out, const nx_vec *src) {
     return NX_STATUS_OK;
 }
 
-nx_status nx_vec_move(nx_vec **out, nx_vec *src) {
-    NX_ASSERT(out);
-    NX_VEC_ASSERT(src);
+// TODO: swap or exchange?
+nx_vec *nx_vec_move(nx_vec **src) {
+    NX_ASSERT(src);
+    NX_ASSERT(*src);
+    NX_VEC_ASSERT(*src);
 
-    *out = nx_null;
-
-    nx_vec *dst = malloc(sizeof(nx_vec));
-    if (!dst) {
-        return NX_STATUS_OUT_OF_MEMORY;
-    }
-
-    *dst = *src;
-    reset_fields(src);
-
-    *out = dst;
-    return NX_STATUS_OK;
+    nx_vec *tmp = *src;
+    *src = nx_null;
+    return tmp;
 }
 
 nx_status nx_vec_copy_assign(nx_vec *self, const nx_vec *src) {
@@ -138,19 +130,25 @@ nx_status nx_vec_copy_assign(nx_vec *self, const nx_vec *src) {
     return NX_STATUS_OK;
 }
 
-nx_status nx_vec_move_assign(nx_vec *self, nx_vec *src) {
+// TODO: swap or exchange?
+void nx_vec_move_assign(nx_vec *self, nx_vec *src) {
     NX_VEC_ASSERT(self);
     NX_VEC_ASSERT(src);
     NX_ASSERT(self->elem_size == src->elem_size);
 
     if (self == src) {
-        return NX_STATUS_OK;
+        return;
     }
 
     free(self->data);
-    *self = *src;
-    reset_fields(src);
-    return NX_STATUS_OK;
+
+    self->data = src->data;
+    self->len = src->len;
+    self->cap = src->cap;
+
+    src->data = nx_null;
+    src->len = 0;
+    src->cap = 0;
 }
 
 /* ---------- info ---------- */
@@ -370,18 +368,18 @@ void nx_vec_erase(nx_vec *self, nx_usize idx) {
 nx_span nx_vec_to_span(nx_vec *self) {
     NX_VEC_ASSERT(self);
 
-    return nx_span_make(self->data, self->len, self->elem_size);
+    return nx_span_new(self->data, self->len, self->elem_size);
 }
 
 nx_cspan nx_vec_to_cspan(const nx_vec *self) {
     NX_VEC_ASSERT(self);
 
-    return nx_cspan_make(self->data, self->len, self->elem_size);
+    return nx_cspan_new(self->data, self->len, self->elem_size);
 }
 
 // internals defs
 
-static nx_status create(nx_vec **out, nx_usize len, nx_usize cap, nx_usize elem_size) {
+static nx_status new_impl(nx_vec **out, nx_usize len, nx_usize cap, nx_usize elem_size) {
     NX_ASSERT(out);
     NX_ASSERT(elem_size > 0);
     NX_ASSERT(len <= cap);
@@ -472,10 +470,6 @@ static void set_fields(nx_vec *self, void *data, nx_usize len, nx_usize cap, nx_
     self->len = len;
     self->cap = cap;
     self->elem_size = elem_size;
-}
-
-static void reset_fields(nx_vec *self) {
-    set_fields(self, nx_null, 0, 0, self->elem_size);
 }
 
 static void shift_left(nx_vec *self, nx_usize idx) {

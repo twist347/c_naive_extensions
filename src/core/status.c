@@ -1,5 +1,7 @@
 #include "nx/core/status.h"
 
+#include "nx/core/assert.h"
+
 const char *nx_status_to_str(nx_status status) {
     switch (status) {
         case NX_STATUS_OK:
@@ -15,4 +17,10 @@ const char *nx_status_to_str(nx_status status) {
         default:
             return "UNKNOWN_NX_STATUS";
     }
+}
+
+void nx_status_fprint(FILE *stream, nx_status status) {
+    NX_ASSERT(stream);
+
+    fputs(nx_status_to_str(status), stream);
 }

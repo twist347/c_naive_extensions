@@ -18,18 +18,18 @@ extern "C" {
 
 typedef struct nx_vec nx_vec;
 
-/* ---------- make/drop ---------- */
+/* ---------- new/drop ---------- */
 
-nx_status nx_vec_make(nx_vec **out, nx_usize len, nx_usize elem_size);
-nx_status nx_vec_make_cap(nx_vec **out, nx_usize cap, nx_usize elem_size);
+nx_status nx_vec_new(nx_vec **out, nx_usize len, nx_usize elem_size);
+nx_status nx_vec_new_cap(nx_vec **out, nx_usize cap, nx_usize elem_size);
 void nx_vec_drop(nx_vec *self);
 
 /* ---------- copy/move semantic ---------- */
 
 nx_status nx_vec_copy(nx_vec **out, const nx_vec *src);
-nx_status nx_vec_move(nx_vec **out, nx_vec *src);
+nx_vec *nx_vec_move(nx_vec **src);
 nx_status nx_vec_copy_assign(nx_vec *self, const nx_vec *src);
-nx_status nx_vec_move_assign(nx_vec *self, nx_vec *src);
+void nx_vec_move_assign(nx_vec *self, nx_vec *src);
 
 /* ---------- info ---------- */
 
@@ -65,11 +65,11 @@ nx_cspan nx_vec_to_cspan(const nx_vec *self);
 
 /* ---------- macros ---------- */
 
-#define NX_VEC_MAKE(out, T, len)    \
-    nx_vec_make((out), (len), sizeof(T))
+#define NX_VEC_NEW(out, T, len)    \
+    nx_vec_new((out), (len), sizeof(T))
 
-#define NX_VEC_MAKE_CAP(out, T, cap)    \
-    nx_vec_make_cap((out), (cap), sizeof(T))
+#define NX_VEC_NEW_CAP(out, T, cap)    \
+    nx_vec_new_cap((out), (cap), sizeof(T))
 
 #define NX_VEC_GET_AS(T, self, idx)                       \
     (NX_ASSERT(nx_vec_elem_size((self)) == sizeof(T)),    \

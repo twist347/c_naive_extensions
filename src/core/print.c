@@ -41,11 +41,11 @@ NX_FPRINT_DEF(dbl,    nx_dbl,    "%g")
 NX_FPRINT_DEF(f32,    nx_f32,    "%g")
 NX_FPRINT_DEF(f64,    nx_f64,    "%g")
 
-void nx_fprint_span(FILE *stream, nx_span s, nx_fprint_func f) {
-    nx_fprint_cspan(stream, nx_cspan_make_from_span(s), f);
+void nx_fprintln_span(FILE *stream, nx_span s, nx_fprint_func f) {
+    nx_fprintln_cspan(stream, nx_cspan_from_span(s), f);
 }
 
-void nx_fprint_cspan(FILE *stream, nx_cspan s, nx_fprint_func f) {
+void nx_fprintln_cspan(FILE *stream, nx_cspan s, nx_fprint_func f) {
     NX_ASSERT(stream);
     NX_ANY_SPAN_ASSERT(s);
     NX_ASSERT(f);

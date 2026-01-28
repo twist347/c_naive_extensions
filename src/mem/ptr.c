@@ -1,4 +1,4 @@
-#include "nx/mem/byte.h"
+#include "nx/mem/ptr.h"
 
 #include "nx/core/assert.h"
 
@@ -20,3 +20,12 @@ nx_isize nx_byte_diff(const void *a, const void *b) {
 
     return (const char *) a - (const char *) b;
 }
+
+void *nx_ptr_exchange(void **obj, void *new_val) {
+    NX_ASSERT(obj);
+
+    void *old = *obj;
+    *obj = new_val;
+    return old;
+}
+

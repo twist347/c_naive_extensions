@@ -23,13 +23,12 @@ struct nx_arr {
 // internals decls
 
 static void set_fields(nx_arr *self, void *data, nx_usize len, nx_usize elem_size);
-static void reset_fields(nx_arr *self);
 
 static nx_status alloc_and_copy_data(void **out, const nx_arr *src);
 
-/* ---------- new/destroy ---------- */
+/* ---------- new/drop ---------- */
 
-nx_status nx_arr_make(nx_arr **out, nx_usize len, nx_usize elem_size) {
+nx_status nx_arr_new(nx_arr **out, nx_usize len, nx_usize elem_size) {
     NX_ASSERT(out);
     NX_ASSERT(elem_size > 0);
 
@@ -107,22 +106,15 @@ nx_status nx_arr_copy(nx_arr **out, const nx_arr *src) {
     return NX_STATUS_OK;
 }
 
-nx_status nx_arr_move(nx_arr **out, nx_arr *src) {
-    NX_ASSERT(out);
-    NX_ARR_ASSERT(src);
+// TODO: swap or exchange?
+nx_arr *nx_arr_move(nx_arr **src) {
+    NX_ASSERT(src);
+    NX_ASSERT(*src);
+    NX_ARR_ASSERT(*src);
 
-    *out = nx_null;
-
-    nx_arr *dst = malloc(sizeof(nx_arr));
-    if (!dst) {
-        return NX_STATUS_OUT_OF_MEMORY;
-    }
-
-    *dst = *src;
-    reset_fields(src);
-
-    *out = dst;
-    return NX_STATUS_OK;
+    nx_arr *tmp = *src;
+    *src = nx_null;
+    return tmp;
 }
 
 nx_status nx_arr_copy_assign(nx_arr *self, const nx_arr *src) {
@@ -151,19 +143,23 @@ nx_status nx_arr_copy_assign(nx_arr *self, const nx_arr *src) {
     return NX_STATUS_OK;
 }
 
-nx_status nx_arr_move_assign(nx_arr *self, nx_arr *src) {
+// TODO: swap or exchange?
+void nx_arr_move_assign(nx_arr *self, nx_arr *src) {
     NX_ARR_ASSERT(self);
     NX_ARR_ASSERT(src);
     NX_ASSERT(self->elem_size == src->elem_size);
 
     if (self == src) {
-        return NX_STATUS_OK;
+        return;
     }
 
     free(self->data);
-    *self = *src;
-    reset_fields(src);
-    return NX_STATUS_OK;
+
+    self->data = src->data;
+    self->len = src->len;
+
+    src->data = nx_null;
+    src->len = 0;
 }
 
 /* ---------- info ---------- */
@@ -243,13 +239,13 @@ void nx_arr_swap(nx_arr *a, nx_arr *b) {
 nx_span nx_arr_to_span(nx_arr *self) {
     NX_ARR_ASSERT(self);
 
-    return nx_span_make(self->data, self->len, self->elem_size);
+    return nx_span_new(self->data, self->len, self->elem_size);
 }
 
 nx_cspan nx_arr_to_cspan(const nx_arr *self) {
     NX_ARR_ASSERT(self);
 
-    return nx_cspan_make(self->data, self->len, self->elem_size);
+    return nx_cspan_new(self->data, self->len, self->elem_size);
 }
 
 // internals defs
@@ -258,10 +254,6 @@ static void set_fields(nx_arr *self, void *data, nx_usize len, nx_usize elem_siz
     self->data = data;
     self->len = len;
     self->elem_size = elem_size;
-}
-
-static void reset_fields(nx_arr *self) {
-    set_fields(self, nx_null, 0, self->elem_size);
 }
 
 static nx_status alloc_and_copy_data(void **out, const nx_arr *src) {
