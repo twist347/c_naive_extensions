@@ -2,7 +2,7 @@
 
 // TODO: unused
 
-#include <stddef.h>
+#include "nx/core/type.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -10,8 +10,8 @@ extern "C" {
 
 // [first, last)
 typedef struct nx_range {
-    ptrdiff_t first;
-    ptrdiff_t last;
+    nx_isize first;
+    nx_isize last;
 } nx_range;
 
 #ifdef __cplusplus

@@ -1,8 +1,6 @@
 #pragma once
 
-#include <stddef.h>
-#include <stdbool.h>
-
+#include "nx/core/type.h"
 #include "nx/core/assert.h"
 #include "nx/core/status.h"
 #include "nx/core/span.h"
@@ -22,8 +20,8 @@ typedef struct nx_vec nx_vec;
 
 /* ---------- make/drop ---------- */
 
-nx_status nx_vec_make(nx_vec **out, size_t len, size_t elem_size);
-nx_status nx_vec_make_cap(nx_vec **out, size_t cap, size_t elem_size);
+nx_status nx_vec_make(nx_vec **out, nx_usize len, nx_usize elem_size);
+nx_status nx_vec_make_cap(nx_vec **out, nx_usize cap, nx_usize elem_size);
 void nx_vec_drop(nx_vec *self);
 
 /* ---------- copy/move semantic ---------- */
@@ -35,16 +33,16 @@ nx_status nx_vec_move_assign(nx_vec *self, nx_vec *src);
 
 /* ---------- info ---------- */
 
-size_t nx_vec_len(const nx_vec *self);
-bool nx_vec_empty(const nx_vec *self);
-size_t nx_vec_cap(const nx_vec *self);
-size_t nx_vec_elem_size(const nx_vec *self);
+nx_usize nx_vec_len(const nx_vec *self);
+nx_bool nx_vec_empty(const nx_vec *self);
+nx_usize nx_vec_cap(const nx_vec *self);
+nx_usize nx_vec_elem_size(const nx_vec *self);
 
 /* ---------- access ---------- */
 
-void *nx_vec_get(nx_vec *self, size_t idx);
-const void *nx_vec_get_const(const nx_vec *self, size_t idx);
-void nx_vec_set(nx_vec *self, size_t idx, const void *elem);
+void *nx_vec_get(nx_vec *self, nx_usize idx);
+const void *nx_vec_get_const(const nx_vec *self, nx_usize idx);
+void nx_vec_set(nx_vec *self, nx_usize idx, const void *elem);
 void *nx_vec_data(nx_vec *self);
 const void *nx_vec_data_const(const nx_vec *self);
 
@@ -53,12 +51,12 @@ const void *nx_vec_data_const(const nx_vec *self);
 nx_status nx_vec_push(nx_vec *self, const void *elem);
 void *nx_vec_pop(nx_vec *self);
 void nx_vec_clear(nx_vec *self);
-nx_status nx_vec_reserve(nx_vec *self, size_t new_cap);
-nx_status nx_vec_resize(nx_vec *self, size_t new_len);
+nx_status nx_vec_reserve(nx_vec *self, nx_usize new_cap);
+nx_status nx_vec_resize(nx_vec *self, nx_usize new_len);
 nx_status nx_vec_shrink_to_fit(nx_vec *self);
 void nx_vec_swap(nx_vec *a, nx_vec *b);
-nx_status nx_vec_insert(nx_vec *self, size_t idx, const void *elem);
-void nx_vec_erase(nx_vec *self, size_t idx);
+nx_status nx_vec_insert(nx_vec *self, nx_usize idx, const void *elem);
+void nx_vec_erase(nx_vec *self, nx_usize idx);
 
 /* ---------- to span ---------- */
 

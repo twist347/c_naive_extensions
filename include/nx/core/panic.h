@@ -33,7 +33,7 @@
     do {                                          \
         fprintf(                                  \
             stderr,                               \
-            "[XL]: unreachable: %s (%s:%d)\n",    \
+            "[NX]: unreachable: %s (%s:%d)\n",    \
             __func__, __FILE__, __LINE__          \
         );                                        \
         fflush(stderr);                           \

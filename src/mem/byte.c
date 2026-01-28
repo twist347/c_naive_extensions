@@ -2,19 +2,19 @@
 
 #include "nx/core/assert.h"
 
-char *nx_byte_offset(void *base, size_t stride, size_t idx) {
+char *nx_byte_offset(void *base, nx_usize stride, nx_usize idx) {
     NX_ASSERT(base);
 
     return (char *) base + idx * stride;
 }
 
-const char *nx_byte_offset_c(const void *base, size_t stride, size_t idx) {
+const char *nx_byte_offset_c(const void *base, nx_usize stride, nx_usize idx) {
     NX_ASSERT(base);
 
     return (const char *) base + idx * stride;
 }
 
-ptrdiff_t nx_byte_diff(const void *a, const void *b) {
+nx_isize nx_byte_diff(const void *a, const void *b) {
     NX_ASSERT(a);
     NX_ASSERT(b);
 

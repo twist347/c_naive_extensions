@@ -1,7 +1,6 @@
 #pragma once
 
-#include <stddef.h>
-#include <stdbool.h>
+#include "nx/core/type.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -9,30 +8,30 @@ extern "C" {
 
 typedef struct nx_str_view {
     const char *data;
-    size_t len;
+    nx_usize len;
 } nx_str_view;
 
-nx_str_view nx_str_view_create(const char *data, size_t len);
+nx_str_view nx_str_view_create(const char *data, nx_usize len);
 nx_str_view nx_str_view_from_cstr(const char *cstr);
 
 /* ---------- comparisons ---------- */
 
-bool nx_str_view_eq(nx_str_view a, nx_str_view b);
-bool nx_str_view_not_eq(nx_str_view a, nx_str_view b);
-int nx_str_view_cmp(nx_str_view a, nx_str_view b); /* lexicographic */
+nx_bool nx_str_view_eq(nx_str_view a, nx_str_view b);
+nx_bool nx_str_view_not_eq(nx_str_view a, nx_str_view b);
+nx_i32 nx_str_view_cmp(nx_str_view a, nx_str_view b); /* lexicographic */
 
 /* ---------- prefix/suffix ---------- */
 
-bool nx_sv_starts_with(nx_str_view s, nx_str_view prefix);
-bool nx_sv_ends_with(nx_str_view s, nx_str_view suffix);
+nx_bool nx_sv_starts_with(nx_str_view s, nx_str_view prefix);
+nx_bool nx_sv_ends_with(nx_str_view s, nx_str_view suffix);
 
 /* ---------- slice ---------- */
 
-nx_str_view nx_str_view_substr(nx_str_view s, size_t pos, size_t len);
+nx_str_view nx_str_view_substr(nx_str_view s, nx_usize pos, nx_usize len);
 
 /* ---------- search ---------- */
 
-ptrdiff_t nx_str_view_find(nx_str_view s, nx_str_view needle);
+nx_isize nx_str_view_find(nx_str_view s, nx_str_view needle);
 
 #ifdef __cplusplus
 }

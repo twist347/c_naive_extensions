@@ -63,9 +63,15 @@ foreach(tgt IN ITEMS c_naive_extension_static c_naive_extension_shared)
 endforeach()
 
 option(BUILD_TESTS "Build unit tests" ON)
+option(BUILD_EXAMPLES "Build examples" ON)
 
 if (BUILD_TESTS)
     set(CRITERION_DIR thirdparty/criterion-2.4.3)
     enable_testing()
     add_subdirectory(test)
+endif ()
+
+if (BUILD_EXAMPLES)
+    set(EXAMPLES_DIR example)
+    add_subdirectory(${EXAMPLES_DIR})
 endif ()

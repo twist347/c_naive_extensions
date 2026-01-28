@@ -7,24 +7,26 @@
 Test(A, B) {
     nx_vec *vec = NULL;
 
-    nx_status st = NX_VEC_MAKE(&vec, int, 0);
+    nx_status st = NX_VEC_MAKE(&vec, nx_i32, 0);
     cr_assert_eq(st, NX_STATUS_OK);
     cr_assert_eq(nx_vec_len(vec), 0);
     cr_assert_eq(nx_vec_cap(vec), 0);
 
-    const int n = 10;
+    const nx_i32 n = 10;
 
-    for (int i = 0; i < n; ++i) {
+    for (nx_i32 i = 0; i < n; ++i) {
         st = nx_vec_push(vec, &i);
         cr_assert_eq(st, NX_STATUS_OK);
     }
 
-    for (int i = 0; i < n; ++i) {
-        cr_assert_eq(i, *NX_VEC_GET_AS_C(int, vec, i));
+    for (nx_i32 i = 0; i < n; ++i) {
+        cr_assert_eq(i, *NX_VEC_GET_AS_C(nx_i32, vec, i));
     }
 
     cr_assert_eq(nx_vec_len(vec), n);
-    printf("%zu\n", nx_vec_cap(vec));
+
+    const nx_usize cap = nx_vec_cap(vec);
+    nx_fprint_usize(stdout, &cap);
 
     nx_vec_drop(vec);
 }

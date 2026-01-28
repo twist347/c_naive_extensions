@@ -1,8 +1,6 @@
 #pragma once
 
-#include <stddef.h>
-#include <stdbool.h>
-
+#include "nx/core/type.h"
 #include "nx/core/assert.h"
 #include "nx/core/status.h"
 #include "nx/core/span.h"
@@ -22,7 +20,7 @@ typedef struct nx_arr nx_arr;
 
 /* ---------- make/drop ---------- */
 
-nx_status nx_arr_make(nx_arr **out, size_t len, size_t elem_size);
+nx_status nx_arr_make(nx_arr **out, nx_usize len, nx_usize elem_size);
 void nx_arr_drop(nx_arr *self);
 
 /* ---------- copy/move semantic ---------- */
@@ -34,15 +32,15 @@ nx_status nx_arr_move_assign(nx_arr *self, nx_arr *src);
 
 /* ---------- info ---------- */
 
-size_t nx_arr_len(const nx_arr *self);
-bool nx_arr_empty(const nx_arr *self);
-size_t nx_arr_elem_size(const nx_arr *self);
+nx_usize nx_arr_len(const nx_arr *self);
+nx_bool nx_arr_empty(const nx_arr *self);
+nx_usize nx_arr_elem_size(const nx_arr *self);
 
 /* ---------- access ---------- */
 
-void *nx_arr_get(nx_arr *self, size_t idx);
-const void *nx_arr_get_const(const nx_arr *self, size_t idx);
-void nx_arr_set(nx_arr *self, size_t idx, const void *elem);
+void *nx_arr_get(nx_arr *self, nx_usize idx);
+const void *nx_arr_get_const(const nx_arr *self, nx_usize idx);
+void nx_arr_set(nx_arr *self, nx_usize idx, const void *elem);
 void *nx_arr_data(nx_arr *self);
 const void *nx_arr_data_const(const nx_arr *self);
 

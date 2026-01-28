@@ -1,12 +1,11 @@
 #pragma once
 
-#include <stdbool.h>
-#include <stddef.h>
-
-// true if overflow
+#include "nx/core/type.h"
 
 // TODO: why size?
 
-bool nx_size_add_overflow(size_t *out, size_t a, size_t b);
+// true if overflow
 
-bool nx_size_mul_overflow(size_t *out, size_t a, size_t b);
+nx_bool nx_size_add_overflow(nx_usize *out, nx_usize a, nx_usize b);
+
+nx_bool nx_size_mul_overflow(nx_usize *out, nx_usize a, nx_usize b);

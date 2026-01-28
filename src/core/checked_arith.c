@@ -4,7 +4,7 @@
 
 #include "nx/core/assert.h"
 
-bool nx_size_add_overflow(size_t *out, size_t a, size_t b) {
+nx_bool nx_size_add_overflow(nx_usize *out, nx_usize a, nx_usize b) {
     NX_ASSERT(out);
 
     if (a > SIZE_MAX - b) {
@@ -14,7 +14,7 @@ bool nx_size_add_overflow(size_t *out, size_t a, size_t b) {
     return false;
 }
 
-bool nx_size_mul_overflow(size_t *out, size_t a, size_t b) {
+nx_bool nx_size_mul_overflow(nx_usize *out, nx_usize a, nx_usize b) {
     NX_ASSERT(out);
 
     if (a == 0 || b == 0) {
