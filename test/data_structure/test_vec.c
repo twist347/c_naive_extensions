@@ -5,17 +5,20 @@
 #include "nx/data_structure/vec.h"
 
 Test(A, B) {
-    nx_vec *vec = nx_null;
+    nx_vec_res res = NX_VEC_NEW(int);
+    if (!NX_RES_IS_OK(res)) {
+        nx_status_fprint(stderr, NX_RES_GET_ERR(res));
+        return;
+    }
 
-    nx_status st = NX_VEC_NEW(&vec, nx_i32, 0);
-    cr_assert_eq(st, NX_STATUS_OK);
+    nx_vec *vec = NX_RES_GET_VAL(res);
     cr_assert_eq(nx_vec_len(vec), 0);
     cr_assert_eq(nx_vec_cap(vec), 0);
 
     const nx_i32 n = 10;
 
     for (nx_i32 i = 0; i < n; ++i) {
-        st = nx_vec_push(vec, &i);
+        const nx_status st = nx_vec_push(vec, &i);
         cr_assert_eq(st, NX_STATUS_OK);
     }
 

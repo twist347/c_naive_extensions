@@ -182,7 +182,7 @@ nx_minmax nx_minmax_element(nx_cspan s, nx_cmp cmp) {
 
 /* ---------- comparison ---------- */
 
-bool nx_equal(nx_cspan a, nx_cspan b, nx_cmp cmp) {
+nx_bool nx_equal(nx_cspan a, nx_cspan b, nx_cmp cmp) {
     NX_ANY_SPAN_ASSERT(a);
     NX_ANY_SPAN_ASSERT(b);
     NX_ASSERT(a.elem_size == b.elem_size);
@@ -202,7 +202,7 @@ bool nx_equal(nx_cspan a, nx_cspan b, nx_cmp cmp) {
     return true;
 }
 
-bool nx_not_equal(nx_cspan a, nx_cspan b, nx_cmp cmp) {
+nx_bool nx_not_equal(nx_cspan a, nx_cspan b, nx_cmp cmp) {
     return !nx_equal(a, b, cmp);
 }
 

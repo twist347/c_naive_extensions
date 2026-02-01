@@ -40,23 +40,23 @@ set(NX_SOURCES
         ${NX_MEM_SOURCES}
 )
 
-add_library(c_naive_extension_static STATIC
+add_library(nx_static STATIC
         ${NX_SOURCES}
 )
 
-add_library(c_naive_extension_shared SHARED
+add_library(nx_shared SHARED
         ${NX_SOURCES}
 )
 
-set_target_properties(c_naive_extension_static PROPERTIES
-        OUTPUT_NAME c_naive_extension
+set_target_properties(nx_static PROPERTIES
+        OUTPUT_NAME nx
 )
 
-set_target_properties(c_naive_extension_shared PROPERTIES
-        OUTPUT_NAME c_naive_extension
+set_target_properties(nx_shared PROPERTIES
+        OUTPUT_NAME nx
 )
 
-foreach(tgt IN ITEMS c_naive_extension_static c_naive_extension_shared)
+foreach(tgt IN ITEMS nx_static nx_shared)
     target_include_directories(${tgt} PUBLIC ${CMAKE_SOURCE_DIR}/include)
     target_compile_options(${tgt} PRIVATE -Wall -Wextra -pedantic)
     target_link_libraries(${tgt} PUBLIC m)

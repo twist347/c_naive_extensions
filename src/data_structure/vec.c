@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "nx/core/checked_arith.h"
+#include "nx/core/limit.h"
 #include "nx/mem/ptr.h"
 
 struct nx_vec {
@@ -19,8 +20,8 @@ struct nx_vec {
         NX_ASSERT((self_)->elem_size > 0);                               \
         NX_ASSERT((self_)->len <= (self_)->cap);                         \
         NX_ASSERT(((self_)->cap == 0) == ((self_)->data == nx_null));    \
-        NX_ASSERT((self_)->len <= SIZE_MAX / (self_)->elem_size);        \
-        NX_ASSERT((self_)->cap <= SIZE_MAX / (self_)->elem_size);        \
+        NX_ASSERT((self_)->len <= NX_USIZE_MAX / (self_)->elem_size);    \
+        NX_ASSERT((self_)->cap <= NX_USIZE_MAX / (self_)->elem_size);    \
     } while (0)
 
 // internals decls
@@ -35,20 +36,39 @@ static void set_fields(nx_vec *self, void *data, nx_usize len, nx_usize cap, nx_
 static void shift_left(nx_vec *self, nx_usize idx);
 static void shift_right(nx_vec *self, nx_usize idx);
 
-/* ---------- new/drop ---------- */
+/* ---------- lifetime ---------- */
 
-nx_status nx_vec_new(nx_vec **out, nx_usize len, nx_usize elem_size) {
-    NX_ASSERT(out);
+nx_vec_res nx_vec_new(nx_usize elem_size) {
     NX_ASSERT(elem_size > 0);
 
-    return new_impl(out, len, len, elem_size);
+    nx_vec *vec = nx_null;
+    const nx_status st = new_impl(&vec, 0, 0, elem_size);
+    if (st != NX_STATUS_OK) {
+        return NX_RES_ERR(nx_vec_res, st);
+    }
+    return NX_RES_OK(nx_vec_res, vec);
 }
 
-nx_status nx_vec_new_cap(nx_vec **out, nx_usize cap, nx_usize elem_size) {
-    NX_ASSERT(out);
+nx_vec_res nx_vec_new_len(nx_usize len, nx_usize elem_size) {
     NX_ASSERT(elem_size > 0);
 
-    return new_impl(out, 0, cap, elem_size);
+    nx_vec *vec = nx_null;
+    const nx_status st = new_impl(&vec, len, len, elem_size);
+    if (st != NX_STATUS_OK) {
+        return NX_RES_ERR(nx_vec_res, st);
+    }
+    return NX_RES_OK(nx_vec_res, vec);
+}
+
+nx_vec_res nx_vec_new_cap(nx_usize cap, nx_usize elem_size) {
+    NX_ASSERT(elem_size > 0);
+
+    nx_vec *vec = nx_null;
+    const nx_status st = new_impl(&vec, 0, cap, elem_size);
+    if (st != NX_STATUS_OK) {
+        return NX_RES_ERR(nx_vec_res, st);
+    }
+    return NX_RES_OK(nx_vec_res, vec);
 }
 
 void nx_vec_drop(nx_vec *self) {
@@ -62,35 +82,30 @@ void nx_vec_drop(nx_vec *self) {
 
 /* ---------- copy/move semantic ---------- */
 
-nx_status nx_vec_copy(nx_vec **out, const nx_vec *src) {
-    NX_ASSERT(out);
+nx_vec_res nx_vec_copy(const nx_vec *src) {
     NX_VEC_ASSERT(src);
-
-    *out = nx_null;
 
     nx_vec *dst = malloc(sizeof(nx_vec));
     if (!dst) {
-        return NX_STATUS_OUT_OF_MEMORY;
+        return NX_RES_ERR(nx_vec_res, NX_STATUS_OUT_OF_MEMORY);
     }
 
     set_fields(dst, nx_null, 0, 0, src->elem_size);
 
     if (src->cap == 0) {
-        set_fields(dst, nx_null, src->len, src->cap, src->elem_size);
-        *out = dst;
-        return NX_STATUS_OK;
+        /* empty/unallocated */
+        return NX_RES_OK(nx_vec_res, dst);
     }
 
     void *data = nx_null;
     const nx_status st = alloc_and_copy_data(&data, src);
     if (st != NX_STATUS_OK) {
         free(dst);
-        return st;
+        return NX_RES_ERR(nx_vec_res, st);
     }
 
     set_fields(dst, data, src->len, src->cap, src->elem_size);
-    *out = dst;
-    return NX_STATUS_OK;
+    return NX_RES_OK(nx_vec_res, dst);
 }
 
 // TODO: swap or exchange?
@@ -186,7 +201,7 @@ void *nx_vec_get(nx_vec *self, nx_usize idx) {
     return nx_byte_offset(self->data, self->elem_size, idx);
 }
 
-const void *nx_vec_get_const(const nx_vec *self, nx_usize idx) {
+const void *nx_vec_get_c(const nx_vec *self, nx_usize idx) {
     NX_VEC_ASSERT(self);
     NX_ASSERT(idx < self->len);
 
@@ -207,7 +222,7 @@ void *nx_vec_data(nx_vec *self) {
     return self->data;
 }
 
-const void *nx_vec_data_const(const nx_vec *self) {
+const void *nx_vec_data_c(const nx_vec *self) {
     NX_VEC_ASSERT(self);
 
     return self->data;

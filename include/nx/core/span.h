@@ -24,11 +24,11 @@ typedef struct nx_cspan {
 #define NX_ANY_SPAN_ASSERT(s)                              \
     do {                                                   \
         NX_ASSERT((s).elem_size > 0);                      \
-        NX_ASSERT((s).len == 0 || (s).data != NULL);       \
+        NX_ASSERT((s).len == 0 || (s).data != nx_null);    \
         NX_ASSERT((s).len <= SIZE_MAX / (s).elem_size);    \
     } while (0)
 
-/* ---------- new ---------- */
+/* ---------- lifetime ---------- */
 
 nx_span nx_span_new(void *data, nx_usize len, nx_usize elem_size);
 nx_cspan nx_cspan_new(const void *data, nx_usize len, nx_usize elem_size);

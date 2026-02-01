@@ -4,7 +4,8 @@
 #include <string.h>
 
 #include "nx/core/checked_arith.h"
-#include "nx/mem/byte.h"
+#include "nx/core/limit.h"
+#include "nx/mem/ptr.h"
 
 struct nx_arr {
     void *data;
@@ -17,10 +18,12 @@ struct nx_arr {
         NX_ASSERT((self_) != nx_null);                                   \
         NX_ASSERT((self_)->elem_size > 0);                               \
         NX_ASSERT(((self_)->len == 0) == ((self_)->data == nx_null));    \
-        NX_ASSERT((self_)->len <= SIZE_MAX / (self_)->elem_size);        \
+        NX_ASSERT((self_)->len <= NX_USIZE_MAX / (self_)->elem_size);    \
     } while (0)
 
 // internals decls
+
+static nx_status new_impl(nx_arr **out, nx_usize len, nx_usize elem_size);
 
 static void set_fields(nx_arr *self, void *data, nx_usize len, nx_usize elem_size);
 
@@ -28,40 +31,15 @@ static nx_status alloc_and_copy_data(void **out, const nx_arr *src);
 
 /* ---------- new/drop ---------- */
 
-nx_status nx_arr_new(nx_arr **out, nx_usize len, nx_usize elem_size) {
-    NX_ASSERT(out);
+nx_arr_res nx_arr_new(nx_usize len, nx_usize elem_size) {
     NX_ASSERT(elem_size > 0);
 
-    *out = nx_null;
-
-    nx_arr *arr = malloc(sizeof(nx_arr));
-    if (!arr) {
-        return NX_STATUS_OUT_OF_MEMORY;
+    nx_arr *arr = nx_null;
+    const nx_status st = new_impl(&arr, len, elem_size);
+    if (st != NX_STATUS_OK) {
+        return NX_RES_ERR(nx_arr_res, st);
     }
-
-    set_fields(arr, nx_null, 0, elem_size);
-
-    if (len == 0) {
-        *out = arr;
-        return NX_STATUS_OK;
-    }
-
-    nx_usize bytes;
-    if (nx_size_mul_overflow(&bytes, len, elem_size)) {
-        free(arr);
-        return NX_STATUS_MUL_OVERFLOW;
-    }
-
-    void *data = calloc(1, bytes);
-    if (!data) {
-        free(arr);
-        return NX_STATUS_OUT_OF_MEMORY;
-    }
-
-    set_fields(arr, data, len, elem_size);
-    *out = arr;
-
-    return NX_STATUS_OK;
+    return NX_RES_OK(nx_arr_res, arr);
 }
 
 void nx_arr_drop(nx_arr *self) {
@@ -75,35 +53,29 @@ void nx_arr_drop(nx_arr *self) {
 
 /* ---------- copy/move semantic ---------- */
 
-nx_status nx_arr_copy(nx_arr **out, const nx_arr *src) {
-    NX_ASSERT(out);
+nx_arr_res nx_arr_copy(const nx_arr *src) {
     NX_ARR_ASSERT(src);
-
-    *out = nx_null;
 
     nx_arr *dst = malloc(sizeof(nx_arr));
     if (!dst) {
-        return NX_STATUS_OUT_OF_MEMORY;
+        return NX_RES_ERR(nx_arr_res, NX_STATUS_OUT_OF_MEMORY);
     }
 
     set_fields(dst, nx_null, 0, src->elem_size);
 
     if (src->len == 0) {
-        *out = dst;
-        return NX_STATUS_OK;
+        return NX_RES_OK(nx_arr_res, dst);
     }
 
     void *data = nx_null;
     const nx_status st = alloc_and_copy_data(&data, src);
     if (st != NX_STATUS_OK) {
         free(dst);
-        return st;
+        return NX_RES_ERR(nx_arr_res, st);
     }
 
     set_fields(dst, data, src->len, src->elem_size);
-
-    *out = dst;
-    return NX_STATUS_OK;
+    return NX_RES_OK(nx_arr_res, dst);
 }
 
 // TODO: swap or exchange?
@@ -191,7 +163,7 @@ void *nx_arr_get(nx_arr *self, nx_usize idx) {
     return nx_byte_offset(self->data, self->elem_size, idx);
 }
 
-const void *nx_arr_get_const(const nx_arr *self, nx_usize idx) {
+const void *nx_arr_get_c(const nx_arr *self, nx_usize idx) {
     NX_ARR_ASSERT(self);
     NX_ASSERT(idx < self->len);
 
@@ -212,7 +184,7 @@ void *nx_arr_data(nx_arr *self) {
     return self->data;
 }
 
-const void *nx_arr_data_const(const nx_arr *self) {
+const void *nx_arr_data_c(const nx_arr *self) {
     NX_ARR_ASSERT(self);
 
     return self->data;
@@ -249,6 +221,39 @@ nx_cspan nx_arr_to_cspan(const nx_arr *self) {
 }
 
 // internals defs
+
+static nx_status new_impl(nx_arr **out, nx_usize len, nx_usize elem_size) {
+    *out = nx_null;
+
+    nx_arr *arr = malloc(sizeof(nx_arr));
+    if (!arr) {
+        return NX_STATUS_OUT_OF_MEMORY;
+    }
+
+    set_fields(arr, nx_null, 0, elem_size);
+
+    if (len == 0) {
+        *out = arr;
+        return NX_STATUS_OK;
+    }
+
+    nx_usize bytes;
+    if (nx_size_mul_overflow(&bytes, len, elem_size)) {
+        free(arr);
+        return NX_STATUS_MUL_OVERFLOW;
+    }
+
+    void *data = calloc(1, bytes);
+    if (!data) {
+        free(arr);
+        return NX_STATUS_OUT_OF_MEMORY;
+    }
+
+    set_fields(arr, data, len, elem_size);
+    *out = arr;
+
+    return NX_STATUS_OK;
+}
 
 static void set_fields(nx_arr *self, void *data, nx_usize len, nx_usize elem_size) {
     self->data = data;

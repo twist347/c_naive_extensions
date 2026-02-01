@@ -4,29 +4,34 @@
 #include "nx/core/assert.h"
 #include "nx/core/status.h"
 #include "nx/core/span.h"
+#include "nx/core/result.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /* Contract:
- * - All invalid usage (NULL, bounds, invariants, elem_size mismatch, etc.) is a programmer error:
- *   guarded by NX_ASSERT (debug). Release behavior is unspecified.
- * - Status-returning functions report only internal failures:
- *   OUT_OF_MEMORY and MUL_OVERFLOW.
+ * - All invalid usage is programmer error (NX_ASSERT). Release behavior is unspecified.
+ * - Operations that may fail due to allocation/overflow return nx_status.
+ * - Constructors/factories return nx_vec_res (Result-like):
+ *     st == OK  => val is valid
+ *     st != OK  => val must not be used
  */
 
 typedef struct nx_vec nx_vec;
 
-/* ---------- new/drop ---------- */
+NX_DEF_RESULT_TYPE(nx_vec_res, nx_vec *);
 
-nx_status nx_vec_new(nx_vec **out, nx_usize len, nx_usize elem_size);
-nx_status nx_vec_new_cap(nx_vec **out, nx_usize cap, nx_usize elem_size);
+/* ---------- lifetime ---------- */
+
+nx_vec_res nx_vec_new(nx_usize elem_size);
+nx_vec_res nx_vec_new_len(nx_usize cap, nx_usize elem_size);
+nx_vec_res nx_vec_new_cap(nx_usize cap, nx_usize elem_size);
 void nx_vec_drop(nx_vec *self);
 
 /* ---------- copy/move semantic ---------- */
 
-nx_status nx_vec_copy(nx_vec **out, const nx_vec *src);
+nx_vec_res nx_vec_copy(const nx_vec *src);
 nx_vec *nx_vec_move(nx_vec **src);
 nx_status nx_vec_copy_assign(nx_vec *self, const nx_vec *src);
 void nx_vec_move_assign(nx_vec *self, nx_vec *src);
@@ -41,10 +46,10 @@ nx_usize nx_vec_elem_size(const nx_vec *self);
 /* ---------- access ---------- */
 
 void *nx_vec_get(nx_vec *self, nx_usize idx);
-const void *nx_vec_get_const(const nx_vec *self, nx_usize idx);
+const void *nx_vec_get_c(const nx_vec *self, nx_usize idx);
 void nx_vec_set(nx_vec *self, nx_usize idx, const void *elem);
 void *nx_vec_data(nx_vec *self);
-const void *nx_vec_data_const(const nx_vec *self);
+const void *nx_vec_data_c(const nx_vec *self);
 
 /* ---------- mods ---------- */
 
@@ -65,10 +70,13 @@ nx_cspan nx_vec_to_cspan(const nx_vec *self);
 
 /* ---------- macros ---------- */
 
-#define NX_VEC_NEW(out, T, len)    \
-    nx_vec_new((out), (len), sizeof(T))
+#define NX_VEC_NEW(T)    \
+    nx_vec_new(sizeof(T))
 
-#define NX_VEC_NEW_CAP(out, T, cap)    \
+#define NX_VEC_NEW_LEN(T, len)    \
+    nx_vec_new_len((out), (len), sizeof(T))
+
+#define NX_VEC_NEW_CAP(T, cap)    \
     nx_vec_new_cap((out), (cap), sizeof(T))
 
 #define NX_VEC_GET_AS(T, self, idx)                       \
@@ -77,7 +85,7 @@ nx_cspan nx_vec_to_cspan(const nx_vec *self);
 
 #define NX_VEC_GET_AS_C(T, self, idx)                     \
     (NX_ASSERT(nx_vec_elem_size((self)) == sizeof(T)),    \
-    (const T *) nx_vec_get_const((self), (idx)))
+    (const T *) nx_vec_get_c((self), (idx)))
 
 #define NX_VEC_SET(T, self, idx, expr)                       \
     do {                                                     \
@@ -92,7 +100,7 @@ nx_cspan nx_vec_to_cspan(const nx_vec *self);
 
 #define NX_VEC_DATA_AS_C(T, self)                          \
     (NX_ASSERT(nx_vec_elem_size((self)) == sizeof(T)),     \
-    (const T *) nx_vec_data_const((self)))
+    (const T *) nx_vec_data_c((self)))
 
 /* ops that may allocate: return nx_status */
 

@@ -48,4 +48,3 @@ nx_bool nx_not_equal(nx_cspan a, nx_cspan b, nx_cmp cmp);
 void nx_fill(nx_span s, const void *elem);
 void nx_reverse(nx_span s);
 void nx_swap_elements(nx_span s, nx_usize i, nx_usize j);
-

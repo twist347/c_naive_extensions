@@ -5,9 +5,13 @@
 #include "nx/data_structure/arr.h"
 
 Test(A, B) {
-    nx_arr *arr = nx_null;
-    const nx_status st = NX_ARR_NEW(&arr, nx_i32, 5);
-    cr_assert_eq(st, NX_STATUS_OK);
+    nx_arr_res res = NX_ARR_NEW_LEN(int, 5);
+    if (!NX_RES_IS_OK(res)) {
+        nx_status_fprint(stderr, NX_RES_GET_ERR(res));
+        return;
+    }
+
+    nx_arr *arr = NX_RES_GET_VAL(res);
 
     const int val = 69;
 

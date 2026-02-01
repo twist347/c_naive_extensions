@@ -4,7 +4,7 @@
 
 #include "nx/mem/ptr.h"
 
-/* ---------- new ---------- */
+/* ---------- lifetime ---------- */
 
 nx_span nx_span_new(void *data, nx_usize len, nx_usize elem_size) {
     const nx_span s = {.data = data, .len = len, .elem_size = elem_size};
