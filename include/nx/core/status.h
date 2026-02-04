@@ -20,7 +20,7 @@ typedef enum nx_status {
 
 const nx_char *nx_status_to_str(nx_status status);
 
-void nx_status_fprint(FILE *stream, nx_status status);
+void nx_status_fprintln(FILE *stream, nx_status status);
 
 #ifdef __cplusplus
 }

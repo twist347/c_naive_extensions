@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 
 project(c_naive_extension)
 
-set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -11,7 +11,6 @@ set(NX_CORE_SOURCES
         src/core/print.c
         src/core/span.c
         src/core/status.c
-        src/core/checked_arith.c
 )
 
 set(NX_DS_SOURCES

@@ -9,11 +9,11 @@
 int main(void) {
     nx_vec_res res = NX_VEC_NEW(int);
     if (!NX_RES_IS_OK(res)) {
-        nx_status_fprint(stderr, NX_RES_GET_ERR(res));
+        nx_status_fprintln(stderr, NX_RES_ERR(res));
         return EXIT_FAILURE;
     }
 
-    nx_vec *vec = NX_RES_GET_VAL(res);
+    nx_vec *vec = NX_RES_VAL(res);
 
     for (nx_i32 i = 0; i < 10; ++i) {
         NX_VEC_PUSH_EXPR(nx_i32, vec, i * i);

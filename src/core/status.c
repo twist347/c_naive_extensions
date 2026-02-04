@@ -2,7 +2,7 @@
 
 #include "nx/core/assert.h"
 
-const char *nx_status_to_str(nx_status status) {
+const nx_char *nx_status_to_str(nx_status status) {
     switch (status) {
         case NX_STATUS_OK:
             return "NX_STATUS_OK";
@@ -19,8 +19,9 @@ const char *nx_status_to_str(nx_status status) {
     }
 }
 
-void nx_status_fprint(FILE *stream, nx_status status) {
+void nx_status_fprintln(FILE *stream, nx_status status) {
     NX_ASSERT(stream);
 
     fputs(nx_status_to_str(status), stream);
+    fputc('\n', stream);
 }

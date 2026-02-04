@@ -11,10 +11,9 @@ typedef struct nx_str_view {
     nx_usize len;
 } nx_str_view;
 
-#define NX_STR_VIEW_ASSERT(self_)                                  \
-    do {                                                           \
-        NX_ASSERT((self_).len == 0 || (self_).data != nx_null);    \
-    } while (0)
+/* ---------- assert ---------- */
+
+void nx_str_view_assert(nx_str_view sv);
 
 /* ---------- lifetime ---------- */
 

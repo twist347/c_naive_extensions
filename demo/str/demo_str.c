@@ -6,11 +6,11 @@
 int main(void) {
     const nx_str_res res = nx_str_new();
     if (!NX_RES_IS_OK(res)) {
-        nx_status_fprint(stderr, NX_RES_GET_ERR(res));
+        nx_status_fprintln(stderr, NX_RES_ERR(res));
         return EXIT_FAILURE;
     }
 
-    nx_str *str = NX_RES_GET_VAL(res);
+    nx_str *str = NX_RES_VAL(res);
 
     for (nx_char c = 'a'; c <= 'z'; ++c) {
         nx_str_push(str, c);

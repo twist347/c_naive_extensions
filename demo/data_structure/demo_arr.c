@@ -30,12 +30,12 @@ int main(void) {
 }
 
 static nx_arr *arr_new_or_die(nx_usize len, nx_usize elem_size) {
-    nx_arr_res res = nx_arr_new(len, elem_size);
+    nx_arr_res res = nx_arr_new_len(len, elem_size);
     if (!NX_RES_IS_OK(res)) {
-        nx_status_fprint(stderr, NX_RES_GET_ERR(res));
+        nx_status_fprintln(stderr, NX_RES_ERR(res));
         exit(EXIT_FAILURE);
     }
-    return NX_RES_GET_VAL(res);
+    return NX_RES_VAL(res);
 }
 
 static void demo_lifetime(void) {
@@ -46,10 +46,10 @@ static void demo_lifetime(void) {
 
     const nx_arr_res res = NX_ARR_NEW_LEN(nx_i32, 5);
     if (!NX_RES_IS_OK(res)) {
-        nx_status_fprint(stderr, NX_RES_GET_ERR(res));
+        nx_status_fprintln(stderr, NX_RES_ERR(res));
         exit(EXIT_FAILURE);
     }
-    nx_arr *arr = NX_RES_GET_VAL(res);
+    nx_arr *arr = NX_RES_VAL(res);
 
     nx_arr_drop(arr);
 }
@@ -67,10 +67,10 @@ static void demo_copy_move(void) {
 
     nx_arr_res res1 = nx_arr_copy(arr);
     if (!NX_RES_IS_OK(res1)) {
-        nx_status_fprint(stderr, NX_RES_GET_ERR(res1));
+        nx_status_fprintln(stderr, NX_RES_ERR(res1));
         exit(EXIT_FAILURE);
     }
-    nx_arr *arr1 = NX_RES_GET_VAL(res1);
+    nx_arr *arr1 = NX_RES_VAL(res1);
 
     nx_arr *arr2 = nx_arr_move(&arr);
 
@@ -95,7 +95,7 @@ static void demo_info(void) {
     const nx_bool is_empty = nx_arr_empty(arr);
     NX_VERIFY(is_empty == false);
 
-    const nx_usize elem_size = nx_arr_elem_size(arr);
+    const nx_usize elem_size = nx_arr_esz(arr);
     NX_VERIFY(elem_size == sizeof(nx_i32));
 
     nx_arr_drop(arr);
@@ -125,7 +125,7 @@ static void demo_access(void) {
         NX_VERIFY(get_val_c == val);
     }
 
-    const nx_usize elem_size = nx_arr_elem_size(arr);
+    const nx_usize elem_size = nx_arr_esz(arr);
 
     void *data = nx_arr_data(arr);
     const void *data_c = nx_arr_data_c(arr);

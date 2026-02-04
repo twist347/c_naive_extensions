@@ -18,6 +18,18 @@
 
 #define NX_VERIFY(cond) NX_VERIFY_MSG((cond), "")
 
+#define NX_PANIC_MSG(msg)                                             \
+    do {                                                              \
+        fprintf(                                                      \
+            stderr,                                                   \
+            "[NX]: panic: %s (%s:%d, %s)\n",                          \
+            (msg) ? (msg) : "", __FILE__, __LINE__, __func__);        \
+        fflush(stderr);                                               \
+        abort();                                                      \
+    } while (0)
+
+#define NX_PANIC()    NX_PANIC_MSG("")
+
 #define NX_UNIMPLEMENTED()                          \
     do {                                            \
         fprintf(                                    \

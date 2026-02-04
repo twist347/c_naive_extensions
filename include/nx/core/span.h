@@ -1,9 +1,8 @@
 #pragma once
 
-#include <stdint.h>
-
 #include "nx/core/type.h"
 #include "nx/core/assert.h"
+#include "nx/core/limit.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -12,26 +11,27 @@ extern "C" {
 typedef struct nx_span {
     void *data;
     nx_usize len;
-    nx_usize elem_size;
+    nx_usize esz;
 } nx_span;
 
 typedef struct nx_cspan {
     const void *data;
     nx_usize len;
-    nx_usize elem_size;
+    nx_usize esz;
 } nx_cspan;
 
-#define NX_ANY_SPAN_ASSERT(s)                              \
-    do {                                                   \
-        NX_ASSERT((s).elem_size > 0);                      \
-        NX_ASSERT((s).len == 0 || (s).data != nx_null);    \
-        NX_ASSERT((s).len <= SIZE_MAX / (s).elem_size);    \
-    } while (0)
+
+/* ---------- assert ---------- */
+
+void nx_span_any_assert(const void *data, nx_usize len, nx_usize esz);
+
+#define NX_SPAN_ANY_ASSERT(s)    \
+    do { nx_span_any_assert((s).data, (s).len, (s).esz); } while (0)
 
 /* ---------- lifetime ---------- */
 
-nx_span nx_span_new(void *data, nx_usize len, nx_usize elem_size);
-nx_cspan nx_cspan_new(const void *data, nx_usize len, nx_usize elem_size);
+nx_span nx_span_new(void *data, nx_usize len, nx_usize esz);
+nx_cspan nx_cspan_new(const void *data, nx_usize len, nx_usize esz);
 nx_cspan nx_cspan_from_span(nx_span s);
 
 /* ---------- access ---------- */
@@ -59,29 +59,29 @@ nx_cspan nx_cspan_tail(nx_cspan s, nx_usize offset);
 
 /* ---------- macros ---------- */
 
-#define NX_SPAN_FROM_PTR(ptr, len) \
+#define NX_SPAN_FROM_PTR(ptr, len)    \
     nx_span_new((ptr), (len), sizeof((ptr)[0]))
 
-#define NX_CSPAN_FROM_PTR(ptr, len) \
+#define NX_CSPAN_FROM_PTR(ptr, len)    \
     nx_cspan_new((ptr), (len), sizeof((ptr)[0]))
 
-#define NX_SPAN_GET_AS(T, s, idx)              \
-    (NX_ASSERT((s).elem_size == sizeof(T)),    \
+#define NX_SPAN_GET_AS(T, s, idx)        \
+    (NX_ASSERT((s).esz == sizeof(T)),    \
     (T *) nx_span_get((s), (idx)))
 
-#define NX_SPAN_GET_AS_C(T, s, idx)            \
-    (NX_ASSERT((s).elem_size == sizeof(T)),    \
+#define NX_SPAN_GET_AS_C(T, s, idx)          \
+    (NX_ASSERT((s).esz == sizeof(T)),        \
     (const T *) nx_span_get_c((s), (idx)))
 
-#define NX_CSPAN_GET_AS_C(T, s, idx)           \
-    (NX_ASSERT((s).elem_size == sizeof(T)),    \
+#define NX_CSPAN_GET_AS_C(T, s, idx)     \
+    (NX_ASSERT((s).esz == sizeof(T)),    \
     (const T *) nx_cspan_get_c((s), (idx)))
 
-#define NX_SPAN_SET(T, s, idx, expr)              \
-    do {                                          \
-        NX_ASSERT((s).elem_size == sizeof(T));    \
-        const T nx_tmp_ = (expr);                 \
-        nx_span_set((s), (idx), &nx_tmp_);        \
+#define NX_SPAN_SET(T, s, idx, expr)          \
+    do {                                      \
+        NX_ASSERT((s).esz == sizeof(T));      \
+        const T nx_tmp_ = (expr);             \
+        nx_span_set((s), (idx), &nx_tmp_);    \
     } while (0)
 
 #ifdef __cplusplus

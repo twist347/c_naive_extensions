@@ -4,30 +4,27 @@
 
 #include "nx/data_structure/arr.h"
 #include "nx/mem/ptr.h"
-#include "nx/core/limit.h"
 
 static nx_arr *arr_new_or_die(nx_usize len, nx_usize elem_size) {
-    nx_arr_res res = nx_arr_new(len, elem_size);
+    nx_arr_res res = nx_arr_new_len(len, elem_size);
     if (!NX_RES_IS_OK(res)) {
-        nx_status_fprint(stderr, NX_RES_GET_ERR(res));
+        nx_status_fprintln(stderr, NX_RES_ERR(res));
         exit(EXIT_FAILURE);
     }
-    return NX_RES_GET_VAL(res);
+    return NX_RES_VAL(res);
 }
 
 /* ---------- lifetime ---------- */
 
-Test(nx_arr_new, regular) {
-    nx_arr_res res = NX_ARR_NEW_LEN(nx_i32, 5);
-    if (!NX_RES_IS_OK(res)) {
-        nx_status_fprint(stderr, NX_RES_GET_ERR(res));
-        return;
-    }
-    nx_arr *arr = NX_RES_GET_VAL(res);
+Test(nx_arr_new_p, regular) {
+    nx_arr_res res = nx_arr_new_p((nx_arr_params){.len = 5, .esz = sizeof(nx_i32)});
+    cr_assert(NX_RES_IS_OK(res));
+    nx_arr *arr = NX_RES_VAL(res);
+    cr_assert_neq(arr, nx_null);
 
     cr_assert_neq(nx_arr_data(arr), nx_null);
     cr_assert_eq(nx_arr_len(arr), 5);
-    cr_assert_eq(nx_arr_elem_size(arr), sizeof(nx_i32));
+    cr_assert_eq(nx_arr_esz(arr), sizeof(nx_i32));
 
     for (nx_usize i = 0; i < nx_arr_len(arr); ++i) {
         cr_assert_eq(*NX_ARR_GET_AS_C(nx_i32, arr, i), 0);
@@ -36,22 +33,37 @@ Test(nx_arr_new, regular) {
     nx_arr_drop(arr);
 }
 
-Test(nx_arr_new, empty) {
-    nx_arr_res res = NX_ARR_NEW_LEN(nx_i32, 0);
-    if (!NX_RES_IS_OK(res)) {
-        nx_status_fprint(stderr, NX_RES_GET_ERR(res));
-        return;
-    }
-    nx_arr *arr = NX_RES_GET_VAL(res);
+Test(nx_arr_new_len, regular) {
+    nx_arr_res res = NX_ARR_NEW_LEN(nx_i32, 5);
+    cr_assert(NX_RES_IS_OK(res));
+    nx_arr *arr = NX_RES_VAL(res);
+    cr_assert_neq(arr, nx_null);
 
-    cr_assert_eq(nx_arr_data(arr), nx_null);
-    cr_assert_eq(nx_arr_len(arr), 0);
-    cr_assert_eq(nx_arr_elem_size(arr), sizeof(nx_i32));
+    cr_assert_neq(nx_arr_data(arr), nx_null);
+    cr_assert_eq(nx_arr_len(arr), 5);
+    cr_assert_eq(nx_arr_esz(arr), sizeof(nx_i32));
+
+    for (nx_usize i = 0; i < nx_arr_len(arr); ++i) {
+        cr_assert_eq(*NX_ARR_GET_AS_C(nx_i32, arr, i), 0);
+    }
 
     nx_arr_drop(arr);
 }
 
-Test(nx_arr_new, len) {
+Test(nx_arr_new_len, empty) {
+    nx_arr_res res = NX_ARR_NEW_LEN(nx_i32, 0);
+    cr_assert(NX_RES_IS_OK(res));
+    nx_arr *arr = NX_RES_VAL(res);
+    cr_assert_neq(arr, nx_null);
+
+    cr_assert_eq(nx_arr_data(arr), nx_null);
+    cr_assert_eq(nx_arr_len(arr), 0);
+    cr_assert_eq(nx_arr_esz(arr), sizeof(nx_i32));
+
+    nx_arr_drop(arr);
+}
+
+Test(nx_arr_new_len, out_of_memory) {
     typedef struct huge_type {
         nx_i64 arr[1024 * 1024];
     } huge_type;
@@ -59,26 +71,18 @@ Test(nx_arr_new, len) {
     const nx_usize len = 1024 * 1024;
 
     nx_arr_res res = NX_ARR_NEW_LEN(huge_type, len);
-    if (!NX_RES_IS_OK(res)) {
-        cr_expect_eq(NX_RES_GET_ERR(res), NX_STATUS_MUL_OVERFLOW);
-        nx_status_fprint(stderr, NX_RES_GET_ERR(res));
-        return;
-    }
-    nx_arr *arr = NX_RES_GET_VAL(res);
-
-    cr_assert_neq(nx_arr_data(arr), nx_null);
-    cr_assert_eq(nx_arr_len(arr), len);
-    cr_assert_eq(nx_arr_elem_size(arr), sizeof(huge_type));
-
-    nx_arr_drop(arr);
+    cr_assert_eq(NX_RES_ERR(res), NX_STATUS_OUT_OF_MEMORY);
 }
 
 Test(nx_arr_drop, regular) {
-    nx_arr *arr = arr_new_or_die(5, sizeof(nx_i32));
+    nx_arr_res res = NX_ARR_NEW_LEN(nx_i32, 5);
+    cr_assert(NX_RES_IS_OK(res));
+    nx_arr *arr = NX_RES_VAL(res);
+    cr_assert_neq(arr, nx_null);
 
     cr_assert_neq(nx_arr_data(arr), nx_null);
     cr_assert_eq(nx_arr_len(arr), 5);
-    cr_assert_eq(nx_arr_elem_size(arr), sizeof(nx_i32));
+    cr_assert_eq(nx_arr_esz(arr), sizeof(nx_i32));
 
     for (nx_usize i = 0; i < nx_arr_len(arr); ++i) {
         cr_assert_eq(*NX_ARR_GET_AS_C(nx_i32, arr, i), 0);
@@ -125,8 +129,8 @@ Test(nx_arr_elem_size, regular) {
     nx_arr *arr = arr_new_or_die(5, sizeof(nx_i32));
     nx_arr *empty = arr_new_or_die(0, sizeof(nx_i32));
 
-    cr_assert_eq(nx_arr_elem_size(arr), sizeof(nx_i32));
-    cr_assert_eq(nx_arr_elem_size(empty), sizeof(nx_i32));
+    cr_assert_eq(nx_arr_esz(arr), sizeof(nx_i32));
+    cr_assert_eq(nx_arr_esz(empty), sizeof(nx_i32));
 
     nx_arr_drop(empty);
     nx_arr_drop(arr);
@@ -178,7 +182,7 @@ Test(nx_arr_set, regular) {
 
 Test(nx_arr_data, regular) {
     nx_arr *arr = arr_new_or_die(5, sizeof(nx_i32));
-    const nx_usize elem_size = nx_arr_elem_size(arr);
+    const nx_usize elem_size = nx_arr_esz(arr);
 
     for (nx_usize i = 0; i < nx_arr_len(arr); ++i) {
         NX_ARR_SET_EXPR(int, arr, i, i * i);
@@ -203,7 +207,7 @@ Test(nx_arr_data, regular) {
 
 Test(nx_arr_data_c, regular) {
     nx_arr *arr = arr_new_or_die(5, sizeof(nx_i32));
-    const nx_usize elem_size = nx_arr_elem_size(arr);
+    const nx_usize elem_size = nx_arr_esz(arr);
 
     for (nx_usize i = 0; i < nx_arr_len(arr); ++i) {
         NX_ARR_SET_EXPR(int, arr, i, i * i);
@@ -256,9 +260,7 @@ Test(nx_arr_swap, regular) {
 /* ---------- to span ---------- */
 
 Test(nx_arr_to_span, regular) {
-
 }
 
 Test(nx_arr_to_cspan, regular) {
-
 }

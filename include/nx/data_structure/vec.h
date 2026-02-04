@@ -11,21 +11,35 @@ extern "C" {
 #endif
 
 /* Contract:
- * - All invalid usage is programmer error (NX_ASSERT). Release behavior is unspecified.
- * - Operations that may fail due to allocation/overflow return nx_status.
- * - Constructors/factories return nx_vec_res (Result-like):
- *     st == OK  => val is valid
- *     st != OK  => val must not be used
+ * - All invalid usage (NULL, bounds, invariants, elem_size mismatch, size overflow, etc.)
+ *   is a programmer error guarded by NX_ASSERT in debug builds. Release behavior is unspecified.
+ *
+ * - The only recoverable failures are allocation failures:
+ *   - operations that may allocate return nx_status,
+ *   - constructors/factories return nx_vec_res.
+ *
+ * - Result convention:
+ *   - st == NX_STATUS_OK => val is valid.
+ *   - st != NX_STATUS_OK => val must not be used.
  */
 
 typedef struct nx_vec nx_vec;
 
 NX_DEF_RESULT_TYPE(nx_vec_res, nx_vec *);
 
+/* ---------- params ---------- */
+
+typedef struct nx_vec_params {
+    nx_usize len;
+    nx_usize cap;
+    nx_usize elem_size;
+} nx_vec_params;
+
 /* ---------- lifetime ---------- */
 
+nx_vec_res nx_vec_new_p(nx_vec_params p);
 nx_vec_res nx_vec_new(nx_usize elem_size);
-nx_vec_res nx_vec_new_len(nx_usize cap, nx_usize elem_size);
+nx_vec_res nx_vec_new_len(nx_usize len, nx_usize elem_size);
 nx_vec_res nx_vec_new_cap(nx_usize cap, nx_usize elem_size);
 void nx_vec_drop(nx_vec *self);
 
@@ -74,10 +88,10 @@ nx_cspan nx_vec_to_cspan(const nx_vec *self);
     nx_vec_new(sizeof(T))
 
 #define NX_VEC_NEW_LEN(T, len)    \
-    nx_vec_new_len((out), (len), sizeof(T))
+    nx_vec_new_len((len), sizeof(T))
 
 #define NX_VEC_NEW_CAP(T, cap)    \
-    nx_vec_new_cap((out), (cap), sizeof(T))
+    nx_vec_new_cap((cap), sizeof(T))
 
 #define NX_VEC_GET_AS(T, self, idx)                       \
     (NX_ASSERT(nx_vec_elem_size((self)) == sizeof(T)),    \
