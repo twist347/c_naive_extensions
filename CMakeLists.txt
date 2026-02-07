@@ -71,7 +71,7 @@ option(BUILD_TESTS "Build unit tests" ON)
 option(BUILD_DEMOS "Build demos" ON)
 
 if (BUILD_TESTS)
-    set(CRITERION_DIR thirdparty/criterion-2.4.3)
+    set(CRITERION_DIR ${CMAKE_SOURCE_DIR}/thirdparty/criterion-2.4.3)
     enable_testing()
     add_subdirectory(test)
 endif ()
