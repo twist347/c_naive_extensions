@@ -1,3 +1,9 @@
 - [ ] add NX_NULL (wrapper under NULL or nullptr depends on standard)
 - [ ] think about move semantics without allocation
 - [ ] add docs (check doxygen)
+- [ ] add hash
+- [ ] add map (hash table)
+- [ ] add container adapters
+- [ ] add rand
+- [ ] add io
+- [ ] add optional

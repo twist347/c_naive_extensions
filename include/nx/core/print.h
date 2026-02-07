@@ -35,6 +35,8 @@ extern "C" {
 #define NX_FMT_BOOL       "%s"
 #define NX_BOOL_STR(b)    ((b) ? "true" : "false")
 
+#define NX_FMT_HASH       NX_FMT_U64
+
 typedef void (*nx_fprint_fn)(FILE *, const void *);
 
 nx_i32 nx_fprintf(FILE *stream, const char *fmt, ...);

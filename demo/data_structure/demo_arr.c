@@ -95,7 +95,7 @@ static void demo_info(void) {
     const nx_bool is_empty = nx_arr_empty(arr);
     NX_VERIFY(is_empty == false);
 
-    const nx_usize elem_size = nx_arr_esz(arr);
+    const nx_usize elem_size = nx_arr_tsz(arr);
     NX_VERIFY(elem_size == sizeof(nx_i32));
 
     nx_arr_drop(arr);
@@ -125,7 +125,7 @@ static void demo_access(void) {
         NX_VERIFY(get_val_c == val);
     }
 
-    const nx_usize elem_size = nx_arr_esz(arr);
+    const nx_usize elem_size = nx_arr_tsz(arr);
 
     void *data = nx_arr_data(arr);
     const void *data_c = nx_arr_data_c(arr);

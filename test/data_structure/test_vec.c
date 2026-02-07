@@ -40,7 +40,7 @@ Test(nx_vec_new, regular) {
     cr_assert_eq(nx_vec_data(vec), nx_null);
     cr_assert_eq(nx_vec_len(vec), 0);
     cr_assert_eq(nx_vec_cap(vec), 0);
-    cr_assert_eq(nx_vec_elem_size(vec), sizeof(nx_i32));
+    cr_assert_eq(nx_vec_tsz(vec), sizeof(nx_i32));
 
     nx_vec_drop(vec);
 }
@@ -56,7 +56,7 @@ Test(nx_vec_new_len, regular) {
     cr_assert_neq(nx_vec_data(vec), nx_null);
     cr_assert_eq(nx_vec_len(vec), 5);
     cr_assert_eq(nx_vec_cap(vec), 5);
-    cr_assert_eq(nx_vec_elem_size(vec), sizeof(nx_i32));
+    cr_assert_eq(nx_vec_tsz(vec), sizeof(nx_i32));
 
     for (nx_usize i = 0; i < nx_vec_len(vec); ++i) {
         cr_assert_eq(*NX_VEC_GET_AS_C(nx_i32, vec, i), 0);
@@ -76,7 +76,7 @@ Test(nx_vec_new_cap, regular) {
     cr_assert_neq(nx_vec_data(vec), nx_null);
     cr_assert_eq(nx_vec_len(vec), 0);
     cr_assert_eq(nx_vec_cap(vec), 5);
-    cr_assert_eq(nx_vec_elem_size(vec), sizeof(nx_i32));
+    cr_assert_eq(nx_vec_tsz(vec), sizeof(nx_i32));
 
     nx_vec_drop(vec);
 }

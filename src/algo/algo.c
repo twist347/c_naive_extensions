@@ -16,7 +16,7 @@ void nx_sort(nx_span s, nx_cmp cmp) {
         return;
     }
 
-    qsort(s.data, s.len, s.esz, cmp);
+    qsort(s.data, s.len, s.tsz, cmp);
 }
 
 bool nx_is_sorted(nx_cspan s, nx_cmp cmp) {
@@ -185,7 +185,7 @@ nx_minmax nx_minmax_element(nx_cspan s, nx_cmp cmp) {
 nx_bool nx_equal(nx_cspan a, nx_cspan b, nx_cmp cmp) {
     NX_SPAN_ANY_ASSERT(a);
     NX_SPAN_ANY_ASSERT(b);
-    NX_ASSERT(a.esz == b.esz);
+    NX_ASSERT(a.tsz == b.tsz);
     NX_ASSERT(cmp);
 
     if (a.len != b.len) {
@@ -214,13 +214,13 @@ void nx_fill(nx_span s, const void *elem) {
         return;
     }
 
-    if (s.esz == 1) {
+    if (s.tsz == 1) {
         memset(s.data, *(const unsigned char *) elem, s.len);
         return;
     }
 
     for (nx_usize i = 0; i < s.len; ++i) {
-        memmove(nx_span_get(s, i), elem, s.esz);
+        memmove(nx_span_get(s, i), elem, s.tsz);
     }
 }
 

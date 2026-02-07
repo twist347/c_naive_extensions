@@ -11,6 +11,7 @@ set(NX_CORE_SOURCES
         src/core/print.c
         src/core/span.c
         src/core/status.c
+        src/core/hash.c
 )
 
 set(NX_DS_SOURCES
@@ -22,7 +23,7 @@ set(NX_ALGO_SOURCES
         src/algo/algo.c
 )
 
-set(NX_STRING_SOURCES
+set(NX_STR_SOURCES
         src/str/str.c
         src/str/str_view.c
 )
@@ -31,12 +32,17 @@ set(NX_MEM_SOURCES
         src/mem/ptr.c
 )
 
+set(NX_RAND_SOURCES
+        src/rand/rand.c
+)
+
 set(NX_SOURCES
         ${NX_CORE_SOURCES}
         ${NX_DS_SOURCES}
         ${NX_ALGO_SOURCES}
-        ${NX_STRING_SOURCES}
+        ${NX_STR_SOURCES}
         ${NX_MEM_SOURCES}
+        ${NX_RAND_SOURCES}
 )
 
 add_library(nx_static STATIC
@@ -55,11 +61,11 @@ set_target_properties(nx_shared PROPERTIES
         OUTPUT_NAME nx
 )
 
-foreach(tgt IN ITEMS nx_static nx_shared)
+foreach (tgt IN ITEMS nx_static nx_shared)
     target_include_directories(${tgt} PUBLIC ${CMAKE_SOURCE_DIR}/include)
     target_compile_options(${tgt} PRIVATE -Wall -Wextra -pedantic)
     target_link_libraries(${tgt} PUBLIC m)
-endforeach()
+endforeach ()
 
 option(BUILD_TESTS "Build unit tests" ON)
 option(BUILD_DEMOS "Build demos" ON)

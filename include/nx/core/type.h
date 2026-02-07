@@ -23,6 +23,9 @@ typedef uint64_t         nx_u64;
 typedef size_t           nx_usize;
 typedef ptrdiff_t        nx_isize;
 
+typedef uintptr_t        nx_uptr;
+typedef intptr_t         nx_iptr;
+
 typedef bool             nx_bool;
 typedef unsigned char    nx_byte;
 typedef char             nx_char;

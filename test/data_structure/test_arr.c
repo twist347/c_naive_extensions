@@ -17,14 +17,14 @@ static nx_arr *arr_new_or_die(nx_usize len, nx_usize elem_size) {
 /* ---------- lifetime ---------- */
 
 Test(nx_arr_new_p, regular) {
-    nx_arr_res res = nx_arr_new_p((nx_arr_params){.len = 5, .esz = sizeof(nx_i32)});
+    nx_arr_res res = nx_arr_new_p((nx_arr_params){.len = 5, .tsz = sizeof(nx_i32)});
     cr_assert(NX_RES_IS_OK(res));
     nx_arr *arr = NX_RES_VAL(res);
     cr_assert_neq(arr, nx_null);
 
     cr_assert_neq(nx_arr_data(arr), nx_null);
     cr_assert_eq(nx_arr_len(arr), 5);
-    cr_assert_eq(nx_arr_esz(arr), sizeof(nx_i32));
+    cr_assert_eq(nx_arr_tsz(arr), sizeof(nx_i32));
 
     for (nx_usize i = 0; i < nx_arr_len(arr); ++i) {
         cr_assert_eq(*NX_ARR_GET_AS_C(nx_i32, arr, i), 0);
@@ -41,7 +41,7 @@ Test(nx_arr_new_len, regular) {
 
     cr_assert_neq(nx_arr_data(arr), nx_null);
     cr_assert_eq(nx_arr_len(arr), 5);
-    cr_assert_eq(nx_arr_esz(arr), sizeof(nx_i32));
+    cr_assert_eq(nx_arr_tsz(arr), sizeof(nx_i32));
 
     for (nx_usize i = 0; i < nx_arr_len(arr); ++i) {
         cr_assert_eq(*NX_ARR_GET_AS_C(nx_i32, arr, i), 0);
@@ -58,7 +58,7 @@ Test(nx_arr_new_len, empty) {
 
     cr_assert_eq(nx_arr_data(arr), nx_null);
     cr_assert_eq(nx_arr_len(arr), 0);
-    cr_assert_eq(nx_arr_esz(arr), sizeof(nx_i32));
+    cr_assert_eq(nx_arr_tsz(arr), sizeof(nx_i32));
 
     nx_arr_drop(arr);
 }
@@ -82,7 +82,7 @@ Test(nx_arr_drop, regular) {
 
     cr_assert_neq(nx_arr_data(arr), nx_null);
     cr_assert_eq(nx_arr_len(arr), 5);
-    cr_assert_eq(nx_arr_esz(arr), sizeof(nx_i32));
+    cr_assert_eq(nx_arr_tsz(arr), sizeof(nx_i32));
 
     for (nx_usize i = 0; i < nx_arr_len(arr); ++i) {
         cr_assert_eq(*NX_ARR_GET_AS_C(nx_i32, arr, i), 0);
@@ -129,8 +129,8 @@ Test(nx_arr_elem_size, regular) {
     nx_arr *arr = arr_new_or_die(5, sizeof(nx_i32));
     nx_arr *empty = arr_new_or_die(0, sizeof(nx_i32));
 
-    cr_assert_eq(nx_arr_esz(arr), sizeof(nx_i32));
-    cr_assert_eq(nx_arr_esz(empty), sizeof(nx_i32));
+    cr_assert_eq(nx_arr_tsz(arr), sizeof(nx_i32));
+    cr_assert_eq(nx_arr_tsz(empty), sizeof(nx_i32));
 
     nx_arr_drop(empty);
     nx_arr_drop(arr);
@@ -182,7 +182,7 @@ Test(nx_arr_set, regular) {
 
 Test(nx_arr_data, regular) {
     nx_arr *arr = arr_new_or_die(5, sizeof(nx_i32));
-    const nx_usize elem_size = nx_arr_esz(arr);
+    const nx_usize elem_size = nx_arr_tsz(arr);
 
     for (nx_usize i = 0; i < nx_arr_len(arr); ++i) {
         NX_ARR_SET_EXPR(int, arr, i, i * i);
@@ -207,7 +207,7 @@ Test(nx_arr_data, regular) {
 
 Test(nx_arr_data_c, regular) {
     nx_arr *arr = arr_new_or_die(5, sizeof(nx_i32));
-    const nx_usize elem_size = nx_arr_esz(arr);
+    const nx_usize elem_size = nx_arr_tsz(arr);
 
     for (nx_usize i = 0; i < nx_arr_len(arr); ++i) {
         NX_ARR_SET_EXPR(int, arr, i, i * i);
