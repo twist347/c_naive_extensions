@@ -47,9 +47,9 @@ static void test_nx_vec_new_regular(void) {
     nx_vec *vec = NX_RES_VAL(res);
 
     TEST_ASSERT_NULL(nx_vec_data(vec));
-    TEST_ASSERT_EQUAL_UINT64(0, (uint64_t)nx_vec_len(vec));
-    TEST_ASSERT_EQUAL_UINT64(0, (uint64_t)nx_vec_cap(vec));
-    TEST_ASSERT_EQUAL_UINT64(sizeof(nx_i32), (uint64_t)nx_vec_tsz(vec));
+    TEST_ASSERT_EQUAL_UINT64(0, nx_vec_len(vec));
+    TEST_ASSERT_EQUAL_UINT64(0, nx_vec_cap(vec));
+    TEST_ASSERT_EQUAL_UINT64(sizeof(nx_i32), nx_vec_tsz(vec));
 
     nx_vec_drop(vec);
 }
@@ -61,9 +61,9 @@ static void test_nx_vec_new_len_regular(void) {
     nx_vec *vec = NX_RES_VAL(res);
 
     TEST_ASSERT_NOT_NULL(nx_vec_data(vec));
-    TEST_ASSERT_EQUAL_UINT64(5, (uint64_t)nx_vec_len(vec));
-    TEST_ASSERT_EQUAL_UINT64(5, (uint64_t)nx_vec_cap(vec));
-    TEST_ASSERT_EQUAL_UINT64(sizeof(nx_i32), (uint64_t)nx_vec_tsz(vec));
+    TEST_ASSERT_EQUAL_UINT64(5, nx_vec_len(vec));
+    TEST_ASSERT_EQUAL_UINT64(5, nx_vec_cap(vec));
+    TEST_ASSERT_EQUAL_UINT64(sizeof(nx_i32), nx_vec_tsz(vec));
 
     for (nx_usize i = 0; i < nx_vec_len(vec); ++i) {
         TEST_ASSERT_EQUAL_INT32(0, *NX_VEC_GET_AS_C(nx_i32, vec, i));
@@ -79,9 +79,9 @@ static void test_nx_vec_new_cap_regular(void) {
     nx_vec *vec = NX_RES_VAL(res);
 
     TEST_ASSERT_NOT_NULL(nx_vec_data(vec));
-    TEST_ASSERT_EQUAL_UINT64(0, (uint64_t)nx_vec_len(vec));
-    TEST_ASSERT_EQUAL_UINT64(5, (uint64_t)nx_vec_cap(vec));
-    TEST_ASSERT_EQUAL_UINT64(sizeof(nx_i32), (uint64_t)nx_vec_tsz(vec));
+    TEST_ASSERT_EQUAL_UINT64(0, nx_vec_len(vec));
+    TEST_ASSERT_EQUAL_UINT64(5, nx_vec_cap(vec));
+    TEST_ASSERT_EQUAL_UINT64(sizeof(nx_i32), nx_vec_tsz(vec));
 
     nx_vec_drop(vec);
 }

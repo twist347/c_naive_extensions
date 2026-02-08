@@ -32,8 +32,8 @@ static void test_nx_arr_new_p_regular(void) {
     TEST_ASSERT_NOT_NULL(arr);
 
     TEST_ASSERT_NOT_NULL(nx_arr_data(arr));
-    TEST_ASSERT_EQUAL_UINT64(5, (uint64_t) nx_arr_len(arr));
-    TEST_ASSERT_EQUAL_UINT64(sizeof(nx_i32), (uint64_t) nx_arr_tsz(arr));
+    TEST_ASSERT_EQUAL_UINT64(5, nx_arr_len(arr));
+    TEST_ASSERT_EQUAL_UINT64(sizeof(nx_i32), nx_arr_tsz(arr));
 
     for (nx_usize i = 0; i < nx_arr_len(arr); ++i) {
         TEST_ASSERT_EQUAL_INT32(0, *NX_ARR_GET_AS_C(nx_i32, arr, i));
@@ -51,8 +51,8 @@ static void test_nx_arr_new_len_regular(void) {
     TEST_ASSERT_NOT_NULL(arr);
 
     TEST_ASSERT_NOT_NULL(nx_arr_data(arr));
-    TEST_ASSERT_EQUAL_UINT64(5, (uint64_t) nx_arr_len(arr));
-    TEST_ASSERT_EQUAL_UINT64(sizeof(nx_i32), (uint64_t) nx_arr_tsz(arr));
+    TEST_ASSERT_EQUAL_UINT64(5, nx_arr_len(arr));
+    TEST_ASSERT_EQUAL_UINT64(sizeof(nx_i32), nx_arr_tsz(arr));
 
     for (nx_usize i = 0; i < nx_arr_len(arr); ++i) {
         TEST_ASSERT_EQUAL_INT32(0, *NX_ARR_GET_AS_C(nx_i32, arr, i));
@@ -70,8 +70,8 @@ static void test_nx_arr_new_len_empty(void) {
     TEST_ASSERT_NOT_NULL(arr);
 
     TEST_ASSERT_NULL(nx_arr_data(arr));
-    TEST_ASSERT_EQUAL_UINT64(0, (uint64_t) nx_arr_len(arr));
-    TEST_ASSERT_EQUAL_UINT64(sizeof(nx_i32), (uint64_t) nx_arr_tsz(arr));
+    TEST_ASSERT_EQUAL_UINT64(0, nx_arr_len(arr));
+    TEST_ASSERT_EQUAL_UINT64(sizeof(nx_i32), nx_arr_tsz(arr));
 
     nx_arr_drop(arr);
 }
@@ -84,7 +84,7 @@ static void test_nx_arr_new_len_out_of_memory(void) {
     const nx_usize len = 1024 * 1024;
 
     nx_arr_res res = NX_ARR_NEW_LEN(huge_type, len);
-    TEST_ASSERT_EQUAL_INT((int) NX_STATUS_OUT_OF_MEMORY, (int) NX_RES_ERR(res));
+    TEST_ASSERT_EQUAL_INT(NX_STATUS_OUT_OF_MEMORY, (int) NX_RES_ERR(res));
 }
 
 static void test_nx_arr_drop_regular(void) {
@@ -96,8 +96,8 @@ static void test_nx_arr_drop_regular(void) {
     TEST_ASSERT_NOT_NULL(arr);
 
     TEST_ASSERT_NOT_NULL(nx_arr_data(arr));
-    TEST_ASSERT_EQUAL_UINT64(5, (uint64_t) nx_arr_len(arr));
-    TEST_ASSERT_EQUAL_UINT64(sizeof(nx_i32), (uint64_t) nx_arr_tsz(arr));
+    TEST_ASSERT_EQUAL_UINT64(5, nx_arr_len(arr));
+    TEST_ASSERT_EQUAL_UINT64(sizeof(nx_i32), nx_arr_tsz(arr));
 
     for (nx_usize i = 0; i < nx_arr_len(arr); ++i) {
         TEST_ASSERT_EQUAL_INT32(0, *NX_ARR_GET_AS_C(nx_i32, arr, i));
@@ -120,8 +120,8 @@ static void test_nx_arr_len_regular(void) {
     nx_arr *arr = arr_new_or_die(5, sizeof(nx_i32));
     nx_arr *empty = arr_new_or_die(0, sizeof(nx_i32));
 
-    TEST_ASSERT_EQUAL_UINT64(5, (uint64_t) nx_arr_len(arr));
-    TEST_ASSERT_EQUAL_UINT64(0, (uint64_t) nx_arr_len(empty));
+    TEST_ASSERT_EQUAL_UINT64(5, nx_arr_len(arr));
+    TEST_ASSERT_EQUAL_UINT64(0, nx_arr_len(empty));
 
     nx_arr_drop(empty);
     nx_arr_drop(arr);
@@ -142,8 +142,8 @@ static void test_nx_arr_elem_size_regular(void) {
     nx_arr *arr = arr_new_or_die(5, sizeof(nx_i32));
     nx_arr *empty = arr_new_or_die(0, sizeof(nx_i32));
 
-    TEST_ASSERT_EQUAL_UINT64(sizeof(nx_i32), (uint64_t) nx_arr_tsz(arr));
-    TEST_ASSERT_EQUAL_UINT64(sizeof(nx_i32), (uint64_t) nx_arr_tsz(empty));
+    TEST_ASSERT_EQUAL_UINT64(sizeof(nx_i32), nx_arr_tsz(arr));
+    TEST_ASSERT_EQUAL_UINT64(sizeof(nx_i32), nx_arr_tsz(empty));
 
     nx_arr_drop(empty);
     nx_arr_drop(arr);
@@ -254,8 +254,8 @@ static void test_nx_arr_swap_regular(void) {
 
     nx_arr_swap(arr1, arr2);
 
-    TEST_ASSERT_EQUAL_UINT64(len2, (uint64_t) nx_arr_len(arr1));
-    TEST_ASSERT_EQUAL_UINT64(len1, (uint64_t) nx_arr_len(arr2));
+    TEST_ASSERT_EQUAL_UINT64(len2, nx_arr_len(arr1));
+    TEST_ASSERT_EQUAL_UINT64(len1, nx_arr_len(arr2));
 
     for (nx_usize i = 0; i < nx_arr_len(arr1); ++i) {
         TEST_ASSERT_EQUAL_INT32((nx_i32) (i * i * i), *NX_ARR_GET_AS_C(nx_i32, arr1, i));
