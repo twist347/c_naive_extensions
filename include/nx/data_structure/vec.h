@@ -118,12 +118,11 @@ nx_cspan nx_vec_to_cspan(const nx_vec *self);
 
 /* ops that may allocate: return nx_status */
 
-#define NX_VEC_PUSH_EXPR(T, self, expr)                            \
-    do {                                                           \
-        NX_ASSERT(nx_vec_tsz((self)) == sizeof(T));                \
-        const T nx_tmp_ = (expr);                                  \
-        const nx_status nx_st_ = nx_vec_push((self), &nx_tmp_);    \
-        NX_ASSERT(nx_st_ == NX_STATUS_OK);                         \
+#define NX_VEC_PUSH_EXPR(T, self, expr)                              \
+    do {                                                             \
+        NX_ASSERT(nx_vec_tsz((self)) == sizeof(T));                  \
+        const T nx_tmp_ = (expr);                                    \
+        NX_ASSERT(nx_vec_push((self), &nx_tmp_) == NX_STATUS_OK);    \
     } while (0)
 
 #define NX_VEC_INSERT_EXPR(T, self, idx, expr)                              \

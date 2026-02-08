@@ -62,21 +62,29 @@ set_target_properties(nx_shared PROPERTIES
 )
 
 foreach (tgt IN ITEMS nx_static nx_shared)
-    target_include_directories(${tgt} PUBLIC ${CMAKE_SOURCE_DIR}/include)
+    target_include_directories(${tgt} PUBLIC ${PROJECT_SOURCE_DIR}/include)
     target_compile_options(${tgt} PRIVATE -Wall -Wextra -pedantic)
     target_link_libraries(${tgt} PUBLIC m)
 endforeach ()
 
-option(BUILD_TESTS "Build unit tests" ON)
-option(BUILD_DEMOS "Build demos" ON)
+option(BUILD_TEST "Build unit tests" ON)
+option(BUILD_BENCH "Build ubench test" ON)
+option(BUILD_DEMO "Build demos" ON)
 
-if (BUILD_TESTS)
-    set(CRITERION_DIR ${CMAKE_SOURCE_DIR}/thirdparty/criterion-2.4.3)
+if (BUILD_TEST)
+    set(UNITY_DIR ${PROJECT_SOURCE_DIR}/thirdparty/Unity-2.6.1)
+    add_subdirectory(${UNITY_DIR})
+
     enable_testing()
     add_subdirectory(test)
 endif ()
 
-if (BUILD_DEMOS)
+if (BUILD_BENCH)
+    set(UBENCH_DIR ${PROJECT_SOURCE_DIR}/thirdparty/ubench)
+    add_subdirectory(bench)
+endif ()
+
+if (BUILD_DEMO)
     set(DEMOS_DIR demo)
     add_subdirectory(${DEMOS_DIR})
 endif ()

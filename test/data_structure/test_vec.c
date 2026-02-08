@@ -1,12 +1,17 @@
-#include "criterion/criterion.h"
+#include "unity.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "nx/core/panic.h"
+#include "nx/core/status.h"
 #include "nx/data_structure/vec.h"
+#include "nx/mem/ptr.h"
 
 static nx_vec *vec_new_or_die(nx_usize elem_size) {
     nx_vec_res res = nx_vec_new(elem_size);
     if (!NX_RES_IS_OK(res)) {
-        nx_status_fprintln(stderr, NX_RES_ERR(res));
-        exit(EXIT_FAILURE);
+        NX_PANIC_MSG(nx_status_to_str(NX_RES_ERR(res)));
     }
     return NX_RES_VAL(res);
 }
@@ -14,8 +19,7 @@ static nx_vec *vec_new_or_die(nx_usize elem_size) {
 static nx_vec *vec_new_len_or_die(nx_usize len, nx_usize elem_size) {
     nx_vec_res res = nx_vec_new_len(len, elem_size);
     if (!NX_RES_IS_OK(res)) {
-        nx_status_fprintln(stderr, NX_RES_ERR(res));
-        exit(EXIT_FAILURE);
+        NX_PANIC_MSG(nx_status_to_str(NX_RES_ERR(res)));
     }
     return NX_RES_VAL(res);
 }
@@ -23,77 +27,88 @@ static nx_vec *vec_new_len_or_die(nx_usize len, nx_usize elem_size) {
 static nx_vec *vec_new_cap_or_die(nx_usize cap, nx_usize elem_size) {
     nx_vec_res res = nx_vec_new_cap(cap, elem_size);
     if (!NX_RES_IS_OK(res)) {
-        nx_status_fprintln(stderr, NX_RES_ERR(res));
-        exit(EXIT_FAILURE);
+        NX_PANIC_MSG(nx_status_to_str(NX_RES_ERR(res)));
     }
     return NX_RES_VAL(res);
 }
 
-Test(nx_vec_new, regular) {
+void setUp(void) {
+}
+
+void tearDown(void) {
+}
+
+/* ========== lifetime ========== */
+
+static void test_nx_vec_new_regular(void) {
     nx_vec_res res = NX_VEC_NEW(nx_i32);
-    if (!NX_RES_IS_OK(res)) {
-        nx_status_fprintln(stderr, NX_RES_ERR(res));
-        exit(EXIT_FAILURE);
-    }
+    TEST_ASSERT_TRUE_MESSAGE(NX_RES_IS_OK(res), "NX_VEC_NEW failed");
+
     nx_vec *vec = NX_RES_VAL(res);
 
-    cr_assert_eq(nx_vec_data(vec), nx_null);
-    cr_assert_eq(nx_vec_len(vec), 0);
-    cr_assert_eq(nx_vec_cap(vec), 0);
-    cr_assert_eq(nx_vec_tsz(vec), sizeof(nx_i32));
+    TEST_ASSERT_NULL(nx_vec_data(vec));
+    TEST_ASSERT_EQUAL_UINT64(0, (uint64_t)nx_vec_len(vec));
+    TEST_ASSERT_EQUAL_UINT64(0, (uint64_t)nx_vec_cap(vec));
+    TEST_ASSERT_EQUAL_UINT64(sizeof(nx_i32), (uint64_t)nx_vec_tsz(vec));
 
     nx_vec_drop(vec);
 }
 
-Test(nx_vec_new_len, regular) {
+static void test_nx_vec_new_len_regular(void) {
     nx_vec_res res = NX_VEC_NEW_LEN(nx_i32, 5);
-    if (!NX_RES_IS_OK(res)) {
-        nx_status_fprintln(stderr, NX_RES_ERR(res));
-        exit(EXIT_FAILURE);
-    }
+    TEST_ASSERT_TRUE_MESSAGE(NX_RES_IS_OK(res), "NX_VEC_NEW_LEN failed");
+
     nx_vec *vec = NX_RES_VAL(res);
 
-    cr_assert_neq(nx_vec_data(vec), nx_null);
-    cr_assert_eq(nx_vec_len(vec), 5);
-    cr_assert_eq(nx_vec_cap(vec), 5);
-    cr_assert_eq(nx_vec_tsz(vec), sizeof(nx_i32));
+    TEST_ASSERT_NOT_NULL(nx_vec_data(vec));
+    TEST_ASSERT_EQUAL_UINT64(5, (uint64_t)nx_vec_len(vec));
+    TEST_ASSERT_EQUAL_UINT64(5, (uint64_t)nx_vec_cap(vec));
+    TEST_ASSERT_EQUAL_UINT64(sizeof(nx_i32), (uint64_t)nx_vec_tsz(vec));
 
     for (nx_usize i = 0; i < nx_vec_len(vec); ++i) {
-        cr_assert_eq(*NX_VEC_GET_AS_C(nx_i32, vec, i), 0);
+        TEST_ASSERT_EQUAL_INT32(0, *NX_VEC_GET_AS_C(nx_i32, vec, i));
     }
 
     nx_vec_drop(vec);
 }
 
-Test(nx_vec_new_cap, regular) {
+static void test_nx_vec_new_cap_regular(void) {
     nx_vec_res res = NX_VEC_NEW_CAP(nx_i32, 5);
-    if (!NX_RES_IS_OK(res)) {
-        nx_status_fprintln(stderr, NX_RES_ERR(res));
-        exit(EXIT_FAILURE);
-    }
+    TEST_ASSERT_TRUE_MESSAGE(NX_RES_IS_OK(res), "NX_VEC_NEW_CAP failed");
+
     nx_vec *vec = NX_RES_VAL(res);
 
-    cr_assert_neq(nx_vec_data(vec), nx_null);
-    cr_assert_eq(nx_vec_len(vec), 0);
-    cr_assert_eq(nx_vec_cap(vec), 5);
-    cr_assert_eq(nx_vec_tsz(vec), sizeof(nx_i32));
+    TEST_ASSERT_NOT_NULL(nx_vec_data(vec));
+    TEST_ASSERT_EQUAL_UINT64(0, (uint64_t)nx_vec_len(vec));
+    TEST_ASSERT_EQUAL_UINT64(5, (uint64_t)nx_vec_cap(vec));
+    TEST_ASSERT_EQUAL_UINT64(sizeof(nx_i32), (uint64_t)nx_vec_tsz(vec));
 
     nx_vec_drop(vec);
 }
 
-Test(nx_vec_new_drop, regular) {
+static void test_nx_vec_new_drop_regular(void) {
     nx_vec_res res = NX_VEC_NEW_LEN(nx_i32, 5);
-    if (!NX_RES_IS_OK(res)) {
-        nx_status_fprintln(stderr, NX_RES_ERR(res));
-        exit(EXIT_FAILURE);
-    }
-    nx_vec *vec = NX_RES_VAL(res);
+    TEST_ASSERT_TRUE_MESSAGE(NX_RES_IS_OK(res), "NX_VEC_NEW_LEN failed");
 
+    nx_vec *vec = NX_RES_VAL(res);
     nx_vec_drop(vec);
 }
 
-Test(nx_vec_new_drop, null) {
+static void test_nx_vec_new_drop_null(void) {
     nx_vec *vec = nx_null;
-
     nx_vec_drop(vec);
+}
+
+/* ========== runner ========== */
+
+int main(void) {
+    UNITY_BEGIN();
+
+    RUN_TEST(test_nx_vec_new_regular);
+    RUN_TEST(test_nx_vec_new_len_regular);
+    RUN_TEST(test_nx_vec_new_cap_regular);
+    RUN_TEST(test_nx_vec_new_drop_regular);
+    RUN_TEST(test_nx_vec_new_drop_null);
+
+    return UNITY_END();
 }
