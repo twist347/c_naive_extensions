@@ -40,7 +40,7 @@ void tearDown(void) {
 
 /* ========== lifetime ========== */
 
-static void test_nx_vec_new_regular(void) {
+static void test_nx_vec_new(void) {
     nx_vec_res res = NX_VEC_NEW(nx_i32);
     TEST_ASSERT_TRUE_MESSAGE(NX_RES_IS_OK(res), "NX_VEC_NEW failed");
 
@@ -54,7 +54,7 @@ static void test_nx_vec_new_regular(void) {
     nx_vec_drop(vec);
 }
 
-static void test_nx_vec_new_len_regular(void) {
+static void test_nx_vec_new_len(void) {
     nx_vec_res res = NX_VEC_NEW_LEN(nx_i32, 5);
     TEST_ASSERT_TRUE_MESSAGE(NX_RES_IS_OK(res), "NX_VEC_NEW_LEN failed");
 
@@ -72,7 +72,7 @@ static void test_nx_vec_new_len_regular(void) {
     nx_vec_drop(vec);
 }
 
-static void test_nx_vec_new_cap_regular(void) {
+static void test_nx_vec_new_cap(void) {
     nx_vec_res res = NX_VEC_NEW_CAP(nx_i32, 5);
     TEST_ASSERT_TRUE_MESSAGE(NX_RES_IS_OK(res), "NX_VEC_NEW_CAP failed");
 
@@ -86,7 +86,7 @@ static void test_nx_vec_new_cap_regular(void) {
     nx_vec_drop(vec);
 }
 
-static void test_nx_vec_new_drop_regular(void) {
+static void test_nx_vec_new_drop(void) {
     nx_vec_res res = NX_VEC_NEW_LEN(nx_i32, 5);
     TEST_ASSERT_TRUE_MESSAGE(NX_RES_IS_OK(res), "NX_VEC_NEW_LEN failed");
 
@@ -104,10 +104,10 @@ static void test_nx_vec_new_drop_null(void) {
 int main(void) {
     UNITY_BEGIN();
 
-    RUN_TEST(test_nx_vec_new_regular);
-    RUN_TEST(test_nx_vec_new_len_regular);
-    RUN_TEST(test_nx_vec_new_cap_regular);
-    RUN_TEST(test_nx_vec_new_drop_regular);
+    RUN_TEST(test_nx_vec_new);
+    RUN_TEST(test_nx_vec_new_len);
+    RUN_TEST(test_nx_vec_new_cap);
+    RUN_TEST(test_nx_vec_new_drop);
     RUN_TEST(test_nx_vec_new_drop_null);
 
     return UNITY_END();

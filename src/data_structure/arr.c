@@ -12,9 +12,21 @@ struct nx_arr {
     nx_usize tsz; // type size
 };
 
-// internals decls
+#if NX_DEBUG
+static void arr_assert_impl(const nx_arr *self) {
+    NX_ASSERT(self != nx_null);
+    NX_ASSERT(self->tsz > 0);
+    NX_ASSERT(((self->len == 0) == (self->data == nx_null)));
+    NX_ASSERT(self->len <= NX_USIZE_MAX / self->tsz);
+}
 
-static void arr_assert(const nx_arr *self);
+#define ARR_ASSERT(self)    \
+    do { arr_assert_impl((self)); } while (0)
+#else
+    #define ARR_ASSERT(self)    ((void) 0)
+#endif
+
+// internals decls
 
 static nx_status new_impl(nx_arr **out, nx_usize len, nx_usize tsz);
 
@@ -54,7 +66,7 @@ void nx_arr_drop(nx_arr *self) {
 /* ========== copy/move semantic ========== */
 
 nx_arr_res nx_arr_copy(const nx_arr *src) {
-    arr_assert(src);
+    ARR_ASSERT(src);
 
     nx_arr *dst = malloc(sizeof(nx_arr));
     if (!dst) {
@@ -82,7 +94,7 @@ nx_arr_res nx_arr_copy(const nx_arr *src) {
 nx_arr *nx_arr_move(nx_arr **src) {
     NX_ASSERT(src);
     NX_ASSERT(*src);
-    arr_assert(*src);
+    ARR_ASSERT(*src);
 
     nx_arr *tmp = *src;
     *src = nx_null;
@@ -90,8 +102,8 @@ nx_arr *nx_arr_move(nx_arr **src) {
 }
 
 nx_status nx_arr_copy_assign(nx_arr *self, const nx_arr *src) {
-    arr_assert(self);
-    arr_assert(src);
+    ARR_ASSERT(self);
+    ARR_ASSERT(src);
     NX_ASSERT(self->tsz == src->tsz);
 
     if (self == src) {
@@ -101,6 +113,14 @@ nx_status nx_arr_copy_assign(nx_arr *self, const nx_arr *src) {
     if (src->len == 0) {
         free(self->data);
         set_fields(self, nx_null, 0, src->tsz);
+        return NX_STATUS_OK;
+    }
+
+    // optimization
+    if (self->len == src->len && src->len > 0) {
+        NX_ASSERT(src->len <= NX_USIZE_MAX / src->tsz);
+        const nx_usize bytes = src->len * src->tsz;
+        memcpy(self->data, src->data, bytes);
         return NX_STATUS_OK;
     }
 
@@ -117,8 +137,8 @@ nx_status nx_arr_copy_assign(nx_arr *self, const nx_arr *src) {
 
 // TODO: swap or exchange?
 void nx_arr_move_assign(nx_arr *self, nx_arr *src) {
-    arr_assert(self);
-    arr_assert(src);
+    ARR_ASSERT(self);
+    ARR_ASSERT(src);
     NX_ASSERT(self->tsz == src->tsz);
 
     if (self == src) {
@@ -137,19 +157,19 @@ void nx_arr_move_assign(nx_arr *self, nx_arr *src) {
 /* ========== info ========== */
 
 nx_usize nx_arr_len(const nx_arr *self) {
-    arr_assert(self);
+    ARR_ASSERT(self);
 
     return self->len;
 }
 
 nx_bool nx_arr_empty(const nx_arr *self) {
-    arr_assert(self);
+    ARR_ASSERT(self);
 
     return self->len == 0;
 }
 
 nx_usize nx_arr_tsz(const nx_arr *self) {
-    arr_assert(self);
+    ARR_ASSERT(self);
 
     return self->tsz;
 }
@@ -157,21 +177,33 @@ nx_usize nx_arr_tsz(const nx_arr *self) {
 /* ========== access ========== */
 
 void *nx_arr_get(nx_arr *self, nx_usize idx) {
-    arr_assert(self);
+    ARR_ASSERT(self);
     NX_ASSERT(idx < self->len);
 
     return nx_byte_offset(self->data, self->tsz, idx);
 }
 
 const void *nx_arr_get_c(const nx_arr *self, nx_usize idx) {
-    arr_assert(self);
+    ARR_ASSERT(self);
     NX_ASSERT(idx < self->len);
 
     return nx_byte_offset_c(self->data, self->tsz, idx);
 }
 
+void *nx_arr_at(nx_arr *self, nx_usize idx) {
+    ARR_ASSERT(self);
+
+    return idx < self->len ? nx_byte_offset(self->data, self->tsz, idx) : nx_null;
+}
+
+const void *nx_arr_at_c(const nx_arr *self, nx_usize idx) {
+    ARR_ASSERT(self);
+
+    return idx < self->len ? nx_byte_offset_c(self->data, self->tsz, idx) : nx_null;
+}
+
 void nx_arr_set(nx_arr *self, nx_usize idx, const void *val) {
-    arr_assert(self);
+    ARR_ASSERT(self);
     NX_ASSERT(idx < self->len);
     NX_ASSERT(val);
 
@@ -179,13 +211,13 @@ void nx_arr_set(nx_arr *self, nx_usize idx, const void *val) {
 }
 
 void *nx_arr_data(nx_arr *self) {
-    arr_assert(self);
+    ARR_ASSERT(self);
 
     return self->data;
 }
 
 const void *nx_arr_data_c(const nx_arr *self) {
-    arr_assert(self);
+    ARR_ASSERT(self);
 
     return self->data;
 }
@@ -193,8 +225,8 @@ const void *nx_arr_data_c(const nx_arr *self) {
 /* ========== mods ========== */
 
 void nx_arr_swap(nx_arr *a, nx_arr *b) {
-    arr_assert(a);
-    arr_assert(b);
+    ARR_ASSERT(a);
+    ARR_ASSERT(b);
     NX_ASSERT(a->tsz == b->tsz);
 
     if (a == b) {
@@ -210,25 +242,18 @@ void nx_arr_swap(nx_arr *a, nx_arr *b) {
 /* ========== to span ========== */
 
 nx_span nx_arr_to_span(nx_arr *self) {
-    arr_assert(self);
+    ARR_ASSERT(self);
 
     return nx_span_new(self->data, self->len, self->tsz);
 }
 
 nx_cspan nx_arr_to_cspan(const nx_arr *self) {
-    arr_assert(self);
+    ARR_ASSERT(self);
 
     return nx_cspan_new(self->data, self->len, self->tsz);
 }
 
 // internals defs
-
-static void arr_assert(const nx_arr *self) {
-    NX_ASSERT(self != nx_null);
-    NX_ASSERT(self->tsz > 0);
-    NX_ASSERT(((self->len == 0) == (self->data == nx_null)));
-    NX_ASSERT(self->len <= NX_USIZE_MAX / self->tsz);
-}
 
 static nx_status new_impl(nx_arr **out, nx_usize len, nx_usize tsz) {
     *out = nx_null;

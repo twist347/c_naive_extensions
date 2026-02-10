@@ -2,9 +2,10 @@
 
 #include "nx/core/assert.h"
 
-#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+
+// TODO: _Float32, _Float64
 
 #ifdef __cplusplus
 extern "C" {

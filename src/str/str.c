@@ -13,41 +13,62 @@ struct nx_str {
     nx_usize cap; /* allocated bytes INCLUDING trailing '\0' */
 };
 
-// internals decls
+#if NX_DEBUG
+static void str_assert_impl(const nx_str *self) {
+    NX_ASSERT(self != nx_null);
+    NX_ASSERT(self->len <= self->cap);
+    NX_ASSERT((self->cap == 0) == (self->data == nx_null));
+    /* ensure cap+1 fits */
+    NX_ASSERT(self->cap <= (NX_USIZE_MAX - 1));
+    if (self->cap > 0) {
+        NX_ASSERT(self->data[self->len] == '\0');
+    }
+}
 
-static void str_assert(const nx_str *self);
+#define STR_ASSERT(self)    \
+    do { str_assert_impl((self)); } while (0)
+#else
+    #define STR_ASSERT(self)    ((void) 0)
+#endif
+
+// internals decls
 
 static nx_status new_impl(nx_str **out, nx_usize len, nx_usize cap);
 
 static void set_fields(nx_str *self, nx_char *data, nx_usize len, nx_usize cap);
 
-/* ---------- lifetime ---------- */
+/* ========== lifetime ========== */
 
-nx_str_res nx_str_new(void) {
+nx_str_res nx_str_new_p(nx_str_params p) {
+    NX_ASSERT(p.len <= p.cap);
+
     nx_str *s = nx_null;
-    const nx_status st = new_impl(&s, 0, 0);
+    const nx_status st = new_impl(&s, p.len, p.cap);
     if (st != NX_STATUS_OK) {
         return NX_RES_NEW_ERR(nx_str_res, st);
     }
     return NX_RES_NEW_OK(nx_str_res, s);
+}
+
+nx_str_res nx_str_new(void) {
+    return nx_str_new_p((nx_str_params){
+        .len = 0,
+        .cap = 0
+    });
 }
 
 nx_str_res nx_str_new_len(nx_usize len) {
-    nx_str *s = nx_null;
-    const nx_status st = new_impl(&s, len, len);
-    if (st != NX_STATUS_OK) {
-        return NX_RES_NEW_ERR(nx_str_res, st);
-    }
-    return NX_RES_NEW_OK(nx_str_res, s);
+    return nx_str_new_p((nx_str_params){
+        .len = len,
+        .cap = len
+    });
 }
 
 nx_str_res nx_str_new_cap(nx_usize cap) {
-    nx_str *s = nx_null;
-    const nx_status st = new_impl(&s, 0, cap);
-    if (st != NX_STATUS_OK) {
-        return NX_RES_NEW_ERR(nx_str_res, st);
-    }
-    return NX_RES_NEW_OK(nx_str_res, s);
+    return nx_str_new_p((nx_str_params){
+        .len = 0,
+        .cap = cap
+    });
 }
 
 nx_str_res nx_str_from_cstr(const nx_char *cstr) {
@@ -55,11 +76,11 @@ nx_str_res nx_str_from_cstr(const nx_char *cstr) {
 
     const nx_usize n = strlen(cstr);
 
-    nx_str *s = nx_null;
-    const nx_status st = new_impl(&s, 0, n);
-    if (st != NX_STATUS_OK) {
-        return NX_RES_NEW_ERR(nx_str_res, st);
+    nx_str_res res = nx_str_new_len(n);
+    if (!NX_RES_IS_OK(res)) {
+        return res;
     }
+    nx_str *s = NX_RES_VAL(res);
 
     if (n != 0) {
         memcpy(s->data, cstr, n);
@@ -68,7 +89,7 @@ nx_str_res nx_str_from_cstr(const nx_char *cstr) {
     if (s->data) {
         s->data[s->len] = '\0';
     }
-    str_assert(s);
+    STR_ASSERT(s);
 
     return NX_RES_NEW_OK(nx_str_res, s);
 }
@@ -82,10 +103,10 @@ void nx_str_drop(nx_str *self) {
     free(self);
 }
 
-/* ---------- copy/move ---------- */
+/* ========== copy/move ========== */
 
 nx_str_res nx_str_copy(const nx_str *src) {
-    str_assert(src);
+    STR_ASSERT(src);
 
     nx_str *dst = nx_null;
     const nx_status st = new_impl(&dst, src->len, src->cap);
@@ -99,7 +120,7 @@ nx_str_res nx_str_copy(const nx_str *src) {
     if (dst->data) {
         dst->data[dst->len] = '\0';
     }
-    str_assert(dst);
+    STR_ASSERT(dst);
 
     return NX_RES_NEW_OK(nx_str_res, dst);
 }
@@ -107,7 +128,7 @@ nx_str_res nx_str_copy(const nx_str *src) {
 nx_str *nx_str_move(nx_str **src) {
     NX_ASSERT(src);
     NX_ASSERT(*src);
-    str_assert(*src);
+    STR_ASSERT(*src);
 
     nx_str *tmp = *src;
     *src = nx_null;
@@ -115,8 +136,8 @@ nx_str *nx_str_move(nx_str **src) {
 }
 
 nx_status nx_str_copy_assign(nx_str *self, const nx_str *src) {
-    str_assert(self);
-    str_assert(src);
+    STR_ASSERT(self);
+    STR_ASSERT(src);
 
     if (self == src) {
         return NX_STATUS_OK;
@@ -145,14 +166,14 @@ nx_status nx_str_copy_assign(nx_str *self, const nx_str *src) {
 
     free(self->data);
     set_fields(self, data, src->len, src->cap);
-    str_assert(self);
+    STR_ASSERT(self);
 
     NX_UNIMPLEMENTED();
 }
 
 void nx_str_move_assign(nx_str *self, nx_str *src) {
-    str_assert(self);
-    str_assert(src);
+    STR_ASSERT(self);
+    STR_ASSERT(src);
 
     if (self == src) {
         return;
@@ -169,27 +190,27 @@ void nx_str_move_assign(nx_str *self, nx_str *src) {
     src->cap = 0;
 }
 
-/* ---------- info ---------- */
+/* ========== info ========== */
 
 nx_usize nx_str_len(const nx_str *self) {
-    str_assert(self);
+    STR_ASSERT(self);
 
     return self->len;
 }
 
 nx_usize nx_str_cap(const nx_str *self) {
-    str_assert(self);
+    STR_ASSERT(self);
 
     return self->cap;
 }
 
 nx_bool nx_str_empty(const nx_str *self) {
-    str_assert(self);
+    STR_ASSERT(self);
 
     return self->len == 0;
 }
 
-/* ---------- access ---------- */
+/* ========== access ========== */
 
 nx_char nx_str_get(const nx_str *self, nx_usize idx) {
     NX_ASSERT(self);
@@ -223,10 +244,10 @@ const nx_char *nx_str_cstr(const nx_str *self) {
     return self->data ? self->data : "";
 }
 
-/* ---------- mods ---------- */
+/* ========== mods ========== */
 
 void nx_str_clear(nx_str *self) {
-    str_assert(self);
+    STR_ASSERT(self);
 
     self->len = 0;
     if (self->data) {
@@ -235,7 +256,7 @@ void nx_str_clear(nx_str *self) {
 }
 
 nx_status nx_str_reserve(nx_str *self, nx_usize new_cap) {
-    str_assert(self);
+    STR_ASSERT(self);
 
     if (new_cap <= self->cap) {
         return NX_STATUS_OK;
@@ -266,20 +287,20 @@ nx_status nx_str_reserve(nx_str *self, nx_usize new_cap) {
 
     /* keep invariant */
     self->data[self->len] = '\0';
-    str_assert(self);
+    STR_ASSERT(self);
 
     return NX_STATUS_OK;
 }
 
 nx_status nx_str_resize(nx_str *self, nx_usize new_len) {
-    str_assert(self);
+    STR_ASSERT(self);
 
     if (new_len <= self->len) {
         self->len = new_len;
         if (self->data) {
             self->data[self->len] = '\0';
         }
-        str_assert(self);
+        STR_ASSERT(self);
         return NX_STATUS_OK;
     }
 
@@ -294,13 +315,13 @@ nx_status nx_str_resize(nx_str *self, nx_usize new_len) {
     memset(self->data + self->len, 0, new_len - self->len);
     self->len = new_len;
     self->data[self->len] = '\0';
-    str_assert(self);
+    STR_ASSERT(self);
 
     return NX_STATUS_OK;
 }
 
 nx_status nx_str_push(nx_str *self, nx_char ch) {
-    str_assert(self);
+    STR_ASSERT(self);
 
     if (self->len == self->cap) {
         nx_usize new_cap = 0;
@@ -322,13 +343,13 @@ nx_status nx_str_push(nx_str *self, nx_char ch) {
     self->data[self->len] = ch;
     ++self->len;
     self->data[self->len] = '\0';
-    str_assert(self);
+    STR_ASSERT(self);
 
     return NX_STATUS_OK;
 }
 
 nx_status nx_str_append_str_view(nx_str *self, nx_str_view sv) {
-    str_assert(self);
+    STR_ASSERT(self);
     NX_ASSERT(sv.len == 0 || sv.data != nx_null);
 
     if (sv.len == 0) {
@@ -365,22 +386,22 @@ nx_status nx_str_append_str_view(nx_str *self, nx_str_view sv) {
     memmove(self->data + self->len, src, sv.len);
     self->len = new_len;
     self->data[self->len] = '\0';
-    str_assert(self);
+    STR_ASSERT(self);
 
     return NX_STATUS_OK;
 }
 
 nx_status nx_str_append_cstr(nx_str *self, const nx_char *cstr) {
-    str_assert(self);
+    STR_ASSERT(self);
     NX_ASSERT(cstr);
 
     return nx_str_append_str_view(self, nx_str_view_from_cstr(cstr));
 }
 
-/* ---------- view ---------- */
+/* ========== view ========== */
 
 nx_str_view nx_str_as_view(const nx_str *self) {
-    str_assert(self);
+    STR_ASSERT(self);
 
     return self->len == 0
                ? nx_str_view_new(nx_null, 0)
@@ -388,17 +409,6 @@ nx_str_view nx_str_as_view(const nx_str *self) {
 }
 
 // internals defs
-
-static void str_assert(const nx_str *self) {
-    NX_ASSERT(self != nx_null);
-    NX_ASSERT(self->len <= self->cap);
-    NX_ASSERT((self->cap == 0) == (self->data == nx_null));
-    /* ensure cap+1 fits */
-    NX_ASSERT(self->cap <= (NX_USIZE_MAX - 1));
-    if (self->cap > 0) {
-        NX_ASSERT(self->data[self->len] == '\0');
-    }
-}
 
 static nx_status new_impl(nx_str **out, nx_usize len, nx_usize cap) {
     NX_ASSERT(out);
@@ -432,7 +442,7 @@ static nx_status new_impl(nx_str **out, nx_usize len, nx_usize cap) {
     }
 
     set_fields(s, data, len, cap);
-    str_assert(s);
+    STR_ASSERT(s);
 
     *out = s;
     return NX_STATUS_OK;

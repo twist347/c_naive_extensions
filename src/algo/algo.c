@@ -6,7 +6,7 @@
 #include "nx/core/assert.h"
 #include "nx/core/panic.h"
 
-/* ---------- sort/order ---------- */
+/* ========== sort/order ========== */
 
 void nx_sort(nx_span s, nx_cmp cmp) {
     NX_SPAN_ANY_ASSERT(s);
@@ -19,7 +19,7 @@ void nx_sort(nx_span s, nx_cmp cmp) {
     qsort(s.data, s.len, s.tsz, cmp);
 }
 
-bool nx_is_sorted(nx_cspan s, nx_cmp cmp) {
+nx_bool nx_is_sorted(nx_cspan s, nx_cmp cmp) {
     NX_SPAN_ANY_ASSERT(s);
     NX_ASSERT(cmp);
 
@@ -37,7 +37,7 @@ bool nx_is_sorted(nx_cspan s, nx_cmp cmp) {
     return true;
 }
 
-/* ---------- search ---------- */
+/* ========== search ========== */
 
 nx_isize nx_find(nx_cspan s, const void *key, nx_cmp cmp) {
     NX_SPAN_ANY_ASSERT(s);
@@ -130,7 +130,7 @@ nx_isize nx_bsearch(nx_cspan s, const void *key, nx_cmp cmp) {
     return cmp(p, key) == 0 ? pos : -1;
 }
 
-/* ---------- min/max ---------- */
+/* ========== min/max ========== */
 
 nx_isize nx_min_element(nx_cspan s, nx_cmp cmp) {
     NX_SPAN_ANY_ASSERT(s);
@@ -180,7 +180,7 @@ nx_minmax nx_minmax_element(nx_cspan s, nx_cmp cmp) {
     NX_UNIMPLEMENTED();
 }
 
-/* ---------- comparison ---------- */
+/* ========== comparison ========== */
 
 nx_bool nx_equal(nx_cspan a, nx_cspan b, nx_cmp cmp) {
     NX_SPAN_ANY_ASSERT(a);

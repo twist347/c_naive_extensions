@@ -4,15 +4,17 @@
 
 #include "nx/mem/ptr.h"
 
-/* ---------- assert ---------- */
+/* ========== assert ========== */
 
-void nx_span_any_assert(const void *data, nx_usize len, nx_usize tsz) {
+#if NX_DEBUG
+void nx_span_any_assert_(const void *data, nx_usize len, nx_usize tsz) {
     NX_ASSERT(tsz > 0);
     NX_ASSERT(len == 0 || data != nx_null);
     NX_ASSERT(len <= NX_USIZE_MAX / tsz);
 }
+#endif
 
-/* ---------- lifetime ---------- */
+/* ========== lifetime ========== */
 
 nx_span nx_span_new(void *data, nx_usize len, nx_usize tsz) {
     const nx_span s = {.data = data, .len = len, .tsz = tsz};
@@ -36,7 +38,7 @@ nx_cspan nx_cspan_from_span(nx_span s) {
     return nx_cspan_new(s.data, s.len, s.tsz);
 }
 
-/* ---------- access ---------- */
+/* ========== access ========== */
 
 void *nx_span_get(nx_span s, nx_usize idx) {
     NX_SPAN_ANY_ASSERT(s);
@@ -67,14 +69,15 @@ void nx_span_set(nx_span s, nx_usize idx, const void *val) {
     memmove(nx_byte_offset(s.data, s.tsz, idx), val, s.tsz);
 }
 
-/* ---------- info ---------- */
+/* ========== info ========== */
 
-bool nx_span_empty(nx_span s) {
+nx_bool nx_span_empty(nx_span s) {
     NX_SPAN_ANY_ASSERT(s);
 
     return s.len == 0;
 }
-bool nx_cspan_empty(nx_cspan s) {
+
+nx_bool nx_cspan_empty(nx_cspan s) {
     NX_SPAN_ANY_ASSERT(s);
 
     return s.len == 0;
@@ -92,7 +95,7 @@ nx_usize nx_cspan_size_bytes(nx_cspan s) {
     return s.len * s.tsz;
 }
 
-/* ---------- subspan ---------- */
+/* ========== subspan ========== */
 
 nx_span nx_span_sub(nx_span s, nx_usize offset, nx_usize count) {
     NX_SPAN_ANY_ASSERT(s);

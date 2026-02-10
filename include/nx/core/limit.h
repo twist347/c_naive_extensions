@@ -1,9 +1,8 @@
 #pragma once
 
-#include "nx/core/type.h"
-
 #include <float.h>
 #include <limits.h>
+#include <stdint.h>
 
 #define NX_I8_MIN     INT8_MIN
 #define NX_I8_MAX     INT8_MAX

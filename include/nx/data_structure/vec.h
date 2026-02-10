@@ -38,7 +38,7 @@ typedef struct nx_vec_params {
 /* ========== lifetime ========== */
 
 nx_vec_res nx_vec_new_p(nx_vec_params p);
-nx_vec_res nx_vec_new(nx_usize esz);
+nx_vec_res nx_vec_new(nx_usize tsz);
 nx_vec_res nx_vec_new_len(nx_usize len, nx_usize tsz);
 nx_vec_res nx_vec_new_cap(nx_usize cap, nx_usize tsz);
 void nx_vec_drop(nx_vec *self);
@@ -61,6 +61,8 @@ nx_usize nx_vec_tsz(const nx_vec *self);
 
 void *nx_vec_get(nx_vec *self, nx_usize idx);
 const void *nx_vec_get_c(const nx_vec *self, nx_usize idx);
+void *nx_vec_at(nx_vec *self, nx_usize idx);
+const void *nx_vec_at_c(const nx_vec *self, nx_usize idx);
 void nx_vec_set(nx_vec *self, nx_usize idx, const void *val);
 void *nx_vec_data(nx_vec *self);
 const void *nx_vec_data_c(const nx_vec *self);
@@ -100,6 +102,14 @@ nx_cspan nx_vec_to_cspan(const nx_vec *self);
 #define NX_VEC_GET_AS_C(T, self, idx)               \
     (NX_ASSERT(nx_vec_tsz((self)) == sizeof(T)),    \
     (const T *) nx_vec_get_c((self), (idx)))
+
+#define NX_VEC_AT_AS(T, self, idx)                  \
+    (NX_ASSERT(nx_vec_tsz((self)) == sizeof(T)),    \
+    (T *) nx_vec_at((self), (idx)))
+
+#define NX_VEC_AT_AS_C(T, self, idx)                \
+    (NX_ASSERT(nx_vec_tsz((self)) == sizeof(T)),    \
+    (const T *) nx_vec_at_c((self), (idx)))
 
 #define NX_VEC_SET(T, self, idx, expr)                 \
     do {                                               \

@@ -57,6 +57,8 @@ nx_usize nx_arr_tsz(const nx_arr *self);
 
 void *nx_arr_get(nx_arr *self, nx_usize idx);
 const void *nx_arr_get_c(const nx_arr *self, nx_usize idx);
+void *nx_arr_at(nx_arr *self, nx_usize idx);
+const void *nx_arr_at_c(const nx_arr *self, nx_usize idx);
 void nx_arr_set(nx_arr *self, nx_usize idx, const void *val);
 void *nx_arr_data(nx_arr *self);
 const void *nx_arr_data_c(const nx_arr *self);
@@ -82,6 +84,14 @@ nx_cspan nx_arr_to_cspan(const nx_arr *self);
 #define NX_ARR_GET_AS_C(T, self, idx)               \
     (NX_ASSERT(nx_arr_tsz((self)) == sizeof(T)),    \
     (const T *) nx_arr_get_c((self), (idx)))
+
+#define NX_ARR_AT_AS(T, self, idx)                  \
+    (NX_ASSERT(nx_arr_tsz((self)) == sizeof(T)),    \
+    (T *) nx_arr_at((self), (idx)))
+
+#define NX_ARR_AT_AS_C(T, self, idx)                \
+    (NX_ASSERT(nx_arr_tsz((self)) == sizeof(T)),    \
+    (const T *) nx_arr_at_c((self), (idx)))
 
 #define NX_ARR_SET_EXPR(T, self, idx, expr)            \
     do {                                               \

@@ -23,7 +23,7 @@ void tearDown(void) {
 
 /* ========== lifetime ========== */
 
-static void test_nx_arr_new_p_regular(void) {
+static void test_nx_arr_new_p(void) {
     nx_arr_res res = nx_arr_new_p((nx_arr_params){.len = 5, .tsz = sizeof(nx_i32)});
 
     TEST_ASSERT_TRUE(NX_RES_IS_OK(res));
@@ -42,7 +42,7 @@ static void test_nx_arr_new_p_regular(void) {
     nx_arr_drop(arr);
 }
 
-static void test_nx_arr_new_len_regular(void) {
+static void test_nx_arr_new_len(void) {
     nx_arr_res res = NX_ARR_NEW_LEN(nx_i32, 5);
 
     TEST_ASSERT_TRUE(NX_RES_IS_OK(res));
@@ -87,7 +87,7 @@ static void test_nx_arr_new_len_out_of_memory(void) {
     TEST_ASSERT_EQUAL_INT(NX_STATUS_OUT_OF_MEMORY, (int) NX_RES_ERR(res));
 }
 
-static void test_nx_arr_drop_regular(void) {
+static void test_nx_arr_drop(void) {
     nx_arr_res res = NX_ARR_NEW_LEN(nx_i32, 5);
 
     TEST_ASSERT_TRUE(NX_RES_IS_OK(res));
@@ -116,7 +116,7 @@ static void test_nx_arr_drop_null(void) {
 
 /* ========== info ========== */
 
-static void test_nx_arr_len_regular(void) {
+static void test_nx_arr_len(void) {
     nx_arr *arr = arr_new_or_die(5, sizeof(nx_i32));
     nx_arr *empty = arr_new_or_die(0, sizeof(nx_i32));
 
@@ -127,7 +127,7 @@ static void test_nx_arr_len_regular(void) {
     nx_arr_drop(arr);
 }
 
-static void test_nx_arr_empty_regular(void) {
+static void test_nx_arr_empty(void) {
     nx_arr *arr = arr_new_or_die(5, sizeof(nx_i32));
     nx_arr *empty = arr_new_or_die(0, sizeof(nx_i32));
 
@@ -138,7 +138,7 @@ static void test_nx_arr_empty_regular(void) {
     nx_arr_drop(arr);
 }
 
-static void test_nx_arr_elem_size_regular(void) {
+static void test_nx_arr_elem_size(void) {
     nx_arr *arr = arr_new_or_die(5, sizeof(nx_i32));
     nx_arr *empty = arr_new_or_die(0, sizeof(nx_i32));
 
@@ -151,7 +151,7 @@ static void test_nx_arr_elem_size_regular(void) {
 
 /* ========== access ========== */
 
-static void test_nx_arr_get_regular(void) {
+static void test_nx_arr_get(void) {
     nx_arr *arr = arr_new_or_die(5, sizeof(nx_i32));
 
     for (nx_usize i = 0; i < nx_arr_len(arr); ++i) {
@@ -165,7 +165,7 @@ static void test_nx_arr_get_regular(void) {
     nx_arr_drop(arr);
 }
 
-static void test_nx_arr_get_c_regular(void) {
+static void test_nx_arr_get_c(void) {
     nx_arr *arr = arr_new_or_die(5, sizeof(nx_i32));
 
     for (nx_usize i = 0; i < nx_arr_len(arr); ++i) {
@@ -179,7 +179,39 @@ static void test_nx_arr_get_c_regular(void) {
     nx_arr_drop(arr);
 }
 
-static void test_nx_arr_set_regular(void) {
+static void test_nx_arr_at(void) {
+    nx_arr *arr = arr_new_or_die(5, sizeof(nx_i32));
+
+    for (nx_usize i = 0; i < nx_arr_len(arr); ++i) {
+        NX_ARR_SET_EXPR(int, arr, i, i * i);
+    }
+
+    for (nx_usize i = 0; i < nx_arr_len(arr); ++i) {
+        TEST_ASSERT_EQUAL_INT32((nx_i32) (i * i), *NX_ARR_AT_AS(nx_i32, arr, i));
+    }
+
+    TEST_ASSERT_NULL(NX_ARR_AT_AS(nx_i32, arr, 10));
+
+    nx_arr_drop(arr);
+}
+
+static void test_nx_arr_at_c(void) {
+    nx_arr *arr = arr_new_or_die(5, sizeof(nx_i32));
+
+    for (nx_usize i = 0; i < nx_arr_len(arr); ++i) {
+        NX_ARR_SET_EXPR(int, arr, i, i * i);
+    }
+
+    for (nx_usize i = 0; i < nx_arr_len(arr); ++i) {
+        TEST_ASSERT_EQUAL_INT32((nx_i32) (i * i), *NX_ARR_AT_AS_C(nx_i32, arr, i));
+    }
+
+    TEST_ASSERT_NULL(NX_ARR_AT_AS_C(nx_i32, arr, 10));
+
+    nx_arr_drop(arr);
+}
+
+static void test_nx_arr_set(void) {
     nx_arr *arr = arr_new_or_die(5, sizeof(nx_i32));
 
     for (nx_usize i = 0; i < nx_arr_len(arr); ++i) {
@@ -193,7 +225,7 @@ static void test_nx_arr_set_regular(void) {
     nx_arr_drop(arr);
 }
 
-static void test_nx_arr_data_regular(void) {
+static void test_nx_arr_data(void) {
     nx_arr *arr = arr_new_or_die(5, sizeof(nx_i32));
     const nx_usize elem_size = nx_arr_tsz(arr);
 
@@ -218,7 +250,7 @@ static void test_nx_arr_data_regular(void) {
     nx_arr_drop(arr);
 }
 
-static void test_nx_arr_data_c_regular(void) {
+static void test_nx_arr_data_c(void) {
     nx_arr *arr = arr_new_or_die(5, sizeof(nx_i32));
     const nx_usize elem_size = nx_arr_tsz(arr);
 
@@ -238,7 +270,7 @@ static void test_nx_arr_data_c_regular(void) {
 
 /* ========== mods ========== */
 
-static void test_nx_arr_swap_regular(void) {
+static void test_nx_arr_swap(void) {
     const nx_usize len1 = 5, len2 = 3;
 
     nx_arr *arr1 = arr_new_or_die(len1, sizeof(nx_i32));
@@ -271,12 +303,46 @@ static void test_nx_arr_swap_regular(void) {
 
 /* ========== to span ========== */
 
-static void test_nx_arr_to_span_regular(void) {
-    /* TODO */
+static void test_nx_arr_to_span(void) {
+    const nx_usize len = 5;
+    nx_arr *arr = arr_new_or_die(len, sizeof(nx_i32));
+    for (nx_usize i = 0; i < len; ++i) {
+        NX_ARR_SET_EXPR(int, arr, i, i * i);
+    }
+
+    nx_span s = nx_arr_to_span(arr);
+
+    TEST_ASSERT_EQUAL_UINT64(s.data, nx_arr_data(arr));
+    TEST_ASSERT_EQUAL_UINT64(s.len, nx_arr_len(arr));
+    TEST_ASSERT_EQUAL_UINT64(s.tsz, nx_arr_tsz(arr));
+
+    NX_SPAN_SET(nx_i32, s, 0, 42);
+
+    for (nx_usize i = 0; i < len; ++i) {
+        TEST_ASSERT_EQUAL_INT32(*NX_SPAN_GET_AS_C(nx_i32, s, i), *NX_ARR_GET_AS_C(nx_i32, arr, i));
+    }
+
+    nx_arr_drop(arr);
 }
 
-static void test_nx_arr_to_cspan_regular(void) {
-    /* TODO */
+static void test_nx_arr_to_cspan(void) {
+    const nx_usize len = 5;
+    nx_arr *arr = arr_new_or_die(len, sizeof(nx_i32));
+    for (nx_usize i = 0; i < len; ++i) {
+        NX_ARR_SET_EXPR(int, arr, i, i * i);
+    }
+
+    nx_cspan s = nx_arr_to_cspan(arr);
+
+    TEST_ASSERT_EQUAL_UINT64(s.data, nx_arr_data(arr));
+    TEST_ASSERT_EQUAL_UINT64(s.len, nx_arr_len(arr));
+    TEST_ASSERT_EQUAL_UINT64(s.tsz, nx_arr_tsz(arr));
+
+    for (nx_usize i = 0; i < len; ++i) {
+        TEST_ASSERT_EQUAL_INT32(*NX_CSPAN_GET_AS_C(nx_i32, s, i), *NX_ARR_GET_AS_C(nx_i32, arr, i));
+    }
+
+    nx_arr_drop(arr);
 }
 
 /* ========== runner ========== */
@@ -284,27 +350,29 @@ static void test_nx_arr_to_cspan_regular(void) {
 int main(void) {
     UNITY_BEGIN();
 
-    RUN_TEST(test_nx_arr_new_p_regular);
-    RUN_TEST(test_nx_arr_new_len_regular);
+    RUN_TEST(test_nx_arr_new_p);
+    RUN_TEST(test_nx_arr_new_len);
     RUN_TEST(test_nx_arr_new_len_empty);
     RUN_TEST(test_nx_arr_new_len_out_of_memory);
-    RUN_TEST(test_nx_arr_drop_regular);
+    RUN_TEST(test_nx_arr_drop);
     RUN_TEST(test_nx_arr_drop_null);
 
-    RUN_TEST(test_nx_arr_len_regular);
-    RUN_TEST(test_nx_arr_empty_regular);
-    RUN_TEST(test_nx_arr_elem_size_regular);
+    RUN_TEST(test_nx_arr_len);
+    RUN_TEST(test_nx_arr_empty);
+    RUN_TEST(test_nx_arr_elem_size);
 
-    RUN_TEST(test_nx_arr_get_regular);
-    RUN_TEST(test_nx_arr_get_c_regular);
-    RUN_TEST(test_nx_arr_set_regular);
-    RUN_TEST(test_nx_arr_data_regular);
-    RUN_TEST(test_nx_arr_data_c_regular);
+    RUN_TEST(test_nx_arr_get);
+    RUN_TEST(test_nx_arr_get_c);
+    RUN_TEST(test_nx_arr_at);
+    RUN_TEST(test_nx_arr_at_c);
+    RUN_TEST(test_nx_arr_set);
+    RUN_TEST(test_nx_arr_data);
+    RUN_TEST(test_nx_arr_data_c);
 
-    RUN_TEST(test_nx_arr_swap_regular);
+    RUN_TEST(test_nx_arr_swap);
 
-    RUN_TEST(test_nx_arr_to_span_regular);
-    RUN_TEST(test_nx_arr_to_cspan_regular);
+    RUN_TEST(test_nx_arr_to_span);
+    RUN_TEST(test_nx_arr_to_cspan);
 
     return UNITY_END();
 }
