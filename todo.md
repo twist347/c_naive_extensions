@@ -7,3 +7,5 @@
 - [ ] add rand
 - [ ] add io
 - [ ] add optional
+- [ ] make OBJECT in cmakelists instead of two builds (static/shared)
+- [ ] add overflow funcs (do not use from C23 because of C++)

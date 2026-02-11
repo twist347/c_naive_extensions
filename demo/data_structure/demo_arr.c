@@ -35,7 +35,7 @@ static nx_arr *arr_new_or_die(nx_usize len, nx_usize elem_size) {
         nx_status_fprintln(stderr, NX_RES_ERR(res));
         exit(EXIT_FAILURE);
     }
-    return NX_RES_VAL(res);
+    return NX_RES_UNWRAP(res);
 }
 
 static void demo_lifetime(void) {
@@ -49,7 +49,7 @@ static void demo_lifetime(void) {
         nx_status_fprintln(stderr, NX_RES_ERR(res));
         exit(EXIT_FAILURE);
     }
-    nx_arr *arr = NX_RES_VAL(res);
+    nx_arr *arr = NX_RES_UNWRAP(res);
 
     nx_arr_drop(arr);
 }
@@ -70,7 +70,7 @@ static void demo_copy_move(void) {
         nx_status_fprintln(stderr, NX_RES_ERR(res1));
         exit(EXIT_FAILURE);
     }
-    nx_arr *arr1 = NX_RES_VAL(res1);
+    nx_arr *arr1 = NX_RES_UNWRAP(res1);
 
     nx_arr *arr2 = nx_arr_move(&arr);
 

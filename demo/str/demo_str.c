@@ -10,7 +10,7 @@ int main(void) {
         return EXIT_FAILURE;
     }
 
-    nx_str *str = NX_RES_VAL(res);
+    nx_str *str = NX_RES_UNWRAP(res);
 
     for (nx_char c = 'a'; c <= 'z'; ++c) {
         nx_str_push(str, c);

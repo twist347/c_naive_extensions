@@ -13,7 +13,7 @@ int main(void) {
         return EXIT_FAILURE;
     }
 
-    nx_vec *vec = NX_RES_VAL(res);
+    nx_vec *vec = NX_RES_UNWRAP(res);
 
     for (nx_i32 i = 0; i < 10; ++i) {
         NX_VEC_PUSH_EXPR(nx_i32, vec, i * i);

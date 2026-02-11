@@ -23,7 +23,7 @@ extern "C" {
 
 typedef struct nx_str nx_str;
 
-NX_DEF_RESULT_TYPE(nx_str_res, nx_str *);
+NX_DEF_RES_TYPE(nx_str_res, nx_str *);
 
 typedef struct nx_str_params {
     nx_usize len;
@@ -49,12 +49,13 @@ void nx_str_move_assign(nx_str *self, nx_str *src);              /* steal buffer
 /* ========== info ========== */
 
 nx_usize nx_str_len(const nx_str *self);
-nx_usize nx_str_cap(const nx_str *self);                         /* usable capacity (excluding '\0') */
+nx_usize nx_str_cap(const nx_str *self);                         /* usable capacity (excludes '\0') */
 nx_bool nx_str_empty(const nx_str *self);
 
 /* ========== access ========== */
 
 nx_char nx_str_get(const nx_str *self, nx_usize idx);
+nx_char nx_str_at(const nx_str *self, nx_usize idx);
 void nx_str_set(nx_str *self, nx_usize idx, nx_char ch);
 nx_char *nx_str_data(nx_str *self); /* may be NULL if cap==0 */
 const nx_char *nx_str_data_c(const nx_str *self);
@@ -66,7 +67,6 @@ void nx_str_clear(nx_str *self);
 nx_status nx_str_reserve(nx_str *self, nx_usize new_cap);
 nx_status nx_str_resize(nx_str *self, nx_usize new_len);     /* new bytes are '\0' */
 nx_status nx_str_push(nx_str *self, nx_char ch);
-nx_status nx_str_append_str_view(nx_str *self, nx_str_view sv);
 nx_status nx_str_append_cstr(nx_str *self, const nx_char *cstr);
 
 /* ========== view ========== */

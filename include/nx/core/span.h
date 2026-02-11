@@ -42,6 +42,12 @@ nx_cspan nx_cspan_from_span(nx_span s);
 void *nx_span_get(nx_span s, nx_usize idx);
 const void *nx_span_get_c(nx_span s, nx_usize idx);
 const void *nx_cspan_get_c(nx_cspan s, nx_usize idx);
+
+void *nx_span_at(nx_span s, nx_usize idx);
+const void *nx_span_at_c(nx_span s, nx_usize idx);
+const void *nx_cspan_at_c(nx_cspan s, nx_usize idx);
+
+/// val must not point to an element within the same span.
 void nx_span_set(nx_span s, nx_usize idx, const void *val);
 
 /* ========== info ========== */
@@ -51,6 +57,11 @@ nx_bool nx_cspan_empty(nx_cspan s);
 
 nx_usize nx_span_size_bytes(nx_span s);
 nx_usize nx_cspan_size_bytes(nx_cspan s);
+
+/* ========== operations ========== */
+
+/// handles overlapping memory correctly
+void nx_span_copy(nx_span dst, nx_cspan src);
 
 /* ========== subspan ========== */
 
@@ -79,6 +90,18 @@ nx_cspan nx_cspan_tail(nx_cspan s, nx_usize offset);
 #define NX_CSPAN_GET_AS_C(T, s, idx)     \
     (NX_ASSERT((s).tsz == sizeof(T)),    \
     (const T *) nx_cspan_get_c((s), (idx)))
+
+#define NX_SPAN_AT_AS(T, s, idx)         \
+    (NX_ASSERT((s).tsz == sizeof(T)),    \
+    (T *) nx_span_at((s), (idx)))
+
+#define NX_SPAN_AT_AS_C(T, s, idx)           \
+    (NX_ASSERT((s).tsz == sizeof(T)),        \
+    (const T *) nx_span_at_c((s), (idx)))
+
+#define NX_CSPAN_AT_AS_C(T, s, idx)      \
+    (NX_ASSERT((s).tsz == sizeof(T)),    \
+    (const T *) nx_cspan_at_c((s), (idx)))
 
 #define NX_SPAN_SET(T, s, idx, expr)          \
     do {                                      \

@@ -21,11 +21,13 @@ extern "C" {
  * - Result convention:
  *   - st == NX_STATUS_OK => val is valid.
  *   - st != NX_STATUS_OK => val must not be used.
+ *
+ * - zero-length <-> null data
  */
 
 typedef struct nx_vec nx_vec;
 
-NX_DEF_RESULT_TYPE(nx_vec_res, nx_vec *);
+NX_DEF_RES_TYPE(nx_vec_res, nx_vec *);
 
 /* ========== params ========== */
 
@@ -41,6 +43,7 @@ nx_vec_res nx_vec_new_p(nx_vec_params p);
 nx_vec_res nx_vec_new(nx_usize tsz);
 nx_vec_res nx_vec_new_len(nx_usize len, nx_usize tsz);
 nx_vec_res nx_vec_new_cap(nx_usize cap, nx_usize tsz);
+nx_vec_res nx_vec_from_data(const void *data, nx_usize len, nx_usize tsz);
 void nx_vec_drop(nx_vec *self);
 
 /* ========== copy/move semantic ========== */
@@ -63,7 +66,10 @@ void *nx_vec_get(nx_vec *self, nx_usize idx);
 const void *nx_vec_get_c(const nx_vec *self, nx_usize idx);
 void *nx_vec_at(nx_vec *self, nx_usize idx);
 const void *nx_vec_at_c(const nx_vec *self, nx_usize idx);
+
+/// val must not point to an element within the same vector.
 void nx_vec_set(nx_vec *self, nx_usize idx, const void *val);
+
 void *nx_vec_data(nx_vec *self);
 const void *nx_vec_data_c(const nx_vec *self);
 
@@ -94,6 +100,9 @@ nx_cspan nx_vec_to_cspan(const nx_vec *self);
 
 #define NX_VEC_NEW_CAP(T, cap)    \
     nx_vec_new_cap((cap), sizeof(T))
+
+#define NX_VEC_FROM_DATA(T, data, len)    \
+    nx_vec_from_data((data), (len), sizeof(T))
 
 #define NX_VEC_GET_AS(T, self, idx)                 \
     (NX_ASSERT(nx_vec_tsz((self)) == sizeof(T)),    \

@@ -4,6 +4,7 @@
 
 #include "nx/core/panic.h"
 #include "nx/core/status.h"
+#include "nx/core/util.h"
 #include "nx/data_structure/arr.h"
 #include "nx/mem/ptr.h"
 
@@ -12,7 +13,7 @@ static nx_arr *arr_new_or_die(nx_usize len, nx_usize elem_size) {
     if (!NX_RES_IS_OK(res)) {
         NX_PANIC_MSG(nx_status_to_str(NX_RES_ERR(res)));
     }
-    return NX_RES_VAL(res);
+    return NX_RES_UNWRAP(res);
 }
 
 void setUp(void) {
@@ -28,7 +29,7 @@ static void test_nx_arr_new_p(void) {
 
     TEST_ASSERT_TRUE(NX_RES_IS_OK(res));
 
-    nx_arr *arr = NX_RES_VAL(res);
+    nx_arr *arr = NX_RES_UNWRAP(res);
     TEST_ASSERT_NOT_NULL(arr);
 
     TEST_ASSERT_NOT_NULL(nx_arr_data(arr));
@@ -47,7 +48,7 @@ static void test_nx_arr_new_len(void) {
 
     TEST_ASSERT_TRUE(NX_RES_IS_OK(res));
 
-    nx_arr *arr = NX_RES_VAL(res);
+    nx_arr *arr = NX_RES_UNWRAP(res);
     TEST_ASSERT_NOT_NULL(arr);
 
     TEST_ASSERT_NOT_NULL(nx_arr_data(arr));
@@ -61,12 +62,30 @@ static void test_nx_arr_new_len(void) {
     nx_arr_drop(arr);
 }
 
+static void test_nx_arr_from_data(void) {
+    const nx_i32 data[] = {1, 2, 3, 4, 5};
+
+    nx_arr_res res = NX_ARR_FROM_DATA(nx_i32, data, NX_C_ARR_LEN(data));
+    TEST_ASSERT_TRUE(NX_RES_IS_OK(res));
+    nx_arr *arr = NX_RES_UNWRAP(res);
+
+    TEST_ASSERT_NOT_NULL(nx_arr_data(arr));
+    TEST_ASSERT_EQUAL_UINT64(NX_C_ARR_LEN(data), nx_arr_len(arr));
+    TEST_ASSERT_EQUAL_UINT64(sizeof(nx_i32), nx_arr_tsz(arr));
+
+    for (nx_usize i = 0; i < nx_arr_len(arr); ++i) {
+        TEST_ASSERT_EQUAL_INT32(data[i], *NX_ARR_GET_AS_C(nx_i32, arr, i));
+    }
+
+    nx_arr_drop(arr);
+}
+
 static void test_nx_arr_new_len_empty(void) {
     nx_arr_res res = NX_ARR_NEW_LEN(nx_i32, 0);
 
     TEST_ASSERT_TRUE(NX_RES_IS_OK(res));
 
-    nx_arr *arr = NX_RES_VAL(res);
+    nx_arr *arr = NX_RES_UNWRAP(res);
     TEST_ASSERT_NOT_NULL(arr);
 
     TEST_ASSERT_NULL(nx_arr_data(arr));
@@ -92,7 +111,7 @@ static void test_nx_arr_drop(void) {
 
     TEST_ASSERT_TRUE(NX_RES_IS_OK(res));
 
-    nx_arr *arr = NX_RES_VAL(res);
+    nx_arr *arr = NX_RES_UNWRAP(res);
     TEST_ASSERT_NOT_NULL(arr);
 
     TEST_ASSERT_NOT_NULL(nx_arr_data(arr));
@@ -352,6 +371,7 @@ int main(void) {
 
     RUN_TEST(test_nx_arr_new_p);
     RUN_TEST(test_nx_arr_new_len);
+    RUN_TEST(test_nx_arr_from_data);
     RUN_TEST(test_nx_arr_new_len_empty);
     RUN_TEST(test_nx_arr_new_len_out_of_memory);
     RUN_TEST(test_nx_arr_drop);

@@ -12,12 +12,18 @@ struct nx_arr {
     nx_usize tsz; // type size
 };
 
+#define ASSERT_MUL_OK(a, b, m)          \
+    do {                                \
+        NX_ASSERT((b) != 0);            \
+        NX_ASSERT((a) <= (m) / (b));    \
+    } while (0)
+
 #if NX_DEBUG
 static void arr_assert_impl(const nx_arr *self) {
     NX_ASSERT(self != nx_null);
     NX_ASSERT(self->tsz > 0);
     NX_ASSERT(((self->len == 0) == (self->data == nx_null)));
-    NX_ASSERT(self->len <= NX_USIZE_MAX / self->tsz);
+    ASSERT_MUL_OK(self->len, self->tsz, NX_USIZE_MAX);
 }
 
 #define ARR_ASSERT(self)    \
@@ -52,6 +58,24 @@ nx_arr_res nx_arr_new_len(nx_usize len, nx_usize tsz) {
         .len = len,
         .tsz = tsz,
     });
+}
+
+nx_arr_res nx_arr_from_data(const void *data, nx_usize len, nx_usize tsz) {
+    NX_ASSERT(data || len == 0);
+
+    nx_arr_res res = nx_arr_new_len(len, tsz);
+    if (!NX_RES_IS_OK(res)) {
+        return res;
+    }
+
+    nx_arr *arr = NX_RES_UNWRAP(res);
+    if (len > 0) {
+        ASSERT_MUL_OK(len, tsz, NX_USIZE_MAX);
+        const nx_usize bytes = len * tsz;
+        memcpy(arr->data, data, bytes);
+    }
+
+    return NX_RES_NEW_OK(nx_arr_res, arr);
 }
 
 void nx_arr_drop(nx_arr *self) {
@@ -117,8 +141,8 @@ nx_status nx_arr_copy_assign(nx_arr *self, const nx_arr *src) {
     }
 
     // optimization
-    if (self->len == src->len && src->len > 0) {
-        NX_ASSERT(src->len <= NX_USIZE_MAX / src->tsz);
+    if (self->len == src->len) {
+        ASSERT_MUL_OK(src->len, src->tsz, NX_USIZE_MAX);
         const nx_usize bytes = src->len * src->tsz;
         memcpy(self->data, src->data, bytes);
         return NX_STATUS_OK;
@@ -207,7 +231,7 @@ void nx_arr_set(nx_arr *self, nx_usize idx, const void *val) {
     NX_ASSERT(idx < self->len);
     NX_ASSERT(val);
 
-    memmove(nx_byte_offset(self->data, self->tsz, idx), val, self->tsz);
+    memcpy(nx_byte_offset(self->data, self->tsz, idx), val, self->tsz);
 }
 
 void *nx_arr_data(nx_arr *self) {
@@ -270,7 +294,7 @@ static nx_status new_impl(nx_arr **out, nx_usize len, nx_usize tsz) {
         return NX_STATUS_OK;
     }
 
-    NX_ASSERT(len <= NX_USIZE_MAX / tsz);
+    ASSERT_MUL_OK(len, tsz, NX_USIZE_MAX);
     const nx_usize bytes = len * tsz;
 
     void *data = calloc(1, bytes);
@@ -296,7 +320,7 @@ static nx_status alloc_and_copy_data(void **out, const nx_arr *src) {
 
     *out = nx_null;
 
-    NX_ASSERT(src->len <= NX_USIZE_MAX / src->tsz);
+    ASSERT_MUL_OK(src->len, src->tsz, NX_USIZE_MAX);
     const nx_usize bytes = src->len * src->tsz;
 
     void *data = malloc(bytes);

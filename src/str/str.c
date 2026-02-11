@@ -5,13 +5,29 @@
 
 #include "nx/core/assert.h"
 #include "nx/core/limit.h"
-#include "nx/core/panic.h"
 
 struct nx_str {
     nx_char *data;
     nx_usize len; /* excludes trailing '\0' */
     nx_usize cap; /* allocated bytes INCLUDING trailing '\0' */
 };
+
+#define ASSERT_ADD_OK(a, b, m)          \
+    do {                                \
+        NX_ASSERT((b) != 0);            \
+        NX_ASSERT((a) <= (m) - (b));    \
+    } while (0)
+
+#define ASSERT_MUL_OK(a, b, m)          \
+    do {                                \
+        NX_ASSERT((b) != 0);            \
+        NX_ASSERT((a) <= (m) / (b));    \
+    } while (0)
+
+#define ASSERT_INC_OK(a, m)    \
+    do {                       \
+        NX_ASSERT((a) < m);    \
+    } while (0)
 
 #if NX_DEBUG
 static void str_assert_impl(const nx_str *self) {
@@ -34,6 +50,8 @@ static void str_assert_impl(const nx_str *self) {
 // internals decls
 
 static nx_status new_impl(nx_str **out, nx_usize len, nx_usize cap);
+
+static nx_status ensure_cap(nx_str *self, nx_usize needed_cap);
 
 static void set_fields(nx_str *self, nx_char *data, nx_usize len, nx_usize cap);
 
@@ -80,18 +98,14 @@ nx_str_res nx_str_from_cstr(const nx_char *cstr) {
     if (!NX_RES_IS_OK(res)) {
         return res;
     }
-    nx_str *s = NX_RES_VAL(res);
 
-    if (n != 0) {
+    nx_str *s = NX_RES_UNWRAP(res);
+    if (n > 0) {
         memcpy(s->data, cstr, n);
+        s->data[n] = '\0';
     }
-    s->len = n;
-    if (s->data) {
-        s->data[s->len] = '\0';
-    }
-    STR_ASSERT(s);
 
-    return NX_RES_NEW_OK(nx_str_res, s);
+    return res;
 }
 
 void nx_str_drop(nx_str *self) {
@@ -143,15 +157,25 @@ nx_status nx_str_copy_assign(nx_str *self, const nx_str *src) {
         return NX_STATUS_OK;
     }
 
-    if (src->cap == 0) {
-        free(self->data);
-        set_fields(self, nx_null, 0, 0);
+    if (src->len == 0) {
+        self->len = 0;
+        if (self->data) {
+            self->data[0] = '\0';
+        }
         return NX_STATUS_OK;
     }
 
-    if (src->cap > NX_USIZE_MAX - 1) {
-        return NX_STATUS_MUL_OVERFLOW;
+    // optimization
+    if (self->cap >= src->len) {
+        memcpy(self->data, src->data, src->len);
+        self->len = src->len;
+        self->data[self->len] = '\0';
+        STR_ASSERT(self);
+        return NX_STATUS_OK;
     }
+
+    // Need to reallocate
+    ASSERT_INC_OK(src->cap, NX_USIZE_MAX);
     const nx_usize bytes = src->cap + 1;
 
     nx_char *data = malloc(bytes);
@@ -159,16 +183,14 @@ nx_status nx_str_copy_assign(nx_str *self, const nx_str *src) {
         return NX_STATUS_OUT_OF_MEMORY;
     }
 
-    if (src->len != 0) {
-        memcpy(data, src->data, src->len);
-    }
+    memcpy(data, src->data, src->len);
     data[src->len] = '\0';
 
     free(self->data);
     set_fields(self, data, src->len, src->cap);
     STR_ASSERT(self);
 
-    NX_UNIMPLEMENTED();
+    return NX_STATUS_OK;
 }
 
 void nx_str_move_assign(nx_str *self, nx_str *src) {
@@ -213,33 +235,39 @@ nx_bool nx_str_empty(const nx_str *self) {
 /* ========== access ========== */
 
 nx_char nx_str_get(const nx_str *self, nx_usize idx) {
-    NX_ASSERT(self);
+    STR_ASSERT(self);
     NX_ASSERT(idx < self->len);
 
     return self->data[idx];
 }
 
+nx_char nx_str_at(const nx_str *self, nx_usize idx) {
+    STR_ASSERT(self);
+
+    return idx < self->len ? self->data[idx] : '\0';
+}
+
 void nx_str_set(nx_str *self, nx_usize idx, nx_char ch) {
-    NX_ASSERT(self);
+    STR_ASSERT(self);
     NX_ASSERT(idx < self->len);
 
     self->data[idx] = ch;
 }
 
 nx_char *nx_str_data(nx_str *self) {
-    NX_ASSERT(self);
+    STR_ASSERT(self);
 
     return self->data;
 }
 
 const nx_char *nx_str_data_c(const nx_str *self) {
-    NX_ASSERT(self);
+    STR_ASSERT(self);
 
     return self->data;
 }
 
 const nx_char *nx_str_cstr(const nx_str *self) {
-    NX_ASSERT(self);
+    STR_ASSERT(self);
 
     return self->data ? self->data : "";
 }
@@ -262,11 +290,9 @@ nx_status nx_str_reserve(nx_str *self, nx_usize new_cap) {
         return NX_STATUS_OK;
     }
 
-    if (new_cap > NX_USIZE_MAX - 1) {
-        return NX_STATUS_MUL_OVERFLOW; /* cap+1 overflow */
-    }
+    ASSERT_INC_OK(new_cap, NX_USIZE_MAX);
 
-    const size_t bytes = new_cap + 1;
+    const nx_usize bytes = new_cap + 1;
 
     nx_char *data = nx_null;
     if (self->cap == 0) {
@@ -278,14 +304,12 @@ nx_status nx_str_reserve(nx_str *self, nx_usize new_cap) {
     } else {
         data = (nx_char *) realloc(self->data, bytes);
         if (!data) {
-            return NX_STATUS_OUT_OF_MEMORY; /* keep old buffer intact */
+            return NX_STATUS_OUT_OF_MEMORY;
         }
     }
 
     self->data = data;
     self->cap = new_cap;
-
-    /* keep invariant */
     self->data[self->len] = '\0';
     STR_ASSERT(self);
 
@@ -323,21 +347,11 @@ nx_status nx_str_resize(nx_str *self, nx_usize new_len) {
 nx_status nx_str_push(nx_str *self, nx_char ch) {
     STR_ASSERT(self);
 
-    if (self->len == self->cap) {
-        nx_usize new_cap = 0;
-        if (self->cap == 0) {
-            new_cap = 1;
-        } else {
-            if (self->cap > NX_USIZE_MAX / 2) {
-                return NX_STATUS_MUL_OVERFLOW;
-            }
-            new_cap = self->cap * 2;
-        }
+    ASSERT_INC_OK(self->len, NX_USIZE_MAX);
 
-        const nx_status st = nx_str_reserve(self, new_cap);
-        if (st != NX_STATUS_OK) {
-            return st;
-        }
+    const nx_status st = ensure_cap(self, self->len + 1);
+    if (st != NX_STATUS_OK) {
+        return st;
     }
 
     self->data[self->len] = ch;
@@ -356,29 +370,20 @@ nx_status nx_str_append_str_view(nx_str *self, nx_str_view sv) {
         return NX_STATUS_OK;
     }
 
-    if (sv.len > NX_USIZE_MAX - self->len) {
-        return NX_STATUS_MUL_OVERFLOW; /* len + sv.len overflow */
-    }
-
+    ASSERT_ADD_OK(self->len, sv.len, NX_USIZE_MAX);
     const nx_usize new_len = self->len + sv.len;
 
-    /* handle aliasing: if sv points into self->data, keep offset across realloc */
-    nx_usize off = 0;
+    // Handle aliasing
     nx_bool alias = false;
-    if (self->data) {
-        const nx_char *begin = self->data;
-        const nx_char *end = self->data + self->cap + 1; /* include '\0' area */
-        if (sv.data >= begin && sv.data < end) {
-            alias = true;
-            off = (nx_usize) (sv.data - begin);
-        }
+    nx_usize off = 0;
+    if (self->data && sv.data >= self->data && sv.data < self->data + self->len) {
+        alias = true;
+        off = (nx_usize)(sv.data - self->data);
     }
 
-    if (new_len > self->cap) {
-        const nx_status st = nx_str_reserve(self, new_len);
-        if (st != NX_STATUS_OK) {
-            return st;
-        }
+    const nx_status st = ensure_cap(self, new_len);
+    if (st != NX_STATUS_OK) {
+        return st;
     }
 
     const nx_char *src = alias ? (self->data + off) : sv.data;
@@ -429,13 +434,9 @@ static nx_status new_impl(nx_str **out, nx_usize len, nx_usize cap) {
         return NX_STATUS_OK;
     }
 
-    /* bytes = cap + 1 */
-    if (cap > NX_USIZE_MAX - 1) {
-        free(s);
-        return NX_STATUS_MUL_OVERFLOW;
-    }
+    ASSERT_INC_OK(cap, NX_USIZE_MAX);
 
-    nx_char *data = calloc(cap + 1, 1); /* +1 and zero-init */
+    nx_char *data = calloc(cap + 1, 1);
     if (!data) {
         free(s);
         return NX_STATUS_OUT_OF_MEMORY;
@@ -446,6 +447,30 @@ static nx_status new_impl(nx_str **out, nx_usize len, nx_usize cap) {
 
     *out = s;
     return NX_STATUS_OK;
+}
+
+static nx_status ensure_cap(nx_str *self, nx_usize needed_cap) {
+    STR_ASSERT(self);
+
+    if (needed_cap <= self->cap) {
+        return NX_STATUS_OK;
+    }
+
+    ASSERT_INC_OK(needed_cap, NX_USIZE_MAX);
+
+    nx_usize new_cap = self->cap == 0 ? 1 : self->cap;
+
+    while (new_cap < needed_cap) {
+        // Check if we can double
+        if (new_cap > NX_USIZE_MAX / 2) {
+            // Can't double - use exact needed_cap
+            new_cap = needed_cap;
+            break;
+        }
+        new_cap *= 2;
+    }
+
+    return nx_str_reserve(self, new_cap);
 }
 
 static void set_fields(nx_str *self, nx_char *data, nx_usize len, nx_usize cap) {

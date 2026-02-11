@@ -4,14 +4,20 @@
 
 #include "nx/mem/ptr.h"
 
+#define ASSERT_MUL_OK(a, b, m)          \
+    do {                                \
+        NX_ASSERT((b) != 0);            \
+        NX_ASSERT((a) <= (m) / (b));    \
+    } while (0)
+
 /* ========== assert ========== */
 
 #if NX_DEBUG
-void nx_span_any_assert_(const void *data, nx_usize len, nx_usize tsz) {
-    NX_ASSERT(tsz > 0);
-    NX_ASSERT(len == 0 || data != nx_null);
-    NX_ASSERT(len <= NX_USIZE_MAX / tsz);
-}
+    void nx_span_any_assert_(const void *data, nx_usize len, nx_usize tsz) {
+        NX_ASSERT(tsz > 0);
+        NX_ASSERT(len == 0 || data != nx_null);
+        ASSERT_MUL_OK(len, tsz, NX_USIZE_MAX);
+    }
 #endif
 
 /* ========== lifetime ========== */
@@ -61,12 +67,30 @@ const void *nx_cspan_get_c(nx_cspan s, nx_usize idx) {
     return nx_byte_offset_c(s.data, s.tsz, idx);
 }
 
+void *nx_span_at(nx_span s, nx_usize idx) {
+    NX_SPAN_ANY_ASSERT(s);
+
+    return idx < s.len ? nx_byte_offset(s.data, s.tsz, idx) : nx_null;
+}
+
+const void *nx_span_at_c(nx_span s, nx_usize idx) {
+    NX_SPAN_ANY_ASSERT(s);
+
+    return idx < s.len ? nx_byte_offset_c(s.data, s.tsz, idx) : nx_null;
+}
+
+const void *nx_cspan_at_c(nx_cspan s, nx_usize idx) {
+    NX_SPAN_ANY_ASSERT(s);
+
+    return idx < s.len ? nx_byte_offset_c(s.data, s.tsz, idx) : nx_null;
+}
+
 void nx_span_set(nx_span s, nx_usize idx, const void *val) {
     NX_SPAN_ANY_ASSERT(s);
     NX_ASSERT(idx < s.len);
     NX_ASSERT(val);
 
-    memmove(nx_byte_offset(s.data, s.tsz, idx), val, s.tsz);
+    memcpy(nx_byte_offset(s.data, s.tsz, idx), val, s.tsz);
 }
 
 /* ========== info ========== */
@@ -93,6 +117,22 @@ nx_usize nx_cspan_size_bytes(nx_cspan s) {
     NX_SPAN_ANY_ASSERT(s);
 
     return s.len * s.tsz;
+}
+
+/* ========== operations ========== */
+
+void nx_span_copy(nx_span dst, nx_cspan src) {
+    NX_SPAN_ANY_ASSERT(dst);
+    NX_SPAN_ANY_ASSERT(src);
+    NX_ASSERT(dst.len == src.len);
+    NX_ASSERT(dst.tsz == src.tsz);
+
+    if (dst.len == 0) {
+        return;
+    }
+
+    const nx_usize bytes = dst.len * dst.tsz;
+    memmove(dst.data, src.data, bytes);
 }
 
 /* ========== subspan ========== */

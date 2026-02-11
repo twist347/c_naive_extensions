@@ -13,13 +13,30 @@ struct nx_vec {
     nx_usize tsz;
 };
 
+#define ASSERT_ADD_OK(a, b, m)          \
+    do {                                \
+        NX_ASSERT((b) != 0);            \
+        NX_ASSERT((a) <= (m) - (b));    \
+    } while (0)
+
+#define ASSERT_MUL_OK(a, b, m)          \
+    do {                                \
+        NX_ASSERT((b) != 0);            \
+        NX_ASSERT((a) <= (m) / (b));    \
+    } while (0)
+
+#define ASSERT_INC_OK(a, m)    \
+    do {                       \
+        NX_ASSERT((a) < m);    \
+    } while (0)
+
 #if NX_DEBUG
 static void vec_assert_impl(const nx_vec *self) {
     NX_ASSERT(self != nx_null);
     NX_ASSERT(self->tsz > 0);
     NX_ASSERT(self->len <= self->cap);
     NX_ASSERT((self->cap == 0) == (self->data == nx_null));
-    NX_ASSERT(self->cap <= NX_USIZE_MAX / self->tsz);
+    ASSERT_MUL_OK(self->cap, self->tsz, NX_USIZE_MAX);
 }
 
 #define VEC_ASSERT(self)    \
@@ -32,7 +49,7 @@ static void vec_assert_impl(const nx_vec *self) {
 
 static nx_status new_impl(nx_vec **out, nx_usize len, nx_usize cap, nx_usize tsz);
 
-static nx_status grow_if_needed(nx_vec *self);
+static nx_status ensure_cap(nx_vec *self, nx_usize needed_cap);
 static nx_status alloc_and_copy_data(void **out, const nx_vec *src);
 
 static void set_fields(nx_vec *self, void *data, nx_usize len, nx_usize cap, nx_usize tsz);
@@ -76,6 +93,25 @@ nx_vec_res nx_vec_new_cap(nx_usize cap, nx_usize tsz) {
         .cap = cap,
         .tsz = tsz,
     });
+}
+
+nx_vec_res nx_vec_from_data(const void *data, nx_usize len, nx_usize tsz) {
+    NX_ASSERT(data || len == 0);
+
+    nx_vec_res res = nx_vec_new_len(len, tsz);
+    if (!NX_RES_IS_OK(res)) {
+        return res;
+    }
+
+    nx_vec *vec = NX_RES_UNWRAP(res);
+
+    if (len > 0) {
+        ASSERT_MUL_OK(len, tsz, NX_USIZE_MAX);
+        const nx_usize bytes = len * tsz;
+        memcpy(vec->data, data, bytes);
+    }
+
+    return NX_RES_NEW_OK(nx_vec_res, vec);
 }
 
 void nx_vec_drop(nx_vec *self) {
@@ -127,7 +163,6 @@ nx_vec *nx_vec_move(nx_vec **src) {
 }
 
 nx_status nx_vec_copy_assign(nx_vec *self, const nx_vec *src) {
-    // TODO: optimization
     VEC_ASSERT(self);
     VEC_ASSERT(src);
     NX_ASSERT(self->tsz == src->tsz);
@@ -136,9 +171,17 @@ nx_status nx_vec_copy_assign(nx_vec *self, const nx_vec *src) {
         return NX_STATUS_OK;
     }
 
-    if (src->cap == 0) {
-        free(self->data);
-        set_fields(self, nx_null, src->len, src->cap, self->tsz);
+    if (src->len == 0) {
+        self->len = 0;
+        return NX_STATUS_OK;
+    }
+
+    // Optimization: reuse existing buffer if it fits
+    if (self->cap >= src->len) {
+        ASSERT_MUL_OK(src->len, src->tsz, NX_USIZE_MAX);
+        const nx_usize bytes = src->len * src->tsz;
+        memcpy(self->data, src->data, bytes);
+        self->len = src->len;
         return NX_STATUS_OK;
     }
 
@@ -254,7 +297,8 @@ nx_status nx_vec_push(nx_vec *self, const void *val) {
     VEC_ASSERT(self);
     NX_ASSERT(val);
 
-    const nx_status st = grow_if_needed(self);
+    ASSERT_INC_OK(self->len, NX_USIZE_MAX);
+    const nx_status st = ensure_cap(self, self->len + 1);
     if (st != NX_STATUS_OK) {
         return st;
     }
@@ -286,7 +330,7 @@ nx_status nx_vec_reserve(nx_vec *self, nx_usize new_cap) {
         return NX_STATUS_OK;
     }
 
-    NX_ASSERT(new_cap <= NX_USIZE_MAX / self->tsz);
+    ASSERT_MUL_OK(new_cap, self->tsz, NX_USIZE_MAX);
     const nx_usize bytes = new_cap * self->tsz;
 
     void *data = realloc(self->data, bytes);
@@ -316,6 +360,7 @@ nx_status nx_vec_resize(nx_vec *self, nx_usize new_len) {
     }
 
     /* zero-init new tail */
+    ASSERT_MUL_OK(new_len - self->len, self->tsz, NX_USIZE_MAX);
     const nx_usize add_bytes = (new_len - self->len) * self->tsz;
     memset(nx_byte_offset(self->data, self->tsz, self->len), 0, add_bytes);
     self->len = new_len;
@@ -336,7 +381,7 @@ nx_status nx_vec_shrink_to_fit(nx_vec *self) {
         return NX_STATUS_OK;
     }
 
-    NX_ASSERT(self->len <= NX_USIZE_MAX / self->tsz);
+    ASSERT_MUL_OK(self->len, self->tsz, NX_USIZE_MAX);
     const nx_usize bytes = self->len * self->tsz;
 
     void *data = realloc(self->data, bytes);
@@ -371,7 +416,7 @@ nx_status nx_vec_insert(nx_vec *self, nx_usize idx, const void *val) {
 
     const nx_usize old_len = self->len;
 
-    const nx_status st = grow_if_needed(self);
+    const nx_status st = ensure_cap(self, self->len + 1);
     if (st != NX_STATUS_OK) {
         return st;
     }
@@ -380,6 +425,7 @@ nx_status nx_vec_insert(nx_vec *self, nx_usize idx, const void *val) {
         shift_right(self, idx);
     }
 
+    ASSERT_INC_OK(self->len, NX_USIZE_MAX);
     ++self->len;
     nx_vec_set(self, idx, val);
 
@@ -426,7 +472,7 @@ static nx_status new_impl(nx_vec **out, nx_usize len, nx_usize cap, nx_usize tsz
         return NX_STATUS_OK;
     }
 
-    NX_ASSERT(cap <= NX_USIZE_MAX / tsz);
+    ASSERT_MUL_OK(cap, tsz, NX_USIZE_MAX);
     const nx_usize cap_bytes = cap * tsz;
 
     void *data = malloc(cap_bytes);
@@ -435,7 +481,7 @@ static nx_status new_impl(nx_vec **out, nx_usize len, nx_usize cap, nx_usize tsz
         return NX_STATUS_OUT_OF_MEMORY;
     }
 
-    NX_ASSERT(len <= NX_USIZE_MAX / tsz);
+    ASSERT_MUL_OK(len, tsz, NX_USIZE_MAX);
     const nx_usize len_bytes = len * tsz;
     memset(data, 0, len_bytes);
 
@@ -444,19 +490,25 @@ static nx_status new_impl(nx_vec **out, nx_usize len, nx_usize cap, nx_usize tsz
     return NX_STATUS_OK;
 }
 
-static nx_status grow_if_needed(nx_vec *self) {
+static nx_status ensure_cap(nx_vec *self, nx_usize needed_cap) {
     VEC_ASSERT(self);
 
-    if (self->len < self->cap) {
+    if (needed_cap <= self->cap) {
         return NX_STATUS_OK;
     }
 
-    nx_usize new_cap;
-    if (self->cap == 0) {
-        new_cap = 1;
-    } else {
-        NX_ASSERT(self->cap <= NX_USIZE_MAX / (nx_usize) 2);
-        new_cap = self->cap * (nx_usize) 2;
+    ASSERT_MUL_OK(needed_cap, self->tsz, NX_USIZE_MAX);
+
+    nx_usize new_cap = self->cap == 0 ? 1 : self->cap;
+
+    while (new_cap < needed_cap) {
+        // Check if we can double
+        if (new_cap > NX_USIZE_MAX / 2) {
+            // Can't double - use exact needed_cap
+            new_cap = needed_cap;
+            break;
+        }
+        new_cap *= 2;
     }
 
     return nx_vec_reserve(self, new_cap);
@@ -470,7 +522,7 @@ static nx_status alloc_and_copy_data(void **out, const nx_vec *src) {
         return NX_STATUS_OK;
     }
 
-    NX_ASSERT(src->cap <= NX_USIZE_MAX / src->tsz);
+    ASSERT_MUL_OK(src->cap, src->tsz, NX_USIZE_MAX);
     const nx_usize cap_bytes = src->cap * src->tsz;
 
     void *data = malloc(cap_bytes);
@@ -478,9 +530,9 @@ static nx_status alloc_and_copy_data(void **out, const nx_vec *src) {
         return NX_STATUS_OUT_OF_MEMORY;
     }
 
-    NX_ASSERT(src->len <= NX_USIZE_MAX / src->tsz);
-    const nx_usize len_bytes = src->len * src->tsz;
-    if (len_bytes > 0) {
+    if (src->len > 0) {
+        ASSERT_MUL_OK(src->len, src->tsz, NX_USIZE_MAX);
+        const nx_usize len_bytes = src->len * src->tsz;
         memcpy(data, src->data, len_bytes);
     }
 
