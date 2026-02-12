@@ -48,6 +48,24 @@ typedef double           nx_f64;
 
 #define nx_null    NULL
 
+// =============================================================================
+// Literal macros
+// =============================================================================
+
+
+#define NX_I8_C(x)      INT8_C(x)
+#define NX_I16_C(x)     INT16_C(x)
+#define NX_I32_C(x)     INT32_C(x)
+#define NX_I64_C(x)     INT64_C(x)
+
+#define NX_U8_C(x)      UINT8_C(x)
+#define NX_U16_C(x)     UINT16_C(x)
+#define NX_U32_C(x)     UINT32_C(x)
+#define NX_U64_C(x)     UINT64_C(x)
+
+#define NX_F32_C(x)     x##f
+#define NX_F64_C(x)     x
+
 #ifdef __cplusplus
 }
 #endif

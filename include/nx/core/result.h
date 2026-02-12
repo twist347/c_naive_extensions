@@ -34,9 +34,8 @@
 
 /* ========== value extraction ========== */
 
-// TODO: panic instead of assert
 #define NX_RES_UNWRAP(res)    \
-    (NX_ASSERT((res).st == NX_STATUS_OK), (res).val)
+    (NX_VERIFY((res).st == NX_STATUS_OK), (res).val)
 
 #define NX_RES_UNWRAP_UNCHECKED(res)    \
     ((res).val)

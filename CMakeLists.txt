@@ -7,6 +7,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(NX_CORE_SOURCES
+        src/core/assert.c
         src/core/cmp.c
         src/core/print.c
         src/core/span.c
@@ -20,7 +21,9 @@ set(NX_DS_SOURCES
 )
 
 set(NX_ALGO_SOURCES
-        src/algo/algo.c
+        src/algo/algo_span.c
+        src/algo/algo_bit.c
+        src/algo/algo_numeric.c
 )
 
 set(NX_STR_SOURCES

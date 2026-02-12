@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-#include "nx/algo/algo.h"
+#include "nx/algo/algo_span.h"
 #include "nx/core/print.h"
 #include "nx/core/type.h"
 

@@ -1,4 +1,4 @@
-#include "nx/algo/algo.h"
+#include "nx/algo/algo_span.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -177,7 +177,36 @@ nx_isize nx_max_element(nx_cspan s, nx_cmp cmp) {
 }
 
 nx_minmax nx_minmax_element(nx_cspan s, nx_cmp cmp) {
-    NX_UNIMPLEMENTED();
+    NX_SPAN_ANY_ASSERT(s);
+    NX_ASSERT(cmp);
+
+    if (s.len == 0) {
+        return (nx_minmax){.min = -1, .max = -1};
+    }
+
+    nx_usize min_idx = 0;
+    nx_usize max_idx = 0;
+    const void *min_p = nx_cspan_get_c(s, 0);
+    const void *max_p = nx_cspan_get_c(s, 0);
+
+    for (nx_usize i = 1; i < s.len; ++i) {
+        const void *cur = nx_cspan_get_c(s, i);
+
+        if (cmp(cur, min_p) < 0) {
+            min_idx = i;
+            min_p = cur;
+        }
+
+        if (cmp(cur, max_p) > 0) {
+            max_idx = i;
+            max_p = cur;
+        }
+    }
+
+    return (nx_minmax){
+        .min = (nx_isize) min_idx,
+        .max = (nx_isize) max_idx
+    };
 }
 
 /* ========== comparison ========== */
@@ -215,7 +244,7 @@ void nx_fill(nx_span s, const void *elem) {
     }
 
     if (s.tsz == 1) {
-        memset(s.data, *(const unsigned char *) elem, s.len);
+        memset(s.data, *(const nx_byte *) elem, s.len);
         return;
     }
 
@@ -225,9 +254,42 @@ void nx_fill(nx_span s, const void *elem) {
 }
 
 void nx_reverse(nx_span s) {
-    NX_UNIMPLEMENTED();
+    NX_SPAN_ANY_ASSERT(s);
+
+    if (s.len < 2) {
+        return;
+    }
+
+    nx_usize left = 0;
+    nx_usize right = s.len - 1;
+
+    while (left < right) {
+        nx_swap_elements(s, left, right);
+        ++left;
+        --right;
+    }
 }
 
 void nx_swap_elements(nx_span s, nx_usize i, nx_usize j) {
     NX_UNIMPLEMENTED();
+}
+
+void nx_rotate(nx_span s, nx_usize mid) {
+    NX_SPAN_ANY_ASSERT(s);
+    NX_ASSERT(mid <= s.len);
+
+    if (mid == 0 || mid == s.len) {
+        return;
+    }
+
+    // Reverse [0, mid)
+    const nx_span left = nx_span_sub(s, 0, mid);
+    nx_reverse(left);
+
+    // Reverse [mid, len)
+    const nx_span right = nx_span_sub(s, mid, s.len - mid);
+    nx_reverse(right);
+
+    // Reverse entire range
+    nx_reverse(s);
 }
