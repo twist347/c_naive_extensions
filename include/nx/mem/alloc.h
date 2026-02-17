@@ -1,33 +1,33 @@
 #pragma once
 
-// TODO: unused
-
 #include "nx/core/type.h"
 
-typedef struct nx_allocator {
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// allocator interface
+
+typedef struct {
     void *ctx;
+    void *(*alloc)(void *ctx, nx_usize size);
+    void *(*calloc)(void *ctx, nx_usize num, nx_usize size);
+    void *(*realloc)(void *ctx, void *ptr, nx_usize old_size, nx_usize new_size);
+    void (*dealloc)(void *ctx, void *ptr, nx_usize size);
+} nx_al;
 
-    void * (*alloc)(void *ctx, nx_usize size);
+// wrappers
 
-    void * (*realloc)(void *ctx, void *ptr, nx_usize size);
+void *nx_al_alloc(nx_al a, nx_usize size);
+void *nx_al_calloc(nx_al a, nx_usize num, nx_usize size);
+void *nx_al_realloc(nx_al a, void *ptr, nx_usize old_size, nx_usize new_size);
+void nx_al_dealloc(nx_al a, void *ptr, nx_usize size);
 
-    void * (*calloc)(void *ctx, size_t nmemb, nx_usize size);
+// relation
 
-    void (*free)(void *ctx, void *ptr);
-} nx_allocator;
+nx_bool nx_al_eq(nx_al a, nx_al b);
+nx_bool nx_al_neq(nx_al a, nx_al b);
 
-static inline void *nx_alloc(nx_allocator a, size_t n) {
-    return a.alloc ? a.alloc(a.ctx, n) : NULL;
+#ifdef __cplusplus
 }
-
-static inline void *nx_calloc(nx_allocator a, nx_usize nmemb, nx_usize size) {
-    return a.calloc ? a.calloc(a.ctx, nmemb, size) : NULL;
-}
-
-static inline void *nx_realloc(nx_allocator a, void *p, nx_usize n) {
-    return a.realloc ? a.realloc(a.ctx, p, n) : NULL;
-}
-
-static inline void nx_free(nx_allocator a, void *p) {
-    if (a.free) a.free(a.ctx, p);
-}
+#endif

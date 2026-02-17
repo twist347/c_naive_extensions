@@ -6,7 +6,7 @@
 #include "nx/core/panic.h"
 
 #define NX_DEF_RES_TYPE(name, T)    \
-    typedef struct name {           \
+    typedef struct {                \
         nx_status st;               \
         T val;                      \
     } name

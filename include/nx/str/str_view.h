@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-typedef struct nx_str_view {
+typedef struct {
     const nx_char *data;
     nx_usize len;
 } nx_str_view;

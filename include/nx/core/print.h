@@ -32,6 +32,8 @@ extern "C" {
 #define NX_FMT_F32        "%g"
 #define NX_FMT_F64        "%g"
 
+#define NX_FMT_PTR        "%p"
+
 #define NX_FMT_BOOL       "%s"
 #define NX_BOOL_STR(b)    ((b) ? "true" : "false")
 

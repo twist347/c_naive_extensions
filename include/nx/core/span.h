@@ -8,13 +8,13 @@
 extern "C" {
 #endif
 
-typedef struct nx_span {
+typedef struct {
     void *data;
     nx_usize len;
     nx_usize tsz;
 } nx_span;
 
-typedef struct nx_cspan {
+typedef struct {
     const void *data;
     nx_usize len;
     nx_usize tsz;

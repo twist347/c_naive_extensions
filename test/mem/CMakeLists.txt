@@ -1,0 +1,2 @@
+nx_add_criterion_test(test_nx_alloc_libc test_alloc_libc.c)
+nx_add_criterion_test(test_nx_alloc_log test_alloc_log.c)
