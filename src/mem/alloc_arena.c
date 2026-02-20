@@ -2,12 +2,13 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <stddef.h>
 
 #include "nx/core/type.h"
 #include "nx/core/util.h"
 #include "nx/mem/alloc.h"
 
-constexpr nx_usize DEFAULT_ALIGNMENT = 8;
+constexpr nx_usize DEFAULT_ALIGNMENT = alignof(max_align_t);
 
 static nx_usize align_up(nx_usize size, nx_usize alignment);
 
@@ -52,10 +53,25 @@ nx_al *nx_al_arena_new(nx_usize cap) {
     al->ctx = ctx;
     al->alloc = arena_alloc;
     al->calloc = arena_calloc;
-    al->realloc = nx_null; // fallback
+    al->realloc = nx_null; // fallback in nx_al
     al->dealloc = arena_dealloc;
 
     return al;
+}
+
+void nx_al_arena_drop(nx_al *al) {
+    if (!al) {
+        return;
+    }
+
+    nx_al_arena_ctx *ctx = al->ctx;
+    if (ctx) {
+        if (ctx->data) {
+            free(ctx->data);
+        }
+        free(ctx);
+    }
+    free(al);
 }
 
 void nx_al_arena_reset(nx_al *al) {
@@ -98,7 +114,7 @@ static void *arena_alloc(void *ctx, nx_usize size) {
         return nx_null;
     }
 
-    void *ptr = (nx_char *) arena->data + arena->offset;
+    void *ptr = (nx_byte *) arena->data + arena->offset;
     arena->offset += aligned_size;
 
     return ptr;

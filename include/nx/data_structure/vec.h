@@ -92,16 +92,16 @@ nx_cspan nx_vec_to_cspan(const nx_vec *self);
 
 /* ========== macros ========== */
 
-#define NX_VEC_NEW(T)    \
+#define NX_VEC_NEW(T) \
     nx_vec_new(sizeof(T))
 
-#define NX_VEC_NEW_LEN(T, len)    \
+#define NX_VEC_NEW_LEN(T, len) \
     nx_vec_new_len((len), sizeof(T))
 
-#define NX_VEC_NEW_CAP(T, cap)    \
+#define NX_VEC_NEW_CAP(T, cap) \
     nx_vec_new_cap((cap), sizeof(T))
 
-#define NX_VEC_FROM_DATA(T, data, len)    \
+#define NX_VEC_FROM_DATA(T, data, len) \
     nx_vec_from_data((data), (len), sizeof(T))
 
 #define NX_VEC_GET_AS(T, self, idx)                 \

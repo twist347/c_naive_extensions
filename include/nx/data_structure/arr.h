@@ -5,6 +5,7 @@
 #include "nx/core/status.h"
 #include "nx/core/span.h"
 #include "nx/core/result.h"
+#include "nx/mem/alloc.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,6 +24,12 @@ extern "C" {
  *   - st != NX_STATUS_OK => val must not be used.
  *
  * - zero-length <-> null data
+ *
+ * - Allocator:
+ *   - Each array holds a pointer to an allocator (NOT owned)
+ *   - Allocator must outlive all arrays using it
+ *   - Simple API uses default allocator (nx_al_default())
+ *   - For custom allocator, use nx_arr_new_p with params
  */
 
 typedef struct nx_arr nx_arr;
@@ -34,6 +41,7 @@ NX_DEF_RES_TYPE(nx_arr_res, nx_arr *);
 typedef struct nx_arr_params {
     nx_usize len;
     nx_usize tsz; // type size
+    nx_al *al;    // must not be null
 } nx_arr_params;
 
 /* ========== lifetime ========== */
@@ -46,6 +54,7 @@ void nx_arr_drop(nx_arr *self);
 /* ========== copy/move semantic ========== */
 
 nx_arr_res nx_arr_copy(const nx_arr *src);
+nx_arr_res nx_arr_copy_a(const nx_arr *src, nx_al *al);
 nx_arr *nx_arr_move(nx_arr **src);
 nx_status nx_arr_copy_assign(nx_arr *self, const nx_arr *src);
 void nx_arr_move_assign(nx_arr *self, nx_arr *src);
@@ -55,6 +64,7 @@ void nx_arr_move_assign(nx_arr *self, nx_arr *src);
 nx_usize nx_arr_len(const nx_arr *self);
 nx_bool nx_arr_empty(const nx_arr *self);
 nx_usize nx_arr_tsz(const nx_arr *self);
+nx_al *nx_arr_al(const nx_arr *self);
 
 /* ========== access ========== */
 
@@ -80,10 +90,10 @@ nx_cspan nx_arr_to_cspan(const nx_arr *self);
 
 /* ========== macros ========== */
 
-#define NX_ARR_NEW_LEN(T, len)    \
+#define NX_ARR_NEW_LEN(T, len) \
     nx_arr_new_len((len), sizeof(T))
 
-#define NX_ARR_FROM_DATA(T, data, len)    \
+#define NX_ARR_FROM_DATA(T, data, len) \
     nx_arr_from_data((data), (len), sizeof(T))
 
 #define NX_ARR_GET_AS(T, self, idx)                 \

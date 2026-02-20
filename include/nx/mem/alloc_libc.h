@@ -14,6 +14,7 @@ extern "C" {
  */
 
 nx_al *nx_al_libc_new(void);
+void nx_al_libc_drop(nx_al *al);
 
 /**
  * Get global static libc allocator

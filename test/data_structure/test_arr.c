@@ -4,6 +4,8 @@
 #include "nx/core/status.h"
 #include "nx/core/util.h"
 #include "nx/data_structure/arr.h"
+#include "nx/mem/alloc_arena.h"
+#include "nx/mem/alloc_libc.h"
 #include "nx/mem/ptr.h"
 
 void setUp(void) {
@@ -12,8 +14,8 @@ void setUp(void) {
 void tearDown(void) {
 }
 
-static nx_arr *arr_new_or_die(nx_usize len, nx_usize elem_size) {
-    nx_arr_res res = nx_arr_new_len(len, elem_size);
+static nx_arr *arr_new_or_die(nx_usize len, nx_usize tsz) {
+    nx_arr_res res = nx_arr_new_len(len, tsz);
     if (!NX_RES_IS_OK(res)) {
         NX_PANIC_MSG(nx_status_to_str(NX_RES_ERR(res)));
     }
@@ -23,7 +25,15 @@ static nx_arr *arr_new_or_die(nx_usize len, nx_usize elem_size) {
 /* ========== lifetime ========== */
 
 static void test_nx_arr_new_p(void) {
-    nx_arr_res res = nx_arr_new_p((nx_arr_params){.len = 5, .tsz = sizeof(nx_i32)});
+    nx_al *arena = nx_al_arena_new(1024);
+
+    nx_arr_res res = nx_arr_new_p(
+        (nx_arr_params){
+            .len = 5,
+            .tsz = sizeof(nx_i32),
+            .al = arena
+        }
+    );
 
     TEST_ASSERT_TRUE(NX_RES_IS_OK(res));
 
@@ -39,6 +49,7 @@ static void test_nx_arr_new_p(void) {
     }
 
     nx_arr_drop(arr);
+    nx_al_arena_drop(arena);
 }
 
 static void test_nx_arr_new_len(void) {

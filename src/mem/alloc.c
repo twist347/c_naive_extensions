@@ -3,16 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* ========== lifecycle ========== */
-
-void nx_al_free(nx_al *al) {
-    if (!al) {
-        return;
-    }
-    free(al->ctx);
-    free(al);
-}
-
 /* ========== wrappers ========== */
 
 void *nx_al_alloc(nx_al *al, nx_usize size) {
@@ -25,6 +15,7 @@ void *nx_al_alloc(nx_al *al, nx_usize size) {
 void *nx_al_calloc(nx_al *al, nx_usize num, nx_usize size) {
     NX_ASSERT(al);
 
+    // fallback
     if (!al->calloc) {
         // TODO: overflow check
         const nx_usize total = num * size;

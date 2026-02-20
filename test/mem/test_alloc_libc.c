@@ -12,7 +12,7 @@ static void test_nx_al_libc_alloc(void) {
     nx_al *al = nx_al_libc_new();
 
     const nx_usize len = 10;
-    nx_i32 *arr = nx_al_alloc(al, len * sizeof(nx_i32));
+    nx_i32 *arr = NX_AL_ALLOC(nx_i32, al, len);
     TEST_ASSERT_TRUE(arr != nx_null);
 
     for (nx_usize i = 0; i < len; ++i) {
@@ -20,18 +20,18 @@ static void test_nx_al_libc_alloc(void) {
     }
 
     for (nx_usize i = 0; i < len; ++i) {
-        TEST_ASSERT_EQUAL_INT32(arr[i], (nx_i32)(i * i));
+        TEST_ASSERT_EQUAL_INT32(arr[i], (nx_i32) (i * i));
     }
 
-    nx_al_dealloc(al, arr, len * sizeof(nx_i32));
-    nx_al_free(al);
+    NX_AL_DEALLOC(nx_i32, al, arr, len);
+    nx_al_libc_drop(al);
 }
 
 static void test_nx_al_libc_calloc(void) {
     nx_al *al = nx_al_libc_new();
 
     const nx_usize len = 10;
-    nx_i32 *arr = nx_al_calloc(al, len, sizeof(nx_i32));
+    nx_i32 *arr = NX_AL_CALLOC(nx_i32, al, len);
     TEST_ASSERT_TRUE(arr != nx_null);
 
     for (nx_usize i = 0; i < len; ++i) {
@@ -43,18 +43,18 @@ static void test_nx_al_libc_calloc(void) {
     }
 
     for (nx_usize i = 0; i < len; ++i) {
-        TEST_ASSERT_EQUAL_INT32(arr[i], (nx_i32)(i * i));
+        TEST_ASSERT_EQUAL_INT32(arr[i], (nx_i32) (i * i));
     }
 
-    nx_al_dealloc(al, arr, len * sizeof(nx_i32));
-    nx_al_free(al);
+    NX_AL_DEALLOC(nx_i32, al, arr, len);
+    nx_al_libc_drop(al);
 }
 
 static void test_nx_al_libc_realloc(void) {
     nx_al *al = nx_al_libc_new();
 
     const nx_usize len = 10;
-    nx_i32 *arr = nx_al_alloc(al, len * sizeof(nx_i32));
+    nx_i32 *arr = NX_AL_ALLOC(nx_i32, al, len);
     TEST_ASSERT_TRUE(arr != nx_null);
 
     for (nx_usize i = 0; i < len; ++i) {
@@ -62,12 +62,12 @@ static void test_nx_al_libc_realloc(void) {
     }
 
     for (nx_usize i = 0; i < len; ++i) {
-        TEST_ASSERT_EQUAL_INT32(arr[i], (nx_i32)(i * i));
+        TEST_ASSERT_EQUAL_INT32(arr[i], (nx_i32) (i * i));
     }
 
     const nx_usize new_len = 20;
 
-    nx_i32 *tmp = nx_al_realloc(al, arr, len * sizeof(nx_i32), new_len * sizeof(nx_i32));
+    nx_i32 *tmp = NX_AL_REALLOC(nx_i32, al, arr, len, new_len);
     TEST_ASSERT_TRUE(tmp != nx_null);
 
     arr = tmp;
@@ -81,11 +81,11 @@ static void test_nx_al_libc_realloc(void) {
     }
 
     for (nx_usize i = len; i < new_len; ++i) {
-        TEST_ASSERT_EQUAL_INT32(arr[i], (nx_i32)(i * i * i));
+        TEST_ASSERT_EQUAL_INT32(arr[i], (nx_i32) (i * i * i));
     }
 
-    nx_al_dealloc(al, arr, new_len * sizeof(nx_i32));
-    nx_al_free(al);
+    NX_AL_DEALLOC(nx_i32, al, arr, new_len);
+    nx_al_libc_drop(al);
 }
 
 
@@ -93,7 +93,7 @@ static void test_nx_default_allocator(void) {
     nx_al *g_al = nx_al_libc_default_g();
 
     const nx_usize len = 10;
-    nx_i32 *arr = nx_al_alloc(g_al, len * sizeof(nx_i32));
+    nx_i32 *arr = NX_AL_ALLOC(nx_i32, g_al, len);
     TEST_ASSERT_TRUE(arr != nx_null);
 
     for (nx_usize i = 0; i < len; ++i) {
@@ -101,10 +101,10 @@ static void test_nx_default_allocator(void) {
     }
 
     for (nx_usize i = 0; i < len; ++i) {
-        TEST_ASSERT_EQUAL_INT32(arr[i], (nx_i32)(i * i));
+        TEST_ASSERT_EQUAL_INT32(arr[i], (nx_i32) (i * i));
     }
 
-    nx_al_dealloc(g_al, arr, len * sizeof(nx_i32));
+    NX_AL_DEALLOC(nx_i32, g_al, arr, len);
 }
 
 int main(void) {

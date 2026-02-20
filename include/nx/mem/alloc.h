@@ -22,10 +22,6 @@ typedef struct {
     void (*dealloc)(void *ctx, void *ptr, nx_usize size);
 } nx_al;
 
-/* ========== lifecycle ========== */
-
-void nx_al_free(nx_al *al);
-
 /* ========== wrappers ========== */
 
 void *nx_al_alloc(nx_al *al, nx_usize size);
@@ -37,6 +33,20 @@ void nx_al_dealloc(nx_al *al, void *ptr, nx_usize size);
 
 nx_bool nx_al_eq(const nx_al *a, const nx_al *b);
 nx_bool nx_al_neq(const nx_al *a, const nx_al *b);
+
+/* ========== macros ========== */
+
+#define NX_AL_ALLOC(T, al, count) \
+    ((T*) nx_al_alloc((al), (count) * sizeof(T)))
+
+#define NX_AL_CALLOC(T, al, count) \
+    ((T*) nx_al_calloc((al), (count), sizeof(T)))
+
+#define NX_AL_REALLOC(T, al, ptr, old_count, new_count) \
+    ((T*) nx_al_realloc((al), (ptr), (old_count) * sizeof(T), (new_count) * sizeof(T)))
+
+#define NX_AL_DEALLOC(T, al, ptr, count) \
+    nx_al_dealloc((al), (ptr), (count) * sizeof(T))
 
 #ifdef __cplusplus
 }

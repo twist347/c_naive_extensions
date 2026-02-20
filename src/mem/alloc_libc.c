@@ -24,6 +24,13 @@ nx_al *nx_al_libc_new(void) {
     return al;
 }
 
+void nx_al_libc_drop(nx_al *al) {
+    if (!al) {
+        return;
+    }
+    free(al);
+}
+
 nx_al *nx_al_libc_default_g(void) {
     static nx_al g_alloc = {
         .ctx = nx_null,

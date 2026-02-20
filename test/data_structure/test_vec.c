@@ -15,24 +15,24 @@ void setUp(void) {
 void tearDown(void) {
 }
 
-static nx_vec *vec_new_or_die(nx_usize elem_size) {
-    nx_vec_res res = nx_vec_new(elem_size);
+static nx_vec *vec_new_or_die(nx_usize tsz) {
+    nx_vec_res res = nx_vec_new(tsz);
     if (!NX_RES_IS_OK(res)) {
         NX_PANIC_MSG(nx_status_to_str(NX_RES_ERR(res)));
     }
     return NX_RES_UNWRAP(res);
 }
 
-static nx_vec *vec_new_len_or_die(nx_usize len, nx_usize elem_size) {
-    nx_vec_res res = nx_vec_new_len(len, elem_size);
+static nx_vec *vec_new_len_or_die(nx_usize len, nx_usize tsz) {
+    nx_vec_res res = nx_vec_new_len(len, tsz);
     if (!NX_RES_IS_OK(res)) {
         NX_PANIC_MSG(nx_status_to_str(NX_RES_ERR(res)));
     }
     return NX_RES_UNWRAP(res);
 }
 
-static nx_vec *vec_new_cap_or_die(nx_usize cap, nx_usize elem_size) {
-    nx_vec_res res = nx_vec_new_cap(cap, elem_size);
+static nx_vec *vec_new_cap_or_die(nx_usize cap, nx_usize tsz) {
+    nx_vec_res res = nx_vec_new_cap(cap, tsz);
     if (!NX_RES_IS_OK(res)) {
         NX_PANIC_MSG(nx_status_to_str(NX_RES_ERR(res)));
     }

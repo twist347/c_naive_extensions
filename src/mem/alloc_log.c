@@ -40,10 +40,21 @@ nx_al *nx_al_log_new(nx_al *wrapped, FILE *stream) {
     a->realloc = log_realloc;
     a->dealloc = log_dealloc;
 
-    fprintf(ctx->stream, "[NX] log allocator created (wrapping %p)\n", (void*)wrapped);
+    fprintf(ctx->stream, "[NX] log allocator created (wrapping %p)\n", (void *) wrapped);
     fflush(ctx->stream);
 
     return a;
+}
+
+void nx_al_log_drop(nx_al *al) {
+    if (!al) {
+        return;
+    }
+
+    if (al->ctx) {
+        free(al->ctx);
+    }
+    free(al);
 }
 
 static void *log_alloc(void *ctx, nx_usize size) {

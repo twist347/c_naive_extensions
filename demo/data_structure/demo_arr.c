@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static nx_arr *arr_new_or_die(nx_usize len, nx_usize elem_size);
+static nx_arr *arr_new_or_die(nx_usize len, nx_usize tsz);
 
 static void demo_lifetime(void);
 static void demo_copy_move(void);
@@ -29,8 +29,8 @@ int main(void) {
     return EXIT_SUCCESS;
 }
 
-static nx_arr *arr_new_or_die(nx_usize len, nx_usize elem_size) {
-    nx_arr_res res = nx_arr_new_len(len, elem_size);
+static nx_arr *arr_new_or_die(nx_usize len, nx_usize tsz) {
+    nx_arr_res res = nx_arr_new_len(len, tsz);
     if (!NX_RES_IS_OK(res)) {
         nx_status_fprintln(stderr, NX_RES_ERR(res));
         exit(EXIT_FAILURE);

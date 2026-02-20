@@ -4,12 +4,14 @@
 #include <string.h>
 
 #include "nx/core/limit.h"
+#include "nx/mem/alloc_libc.h"
 #include "nx/mem/ptr.h"
 
 struct nx_arr {
     void *data;
     nx_usize len;
     nx_usize tsz; // type size
+    nx_al *al;    // must not be null
 };
 
 #define ASSERT_MUL_OK(a, b, m)          \
@@ -22,6 +24,7 @@ struct nx_arr {
 static void arr_assert_impl(const nx_arr *self) {
     NX_ASSERT(self != nx_null);
     NX_ASSERT(self->tsz > 0);
+    NX_ASSERT(self->al != nx_null);
     NX_ASSERT(((self->len == 0) == (self->data == nx_null)));
     ASSERT_MUL_OK(self->len, self->tsz, NX_USIZE_MAX);
 }
@@ -34,19 +37,20 @@ static void arr_assert_impl(const nx_arr *self) {
 
 // internals decls
 
-static nx_status new_impl(nx_arr **out, nx_usize len, nx_usize tsz);
-
-static void set_fields(nx_arr *self, void *data, nx_usize len, nx_usize tsz);
-
-static nx_status alloc_and_copy_data(void **out, const nx_arr *src);
+static nx_status new_impl(nx_arr **out, nx_usize len, nx_usize tsz, nx_al *al);
+static void set_fields(nx_arr *self, void *data, nx_usize len, nx_usize tsz, nx_al *al);
+static inline nx_usize calc_bytes(nx_usize len, nx_usize tsz);
+static void free_data(nx_arr *self);
+static nx_status alloc_and_copy_data(void **out, nx_al *alloc, const void *src_data, nx_usize len, nx_usize tsz);
 
 /* ========== lifetime ========== */
 
 nx_arr_res nx_arr_new_p(nx_arr_params p) {
     NX_ASSERT(p.tsz != 0);
+    NX_ASSERT(p.al);
 
     nx_arr *arr = nx_null;
-    const nx_status st = new_impl(&arr, p.len, p.tsz);
+    const nx_status st = new_impl(&arr, p.len, p.tsz, p.al);
     if (st != NX_STATUS_OK) {
         return NX_RES_NEW_ERR(nx_arr_res, st);
     }
@@ -57,6 +61,7 @@ nx_arr_res nx_arr_new_len(nx_usize len, nx_usize tsz) {
     return nx_arr_new_p((nx_arr_params){
         .len = len,
         .tsz = tsz,
+        .al = nx_al_libc_default_g(),
     });
 }
 
@@ -70,8 +75,7 @@ nx_arr_res nx_arr_from_data(const void *data, nx_usize len, nx_usize tsz) {
 
     nx_arr *arr = NX_RES_UNWRAP(res);
     if (len > 0) {
-        ASSERT_MUL_OK(len, tsz, NX_USIZE_MAX);
-        const nx_usize bytes = len * tsz;
+        const nx_usize bytes = calc_bytes(len, tsz);
         memcpy(arr->data, data, bytes);
     }
 
@@ -83,7 +87,7 @@ void nx_arr_drop(nx_arr *self) {
         return;
     }
 
-    free(self->data);
+    free_data(self);
     free(self);
 }
 
@@ -92,25 +96,32 @@ void nx_arr_drop(nx_arr *self) {
 nx_arr_res nx_arr_copy(const nx_arr *src) {
     ARR_ASSERT(src);
 
+    return nx_arr_copy_a(src, src->al);
+}
+
+nx_arr_res nx_arr_copy_a(const nx_arr *src, nx_al *al) {
+    ARR_ASSERT(src);
+    NX_ASSERT(al);
+
     nx_arr *dst = malloc(sizeof(nx_arr));
     if (!dst) {
         return NX_RES_NEW_ERR(nx_arr_res, NX_STATUS_OUT_OF_MEMORY);
     }
 
-    set_fields(dst, nx_null, 0, src->tsz);
+    set_fields(dst, nx_null, 0, src->tsz, al);
 
     if (src->len == 0) {
         return NX_RES_NEW_OK(nx_arr_res, dst);
     }
 
     void *data = nx_null;
-    const nx_status st = alloc_and_copy_data(&data, src);
+    const nx_status st = alloc_and_copy_data(&data, al, src->data, src->len, src->tsz);
     if (st != NX_STATUS_OK) {
         free(dst);
         return NX_RES_NEW_ERR(nx_arr_res, st);
     }
 
-    set_fields(dst, data, src->len, src->tsz);
+    set_fields(dst, data, src->len, src->tsz, al);
     return NX_RES_NEW_OK(nx_arr_res, dst);
 }
 
@@ -135,27 +146,28 @@ nx_status nx_arr_copy_assign(nx_arr *self, const nx_arr *src) {
     }
 
     if (src->len == 0) {
-        free(self->data);
-        set_fields(self, nx_null, 0, src->tsz);
+        free_data(self);
+        set_fields(self, nx_null, 0, src->tsz, self->al);
         return NX_STATUS_OK;
     }
 
     // optimization
     if (self->len == src->len) {
-        ASSERT_MUL_OK(src->len, src->tsz, NX_USIZE_MAX);
-        const nx_usize bytes = src->len * src->tsz;
+        const nx_usize bytes = calc_bytes(src->len, src->tsz);
         memcpy(self->data, src->data, bytes);
         return NX_STATUS_OK;
     }
 
     void *data = nx_null;
-    const nx_status st = alloc_and_copy_data(&data, src);
+    const nx_status st = alloc_and_copy_data(&data, self->al, src->data, src->len, src->tsz);
     if (st != NX_STATUS_OK) {
         return st;
     }
 
-    free(self->data);
-    set_fields(self, data, src->len, self->tsz);
+    // free old data
+    free_data(self);
+
+    set_fields(self, data, src->len, self->tsz, self->al);
     return NX_STATUS_OK;
 }
 
@@ -169,11 +181,15 @@ void nx_arr_move_assign(nx_arr *self, nx_arr *src) {
         return;
     }
 
-    free(self->data);
+    // free self's old data
+    free_data(self);
 
+    // take src's data
     self->data = src->data;
     self->len = src->len;
+    // NOTE: self keeps its own allocator!
 
+    // clear src
     src->data = nx_null;
     src->len = 0;
 }
@@ -196,6 +212,12 @@ nx_usize nx_arr_tsz(const nx_arr *self) {
     ARR_ASSERT(self);
 
     return self->tsz;
+}
+
+nx_al *nx_arr_al(const nx_arr *self) {
+    ARR_ASSERT(self);
+
+    return self->al;
 }
 
 /* ========== access ========== */
@@ -257,10 +279,15 @@ void nx_arr_swap(nx_arr *a, nx_arr *b) {
         return;
     }
 
-    // TODO: use nx_swap
-    const nx_arr tmp = *a;
-    *a = *b;
-    *b = tmp;
+    // swap data and len, but NOT allocators
+    void *tmp_data = a->data;
+    const nx_usize tmp_len = a->len;
+
+    a->data = b->data;
+    a->len = b->len;
+
+    b->data = tmp_data;
+    b->len = tmp_len;
 }
 
 /* ========== to span ========== */
@@ -279,7 +306,10 @@ nx_cspan nx_arr_to_cspan(const nx_arr *self) {
 
 // internals defs
 
-static nx_status new_impl(nx_arr **out, nx_usize len, nx_usize tsz) {
+static nx_status new_impl(nx_arr **out, nx_usize len, nx_usize tsz, nx_al *al) {
+    NX_ASSERT(out);
+    NX_ASSERT(al);
+
     *out = nx_null;
 
     nx_arr *arr = malloc(sizeof(nx_arr));
@@ -287,48 +317,64 @@ static nx_status new_impl(nx_arr **out, nx_usize len, nx_usize tsz) {
         return NX_STATUS_OUT_OF_MEMORY;
     }
 
-    set_fields(arr, nx_null, 0, tsz);
+    set_fields(arr, nx_null, 0, tsz, al);
 
     if (len == 0) {
         *out = arr;
         return NX_STATUS_OK;
     }
 
-    ASSERT_MUL_OK(len, tsz, NX_USIZE_MAX);
-    const nx_usize bytes = len * tsz;
+    const nx_usize bytes = calc_bytes(len, tsz);
 
-    void *data = calloc(1, bytes);
+    void *data = nx_al_calloc(al, 1, bytes);
     if (!data) {
         free(arr);
         return NX_STATUS_OUT_OF_MEMORY;
     }
 
-    set_fields(arr, data, len, tsz);
+    set_fields(arr, data, len, tsz, al);
     *out = arr;
 
     return NX_STATUS_OK;
 }
 
-static void set_fields(nx_arr *self, void *data, nx_usize len, nx_usize tsz) {
+static void set_fields(nx_arr *self, void *data, nx_usize len, nx_usize tsz, nx_al *al) {
     self->data = data;
     self->len = len;
     self->tsz = tsz;
+    self->al = al;
 }
 
-static nx_status alloc_and_copy_data(void **out, const nx_arr *src) {
+static inline nx_usize calc_bytes(nx_usize len, nx_usize tsz) {
+    ASSERT_MUL_OK(len, tsz, NX_USIZE_MAX);
+    return len * tsz;
+}
+
+static void free_data(nx_arr *self) {
+    if (self->data) {
+        const nx_usize bytes = calc_bytes(self->len, self->tsz);
+        nx_al_dealloc(self->al, self->data, bytes);
+        self->data = nx_null;
+        self->len = 0;
+    }
+}
+
+static nx_status alloc_and_copy_data(void **out, nx_al *alloc, const void *src_data, nx_usize len, nx_usize tsz) {
     NX_ASSERT(out);
+    NX_ASSERT(alloc);
+    NX_ASSERT(src_data);
 
     *out = nx_null;
 
-    ASSERT_MUL_OK(src->len, src->tsz, NX_USIZE_MAX);
-    const nx_usize bytes = src->len * src->tsz;
+    const nx_usize bytes = calc_bytes(len, tsz);
 
-    void *data = malloc(bytes);
+    void *data = nx_al_alloc(alloc, bytes);
     if (!data) {
         return NX_STATUS_OUT_OF_MEMORY;
     }
 
-    memcpy(data, src->data, bytes);
+    memcpy(data, src_data, bytes);
     *out = data;
     return NX_STATUS_OK;
 }
+

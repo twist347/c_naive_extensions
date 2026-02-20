@@ -13,7 +13,7 @@ static void test_nx_al_arena_alloc(void) {
     TEST_ASSERT_TRUE(al != nx_null);
 
     const nx_usize len = 10;
-    nx_i32 *arr = nx_al_alloc(al, len * sizeof(nx_i32));
+    nx_i32 *arr = NX_AL_ALLOC(nx_i32, al, len);
     TEST_ASSERT_TRUE(arr != nx_null);
 
     for (nx_usize i = 0; i < len; ++i) {
@@ -21,11 +21,11 @@ static void test_nx_al_arena_alloc(void) {
     }
 
     for (nx_usize i = 0; i < len; ++i) {
-        TEST_ASSERT_EQUAL_INT32(arr[i], (nx_i32)(i * i));
+        TEST_ASSERT_EQUAL_INT32(arr[i], (nx_i32) (i * i));
     }
 
-    nx_al_dealloc(al, arr, len * sizeof(nx_i32));
-    nx_al_free(al);
+    NX_AL_DEALLOC(nx_i32, al, arr, len);
+    nx_al_arena_drop(al);
 }
 
 static void test_nx_al_arena_calloc(void) {
@@ -33,7 +33,7 @@ static void test_nx_al_arena_calloc(void) {
     TEST_ASSERT_TRUE(al != nx_null);
 
     const nx_usize len = 10;
-    nx_i32 *arr = nx_al_calloc(al, len, sizeof(nx_i32));
+    nx_i32 *arr = NX_AL_CALLOC(nx_i32, al, len);
     TEST_ASSERT_TRUE(arr != nx_null);
 
     for (nx_usize i = 0; i < len; ++i) {
@@ -45,11 +45,11 @@ static void test_nx_al_arena_calloc(void) {
     }
 
     for (nx_usize i = 0; i < len; ++i) {
-        TEST_ASSERT_EQUAL_INT32(arr[i], (nx_i32)(i * i));
+        TEST_ASSERT_EQUAL_INT32(arr[i], (nx_i32) (i * i));
     }
 
-    nx_al_dealloc(al, arr, len * sizeof(nx_i32));
-    nx_al_free(al);
+    NX_AL_DEALLOC(nx_i32, al, arr, len);
+    nx_al_arena_drop(al);
 }
 
 static void test_nx_al_arena_realloc(void) {
@@ -57,7 +57,7 @@ static void test_nx_al_arena_realloc(void) {
     TEST_ASSERT_TRUE(al != nx_null);
 
     const nx_usize len = 10;
-    nx_i32 *arr = nx_al_alloc(al, len * sizeof(nx_i32));
+    nx_i32 *arr = NX_AL_ALLOC(nx_i32, al, len);
     TEST_ASSERT_TRUE(arr != nx_null);
 
     for (nx_usize i = 0; i < len; ++i) {
@@ -65,13 +65,13 @@ static void test_nx_al_arena_realloc(void) {
     }
 
     const nx_usize new_len = 20;
-    nx_i32 *tmp = nx_al_realloc(al, arr, len * sizeof(nx_i32), new_len * sizeof(nx_i32));
+    nx_i32 *tmp = NX_AL_REALLOC(nx_i32, al, arr, len, new_len);
     TEST_ASSERT_TRUE(tmp != nx_null);
 
     arr = tmp;
 
     for (nx_usize i = 0; i < len; ++i) {
-        TEST_ASSERT_EQUAL_INT32(arr[i], (nx_i32)(i * i));
+        TEST_ASSERT_EQUAL_INT32(arr[i], (nx_i32) (i * i));
     }
 
     for (nx_usize i = len; i < new_len; ++i) {
@@ -79,18 +79,18 @@ static void test_nx_al_arena_realloc(void) {
     }
 
     for (nx_usize i = len; i < new_len; ++i) {
-        TEST_ASSERT_EQUAL_INT32(arr[i], (nx_i32)(i * i * i));
+        TEST_ASSERT_EQUAL_INT32(arr[i], (nx_i32) (i * i * i));
     }
 
-    nx_al_dealloc(al, arr, new_len * sizeof(nx_i32));
-    nx_al_free(al);
+    NX_AL_DEALLOC(nx_i32, al, arr, new_len);
+    nx_al_arena_drop(al);
 }
 
 static void test_nx_al_arena_reset(void) {
     nx_al *al = nx_al_arena_new(1024);
     TEST_ASSERT_TRUE(al != nx_null);
 
-    nx_i32 *arr1 = nx_al_alloc(al, 100 * sizeof(nx_i32));
+    nx_i32 *arr1 = NX_AL_ALLOC(nx_i32, al, 100);
     TEST_ASSERT_TRUE(arr1 != nx_null);
 
     nx_al_arena_stats stats = nx_al_arena_get_stats(al);
@@ -103,12 +103,12 @@ static void test_nx_al_arena_reset(void) {
     TEST_ASSERT_EQUAL_UINT(0, stats.used);
     TEST_ASSERT_EQUAL_UINT(1024, stats.available);
 
-    nx_i32 *arr2 = nx_al_alloc(al, 50 * sizeof(nx_i32));
+    nx_i32 *arr2 = NX_AL_ALLOC(nx_i32, al, 50);
     TEST_ASSERT_TRUE(arr2 != nx_null);
 
     TEST_ASSERT_EQUAL_PTR(arr1, arr2);
 
-    nx_al_free(al);
+    nx_al_arena_drop(al);
 }
 
 static void test_nx_al_arena_stats(void) {
@@ -132,11 +132,11 @@ static void test_nx_al_arena_stats(void) {
     void *p2 = nx_al_alloc(al, 200);
     TEST_ASSERT_TRUE(p2 != nx_null);
 
-    nx_al_arena_stats stats2 = nx_al_arena_get_stats(al);
+    const nx_al_arena_stats stats2 = nx_al_arena_get_stats(al);
     TEST_ASSERT_TRUE(stats2.used > stats.used);
     TEST_ASSERT_EQUAL_UINT(capacity - stats2.used, stats2.available);
 
-    nx_al_free(al);
+    nx_al_arena_drop(al);
 }
 
 static void test_nx_al_arena_oom(void) {
@@ -152,14 +152,13 @@ static void test_nx_al_arena_oom(void) {
     void *p3 = nx_al_alloc(al, 10);
     TEST_ASSERT_TRUE(p3 != nx_null);
 
-    nx_al_free(al);
+    nx_al_arena_drop(al);
 }
 
 static void test_nx_al_arena_alignment(void) {
     nx_al *al = nx_al_arena_new(1024);
     TEST_ASSERT_TRUE(al != nx_null);
 
-    // Аллоцируем разные размеры
     void *p1 = nx_al_alloc(al, 1);
     void *p2 = nx_al_alloc(al, 1);
     void *p3 = nx_al_alloc(al, 1);
@@ -168,16 +167,14 @@ static void test_nx_al_arena_alignment(void) {
     TEST_ASSERT_TRUE(p2 != nx_null);
     TEST_ASSERT_TRUE(p3 != nx_null);
 
-    // Проверяем что адреса выровнены по 8 байт
-    TEST_ASSERT_EQUAL_UINT(0, ((nx_usize)p1) % 8);
-    TEST_ASSERT_EQUAL_UINT(0, ((nx_usize)p2) % 8);
-    TEST_ASSERT_EQUAL_UINT(0, ((nx_usize)p3) % 8);
+    TEST_ASSERT_EQUAL_UINT(0, ((nx_usize) p1) % 8);
+    TEST_ASSERT_EQUAL_UINT(0, ((nx_usize) p2) % 8);
+    TEST_ASSERT_EQUAL_UINT(0, ((nx_usize) p3) % 8);
 
-    // Проверяем что между указателями 8 байт (alignment)
-    TEST_ASSERT_EQUAL_UINT(8, (char*)p2 - (char*)p1);
-    TEST_ASSERT_EQUAL_UINT(8, (char*)p3 - (char*)p2);
+    TEST_ASSERT_EQUAL_UINT(alignof(max_align_t), (nx_byte*) p2 - (nx_byte*) p1);
+    TEST_ASSERT_EQUAL_UINT(alignof(max_align_t), (nx_byte*) p3 - (nx_byte*) p2);
 
-    nx_al_free(al);
+    nx_al_arena_drop(al);
 }
 
 int main(void) {

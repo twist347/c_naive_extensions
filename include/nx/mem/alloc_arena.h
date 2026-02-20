@@ -20,6 +20,7 @@
  * @return new arena allocator or NULL on allocation failure
  */
 nx_al *nx_al_arena_new(nx_usize cap);
+void nx_al_arena_drop(nx_al *al);
 
 /**
  * Reset arena to empty state (offset = 0)
