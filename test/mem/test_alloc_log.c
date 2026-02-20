@@ -1,39 +1,101 @@
-#include <stdio.h>
+#include "unity.h"
 
-#include "nx/core/print.h"
 #include "nx/mem/alloc_libc.h"
 #include "nx/mem/alloc_log.h"
 
+void setUp(void) {
+}
+
+void tearDown(void) {
+}
+
+static void test_nx_al_log_alloc(void) {
+    nx_al *libc_al = nx_al_libc_default_g();
+    nx_al *al = nx_al_log_new(libc_al, stdout);
+
+    const nx_usize len = 10;
+    nx_i32 *arr = nx_al_alloc(al, len * sizeof(nx_i32));
+    TEST_ASSERT_TRUE(arr != nx_null);
+
+    for (nx_usize i = 0; i < len; ++i) {
+        arr[i] = (nx_i32) (i * i);
+    }
+
+    for (nx_usize i = 0; i < len; ++i) {
+        TEST_ASSERT_EQUAL_INT32(arr[i], (nx_i32)(i * i));
+    }
+
+    nx_al_dealloc(al, arr, len * sizeof(nx_i32));
+    nx_al_free(al);
+}
+
+static void test_nx_al_log_calloc(void) {
+    nx_al *libc_al = nx_al_libc_default_g();
+    nx_al *al = nx_al_log_new(libc_al, stdout);
+
+    const nx_usize len = 10;
+    nx_i32 *arr = nx_al_calloc(al, len, sizeof(nx_i32));
+    TEST_ASSERT_TRUE(arr != nx_null);
+
+    for (nx_usize i = 0; i < len; ++i) {
+        TEST_ASSERT_EQUAL_INT32(arr[i], 0);
+    }
+
+    for (nx_usize i = 0; i < len; ++i) {
+        arr[i] = (nx_i32) (i * i);
+    }
+
+    for (nx_usize i = 0; i < len; ++i) {
+        TEST_ASSERT_EQUAL_INT32(arr[i], (nx_i32)(i * i));
+    }
+
+    nx_al_dealloc(al, arr, len * sizeof(nx_i32));
+    nx_al_free(al);
+}
+
+static void test_nx_al_log_realloc(void) {
+    nx_al *libc_al = nx_al_libc_default_g();
+    nx_al *al = nx_al_log_new(libc_al, stdout);
+
+    const nx_usize len = 10;
+    nx_i32 *arr = nx_al_alloc(al, len * sizeof(nx_i32));
+    TEST_ASSERT_TRUE(arr != nx_null);
+
+    for (nx_usize i = 0; i < len; ++i) {
+        arr[i] = (nx_i32) (i * i);
+    }
+
+    for (nx_usize i = 0; i < len; ++i) {
+        TEST_ASSERT_EQUAL_INT32(arr[i], (nx_i32)(i * i));
+    }
+
+    const nx_usize new_len = 20;
+
+    nx_i32 *tmp = nx_al_realloc(al, arr, len * sizeof(nx_i32), new_len * sizeof(nx_i32));
+    TEST_ASSERT_TRUE(tmp != nx_null);
+
+    arr = tmp;
+
+    for (nx_usize i = 0; i < len; ++i) {
+        TEST_ASSERT_EQUAL_INT32(arr[i], (nx_i32)(i * i));
+    }
+
+    for (nx_usize i = len; i < new_len; ++i) {
+        arr[i] = (nx_i32) (i * i * i);
+    }
+
+    for (nx_usize i = len; i < new_len; ++i) {
+        TEST_ASSERT_EQUAL_INT32(arr[i], (nx_i32)(i * i * i));
+    }
+
+    nx_al_dealloc(al, arr, new_len * sizeof(nx_i32));
+    nx_al_free(al);
+}
+
 int main(void) {
-    const nx_al libc_alloc = nx_al_libc_new();
+    RUN_TEST(test_nx_al_log_alloc);
+    RUN_TEST(test_nx_al_log_calloc);
+    RUN_TEST(test_nx_al_log_realloc);
 
-    nx_al_log_ctx log_ctx = {0};
-    const nx_al log_alloc = nx_al_log_new(&log_ctx, libc_alloc, stdout);
-
-    nx_i32 *arr = nx_al_alloc(log_alloc, 5 * sizeof(nx_i32));
-
-    for (nx_i32 i = 0; i < 5; ++i) {
-        arr[i] = i;
-    }
-
-    for (nx_i32 i = 0; i < 5; ++i) {
-        printf("arr[%d] = %d ", i, arr[i]);
-    }
-    printf("\n");
-
-    nx_i32 *p = nx_al_realloc(log_alloc, arr, 5 * sizeof(nx_i32), 10 * sizeof(nx_i32));
-    if (p) {
-        arr = p;
-    }
-
-    for (nx_i32 i = 0; i < 10; ++i) {
-        arr[i] = i * i;
-    }
-
-    for (nx_i32 i = 0; i < 10; ++i) {
-        printf("arr[%d] = %d ", i, arr[i]);
-    }
-    printf("\n");
-
-    nx_al_dealloc(log_alloc, arr, 5 * sizeof(nx_i32));
+    return UNITY_END();
 }

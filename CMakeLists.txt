@@ -33,6 +33,7 @@ set(NX_STR_SOURCES
 
 set(NX_MEM_SOURCES
         src/mem/alloc.c
+        src/mem/alloc_arena.c
         src/mem/alloc_libc.c
         src/mem/alloc_log.c
         src/mem/ptr.c

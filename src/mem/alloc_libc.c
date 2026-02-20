@@ -9,13 +9,31 @@ static void *calloc_wrapper(void *ctx, nx_usize num, nx_usize size);
 static void *realloc_wrapper(void *ctx, void *ptr, nx_usize old_size, nx_usize new_size);
 static void free_wrapper(void *ctx, void *ptr, nx_usize size);
 
-nx_al nx_al_libc_new(void) {
-    return (nx_al){
+nx_al *nx_al_libc_new(void) {
+    nx_al *al = malloc(sizeof(nx_al));
+    if (!al) {
+        return nx_null;
+    }
+
+    al->ctx = nx_null;
+    al->alloc = malloc_wrapper;
+    al->calloc = calloc_wrapper;
+    al->realloc = realloc_wrapper;
+    al->dealloc = free_wrapper;
+
+    return al;
+}
+
+nx_al *nx_al_libc_default_g(void) {
+    static nx_al g_alloc = {
+        .ctx = nx_null,
         .alloc = malloc_wrapper,
         .calloc = calloc_wrapper,
         .realloc = realloc_wrapper,
-        .dealloc = free_wrapper
+        .dealloc = free_wrapper,
     };
+
+    return &g_alloc;
 }
 
 static void *malloc_wrapper(void *ctx, nx_usize size) {

@@ -9,6 +9,12 @@
 #include "nx/data_structure/vec.h"
 #include "nx/mem/ptr.h"
 
+void setUp(void) {
+}
+
+void tearDown(void) {
+}
+
 static nx_vec *vec_new_or_die(nx_usize elem_size) {
     nx_vec_res res = nx_vec_new(elem_size);
     if (!NX_RES_IS_OK(res)) {
@@ -31,12 +37,6 @@ static nx_vec *vec_new_cap_or_die(nx_usize cap, nx_usize elem_size) {
         NX_PANIC_MSG(nx_status_to_str(NX_RES_ERR(res)));
     }
     return NX_RES_UNWRAP(res);
-}
-
-void setUp(void) {
-}
-
-void tearDown(void) {
 }
 
 /* ========== lifetime ========== */

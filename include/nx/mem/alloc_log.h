@@ -8,12 +8,19 @@
 extern "C" {
 #endif
 
-typedef struct {
-    nx_al wrapped;
-    FILE *stream;
-} nx_al_log_ctx;
-
-nx_al nx_al_log_new(nx_al_log_ctx *ctx, nx_al wrapped, FILE *stream);
+/**
+ * Logging allocator - wraps another allocator and logs all operations
+ *
+ * Creates heap-allocated allocator with its own heap-allocated context
+ * Must be freed with nx_al_free() when done
+ *
+ * NOTE: The wrapped allocator must outlive this logging allocator
+ *
+ * @param wrapped - allocator to wrap (must not be NULL)
+ * @param stream - where to log (stdout, stderr, or file)
+ * @return new logging allocator or NULL on allocation failure
+ */
+nx_al *nx_al_log_new(nx_al *wrapped, FILE *stream);
 
 #ifdef __cplusplus
 }
