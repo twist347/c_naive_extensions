@@ -50,9 +50,6 @@ NX_CMP_INT_DEF(bool,  nx_bool)
 NX_CMP_INT_DEF(byte,  nx_byte)
 NX_CMP_INT_DEF(char,  nx_char)
 
-NX_CMP_FP_DEF(flt,    nx_flt)
-NX_CMP_FP_DEF(dbl,    nx_dbl)
-
 NX_CMP_FP_DEF(f32,    nx_f32)
 NX_CMP_FP_DEF(f64,    nx_f64)
 
@@ -63,7 +60,7 @@ int nx_cmp_cstr(const void *lhs, const void *rhs) {
     const char *a = *(const char * const *) lhs;
     const char *b = *(const char * const *) rhs;
 
-    /* Policy: NULL is less than non-NULL */
+    // policy: null is less than non-null
     if (!a || !b) {
         if (a == b) {
             return 0;

@@ -2,26 +2,21 @@
 
 #include "nx/core/assert.h"
 
-const nx_char *nx_status_to_str(nx_status status) {
-    switch (status) {
+const nx_char *nx_status_to_str(nx_status st) {
+    switch (st) {
         case NX_STATUS_OK:
             return "NX_STATUS_OK";
         case NX_STATUS_OUT_OF_MEMORY:
             return "NX_STATUS_OUT_OF_MEMORY";
-        case NX_STATUS_MUL_OVERFLOW:
-            return "NX_STATUS_MUL_OVERFLOW";
-        case NX_STATUS_INVALID_ARGUMENT:
-            return "NX_STATUS_INVALID_ARGUMENT";
-        case NX_STATUS_OUT_OF_BOUNDS:
-            return "NX_STATUS_OUT_OF_BOUNDS";
-        default:
-            return "UNKNOWN_NX_STATUS";
+        case NX_STATUS__COUNT:
+            break;
     }
+    return "UNKNOWN_NX_STATUS";
 }
 
-void nx_status_fprintln(FILE *stream, nx_status status) {
+void nx_status_fprintln(FILE *stream, nx_status st) {
     NX_ASSERT(stream);
 
-    fputs(nx_status_to_str(status), stream);
+    fputs(nx_status_to_str(st), stream);
     fputc('\n', stream);
 }

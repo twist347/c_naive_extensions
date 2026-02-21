@@ -14,8 +14,8 @@
 /* ========== constructors ========== */
 
 #ifdef __cplusplus
-    #define NX_RES_NEW_OK(name, v)     ((name){NX_STATUS_OK, (v)})
-    #define NX_RES_NEW_ERR(name, e)    ((name){(e), {}})
+    #define NX_RES_NEW_OK(name, v)     (name{NX_STATUS_OK, (v)})
+    #define NX_RES_NEW_ERR(name, e)    (name{(e), {}})
 #else
     #define NX_RES_NEW_OK(name, v)     ((name){.st = NX_STATUS_OK, .val = (v)})
     #define NX_RES_NEW_ERR(name, e)    ((name){.st = (e)})
@@ -23,19 +23,19 @@
 
 /* ========== queries ========== */
 
-#define NX_RES_IS_OK(res)    \
+#define NX_RES_IS_OK(res) \
     ((res).st == NX_STATUS_OK)
 
-#define NX_RES_IS_ERR(res)    \
+#define NX_RES_IS_ERR(res) \
     ((res).st != NX_STATUS_OK)
 
-#define NX_RES_ERR(res)    \
+#define NX_RES_ERR(res) \
     ((res).st)
 
 /* ========== value extraction ========== */
 
-#define NX_RES_UNWRAP(res)    \
+#define NX_RES_UNWRAP(res) \
     (NX_VERIFY((res).st == NX_STATUS_OK), (res).val)
 
-#define NX_RES_UNWRAP_UNCHECKED(res)    \
+#define NX_RES_UNWRAP_UNCHECKED(res) \
     ((res).val)

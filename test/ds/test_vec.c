@@ -6,7 +6,7 @@
 #include "nx/core/panic.h"
 #include "nx/core/status.h"
 #include "nx/core/util.h"
-#include "nx/data_structure/vec.h"
+#include "nx/ds/vec.h"
 #include "nx/mem/ptr.h"
 
 void setUp(void) {

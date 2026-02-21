@@ -3,7 +3,7 @@
 #include "nx/core/type.h"
 #include "nx/core/assert.h"
 #include "nx/core/status.h"
-#include "nx/core/span.h"
+#include "nx/ds/span.h"
 #include "nx/core/result.h"
 
 #ifdef __cplusplus

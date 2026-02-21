@@ -3,6 +3,9 @@
 #include <float.h>
 #include <limits.h>
 #include <stdint.h>
+#include <math.h>
+
+#include "nx/core/type.h"
 
 #define NX_I8_MIN     INT8_MIN
 #define NX_I8_MAX     INT8_MAX
@@ -13,31 +16,37 @@
 #define NX_I64_MIN    INT64_MIN
 #define NX_I64_MAX    INT64_MAX
 
+#define NX_U8_MIN     0
 #define NX_U8_MAX     UINT8_MAX
+#define NX_U16_MIN    0
 #define NX_U16_MAX    UINT16_MAX
+#define NX_U32_MIN    0
 #define NX_U32_MAX    UINT32_MAX
+#define NX_U64_MIN    0
 #define NX_U64_MAX    UINT64_MAX
 
+#define NX_USIZE_MIN    0
 #define NX_USIZE_MAX    SIZE_MAX
 #define NX_ISIZE_MIN    PTRDIFF_MIN
 #define NX_ISIZE_MAX    PTRDIFF_MAX
 
+#define NX_BYTE_MIN    0
 #define NX_BYTE_MAX    UCHAR_MAX
 
 #define NX_F32_MAX        FLT_MAX
 #define NX_F32_MIN_POS    FLT_MIN
 #define NX_F32_LOWEST     (-FLT_MAX)
 #define NX_F32_EPS        FLT_EPSILON
+#define NX_F32_INF        ((nx_f32) INFINITY)
+#define NX_F32_NAN        ((nx_f32) NAN)
 
 #define NX_F64_MAX        DBL_MAX
 #define NX_F64_MIN_POS    DBL_MIN
 #define NX_F64_LOWEST     (-DBL_MAX)
 #define NX_F64_EPS        DBL_EPSILON
+#define NX_F64_INF        ((nx_f64) INFINITY)
+#define NX_F64_NAN        ((nx_f64) NAN)
 
-#define NX_FLT_MAX        FLT_MAX
-#define NX_FLT_MIN_POS    FLT_MIN
-#define NX_FLT_LOWEST     (-FLT_MAX)
-
-#define NX_DBL_MAX        DBL_MAX
-#define NX_DBL_MIN_POS    DBL_MIN
-#define NX_DBL_LOWEST     (-DBL_MAX)
+#define NX_UPTR_MAX    UINTPTR_MAX
+#define NX_IPTR_MIN    INTPTR_MIN
+#define NX_IPTR_MAX    INTPTR_MAX

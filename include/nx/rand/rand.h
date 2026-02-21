@@ -1,7 +1,7 @@
 #pragma once
 
 #include "nx/core/type.h"
-#include "nx/core/span.h"
+#include "nx/ds/span.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -15,7 +15,8 @@ nx_rng *nx_rng_drop(nx_rng *r);
 nx_f32 nx_rng_f32(nx_rng *r);
 nx_f64 nx_rng_f64(nx_rng *r);
 
-// Fisher–Yates
+// TODO: maybe move to algo/transform
+// fisher–Yates
 void nx_rng_shuffle_span(nx_rng *r, nx_span s);
 
 #ifdef __cplusplus

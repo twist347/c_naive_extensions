@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <inttypes.h>
 
-#include "nx/core/span.h"
+#include "../ds/span.h"
 #include "nx/core/type.h"
 
 #ifdef __cplusplus
@@ -59,9 +59,6 @@ void nx_fprint_isize(FILE *stream, const void *data);
 void nx_fprint_bool(FILE *stream, const void *data);
 void nx_fprint_byte(FILE *stream, const void *data);
 void nx_fprint_char(FILE *stream, const void *data);
-
-void nx_fprint_flt(FILE *stream, const void *data);
-void nx_fprint_dbl(FILE *stream, const void *data);
 
 void nx_fprint_f32(FILE *stream, const void *data);
 void nx_fprint_f64(FILE *stream, const void *data);

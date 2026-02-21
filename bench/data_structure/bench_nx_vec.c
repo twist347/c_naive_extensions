@@ -3,7 +3,7 @@
 
 #include "ubench.h"
 
-#include "nx/data_structure/vec.h"
+#include "nx/ds/vec.h"
 
 #ifndef NX_BENCH_N
 #define NX_BENCH_N 1000000u

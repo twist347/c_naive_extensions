@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-#include "nx/core/span.h"
+#include "../../include/nx/ds/span.h"
 #include "nx/core/print.h"
 #include "nx/core/type.h"
 

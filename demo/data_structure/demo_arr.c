@@ -1,7 +1,7 @@
-#include "nx/data_structure/arr.h"
+#include "nx/ds/arr.h"
 
 #include "nx/core/print.h"
-#include "nx/core/span.h"
+#include "../../include/nx/ds/span.h"
 #include "nx/core/panic.h"
 
 #include "nx/mem/ptr.h"

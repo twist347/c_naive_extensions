@@ -1,7 +1,8 @@
 #include "nx/mem/alloc.h"
 
-#include <stdlib.h>
 #include <string.h>
+
+#include "nx/core/assert.h"
 
 /* ========== wrappers ========== */
 

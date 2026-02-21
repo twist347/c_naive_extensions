@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "nx/core/assert.h"
-#include "nx/core/limit.h"
+#include "../../include/nx/numeric/limit.h"
 
 struct nx_str {
     nx_char *data;

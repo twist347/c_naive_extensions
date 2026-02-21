@@ -1,8 +1,9 @@
-#include "nx/core/span.h"
+#include "nx/ds/span.h"
 
 #include <string.h>
 
 #include "nx/mem/ptr.h"
+#include "../../include/nx/numeric/limit.h"
 
 #define ASSERT_MUL_OK(a, b, m)          \
     do {                                \

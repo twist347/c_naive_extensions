@@ -1,5 +1,7 @@
 #include "nx/core/hash.h"
 
+#include "nx/core/assert.h"
+
 /* FNV-1a 64-bit */
 static constexpr nx_u64 NX_FNV_OFFSET_BASIS_64 = 14695981039346656037ULL;
 static constexpr nx_u64 NX_FNV_PRIME_64 = 1099511628211ULL;
@@ -53,6 +55,9 @@ nx_hash nx_hash_isize(nx_isize x) {
 }
 
 nx_hash nx_hash_bytes(const void *data, nx_usize len) {
+    NX_ASSERT(data);
+    NX_ASSERT(len > 0);
+
     const nx_u8 *p = data;
     nx_u64 h = NX_FNV_OFFSET_BASIS_64;
 
@@ -76,7 +81,7 @@ nx_hash nx_hash_cstr(const nx_char *s) {
 }
 
 nx_hash nx_hash_ptr(const void *ptr) {
-    return hash_mix64((nx_u64) (nx_isize) ptr);
+    return hash_mix64((nx_uptr) ptr);
 }
 
 nx_hash nx_hash_combine(nx_hash h, nx_hash x) {

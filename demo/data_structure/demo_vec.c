@@ -1,9 +1,9 @@
-#include "nx/data_structure/vec.h"
+#include "nx/ds/vec.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "nx/core/span.h"
+#include "../../include/nx/ds/span.h"
 #include "nx/core/print.h"
 
 int main(void) {

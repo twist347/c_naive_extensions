@@ -1,9 +1,9 @@
-#include "nx/data_structure/vec.h"
+#include "nx/ds/vec.h"
 
 #include <stdlib.h>
 #include <string.h>
 
-#include "nx/core/limit.h"
+#include "../../include/nx/numeric/limit.h"
 #include "nx/mem/ptr.h"
 
 struct nx_vec {

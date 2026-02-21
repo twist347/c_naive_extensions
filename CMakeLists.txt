@@ -5,25 +5,29 @@ project(c_naive_extension)
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+#set(CMAKE_C_EXTENSIONS OFF) // TODO: wtf? it breaks unity test lib
 
 set(NX_CORE_SOURCES
         src/core/assert.c
         src/core/cmp.c
         src/core/print.c
-        src/core/span.c
         src/core/status.c
         src/core/hash.c
 )
 
 set(NX_DS_SOURCES
-        src/data_structure/arr.c
-        src/data_structure/vec.c
+        src/ds/arr.c
+        src/ds/vec.c
+        src/ds/span.c
 )
 
 set(NX_ALGO_SOURCES
-        src/algo/algo_span.c
-        src/algo/algo_bit.c
-        src/algo/algo_numeric.c
+        src/algo/bit.c
+        src/algo/compare.c
+        src/algo/sort.c
+        src/algo/search.c
+        src/algo/transform.c
+        src/algo/minmax.c
 )
 
 set(NX_STR_SOURCES
@@ -43,6 +47,14 @@ set(NX_RAND_SOURCES
         src/rand/rand.c
 )
 
+set(NX_NUMERIC_SOURCES
+    src/numeric/abs.c
+    src/numeric/ckd.c
+    src/numeric/sat.c
+    src/numeric/sign.c
+    src/numeric/minmax.c
+)
+
 set(NX_SOURCES
         ${NX_CORE_SOURCES}
         ${NX_DS_SOURCES}
@@ -50,6 +62,7 @@ set(NX_SOURCES
         ${NX_STR_SOURCES}
         ${NX_MEM_SOURCES}
         ${NX_RAND_SOURCES}
+        ${NX_NUMERIC_SOURCES}
 )
 
 add_library(nx_static STATIC

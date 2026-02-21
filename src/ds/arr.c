@@ -1,9 +1,9 @@
-#include "nx/data_structure/arr.h"
+#include "nx/ds/arr.h"
 
 #include <stdlib.h>
 #include <string.h>
 
-#include "nx/core/limit.h"
+#include "../../include/nx/numeric/limit.h"
 #include "nx/mem/alloc_libc.h"
 #include "nx/mem/ptr.h"
 
@@ -39,14 +39,14 @@ static void arr_assert_impl(const nx_arr *self) {
 
 static nx_status new_impl(nx_arr **out, nx_usize len, nx_usize tsz, nx_al *al);
 static void set_fields(nx_arr *self, void *data, nx_usize len, nx_usize tsz, nx_al *al);
-static inline nx_usize calc_bytes(nx_usize len, nx_usize tsz);
+static nx_usize calc_bytes(nx_usize len, nx_usize tsz);
 static void free_data(nx_arr *self);
 static nx_status alloc_and_copy_data(void **out, nx_al *alloc, const void *src_data, nx_usize len, nx_usize tsz);
 
 /* ========== lifetime ========== */
 
 nx_arr_res nx_arr_new_p(nx_arr_params p) {
-    NX_ASSERT(p.tsz != 0);
+    NX_ASSERT(p.tsz > 0);
     NX_ASSERT(p.al);
 
     nx_arr *arr = nx_null;
@@ -308,7 +308,6 @@ nx_cspan nx_arr_to_cspan(const nx_arr *self) {
 
 static nx_status new_impl(nx_arr **out, nx_usize len, nx_usize tsz, nx_al *al) {
     NX_ASSERT(out);
-    NX_ASSERT(al);
 
     *out = nx_null;
 
@@ -345,7 +344,7 @@ static void set_fields(nx_arr *self, void *data, nx_usize len, nx_usize tsz, nx_
     self->al = al;
 }
 
-static inline nx_usize calc_bytes(nx_usize len, nx_usize tsz) {
+static nx_usize calc_bytes(nx_usize len, nx_usize tsz) {
     ASSERT_MUL_OK(len, tsz, NX_USIZE_MAX);
     return len * tsz;
 }

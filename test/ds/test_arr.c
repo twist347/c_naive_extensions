@@ -3,7 +3,7 @@
 #include "nx/core/panic.h"
 #include "nx/core/status.h"
 #include "nx/core/util.h"
-#include "nx/data_structure/arr.h"
+#include "nx/ds/arr.h"
 #include "nx/mem/alloc_arena.h"
 #include "nx/mem/alloc_libc.h"
 #include "nx/mem/ptr.h"

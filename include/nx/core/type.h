@@ -1,15 +1,13 @@
 #pragma once
 
-#include "nx/core/assert.h"
-
 #include <stddef.h>
 #include <stdint.h>
 
+/* ========== types aliases ========== */
+
 // TODO: _Float32, _Float64
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#define nx_null          nullptr
 
 typedef int8_t           nx_i8;
 typedef int16_t          nx_i16;
@@ -31,27 +29,13 @@ typedef bool             nx_bool;
 typedef unsigned char    nx_byte;
 typedef char             nx_char;
 
-typedef float            nx_flt;
-typedef double           nx_dbl;
-
 typedef float            nx_f32;
 typedef double           nx_f64;
 
-#ifndef NX_STRICT_FP_TYPES
-    #define NX_STRICT_FP_TYPES 1
-#endif
+static_assert(sizeof(float) == 4, "nx_f32 requires 4-byte float");
+static_assert(sizeof(double) == 8, "nx_f64 requires 8-byte double");
 
-#if NX_STRICT_FP_TYPES
-    NX_STATIC_ASSERT_MSG(sizeof(float) == 4, "nx_f32 requires 4-byte float");
-    NX_STATIC_ASSERT_MSG(sizeof(double) == 8, "nx_f64 requires 8-byte double");
-#endif
-
-#define nx_null    NULL
-
-// =============================================================================
-// Literal macros
-// =============================================================================
-
+/* ========== literal macros ========== */
 
 #define NX_I8_C(x)      INT8_C(x)
 #define NX_I16_C(x)     INT16_C(x)
@@ -66,6 +50,5 @@ typedef double           nx_f64;
 #define NX_F32_C(x)     x##f
 #define NX_F64_C(x)     x
 
-#ifdef __cplusplus
-}
-#endif
+#define NX_USIZE_C(x)   ((nx_usize) (x))
+#define NX_ISIZE_C(x)   ((nx_isize) (x))

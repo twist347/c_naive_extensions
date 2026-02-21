@@ -45,9 +45,6 @@ void nx_fprint_bool(FILE *stream, const void *data) {
 NX_FPRINT_DEF(byte,   nx_byte,   NX_FMT_BYTE)
 NX_FPRINT_DEF(char,   nx_char,   NX_FMT_CHAR)
 
-NX_FPRINT_DEF(flt,    nx_flt,    NX_FMT_FLT)
-NX_FPRINT_DEF(dbl,    nx_dbl,    NX_FMT_DBL)
-
 NX_FPRINT_DEF(f32,    nx_f32,    NX_FMT_F32)
 NX_FPRINT_DEF(f64,    nx_f64,    NX_FMT_F64)
 

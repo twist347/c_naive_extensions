@@ -4,9 +4,8 @@
 #include <stdlib.h>
 #include <stddef.h>
 
-#include "nx/core/type.h"
+#include "nx/core/assert.h"
 #include "nx/core/util.h"
-#include "nx/mem/alloc.h"
 
 constexpr nx_usize DEFAULT_ALIGNMENT = alignof(max_align_t);
 

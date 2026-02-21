@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "nx/core/assert.h"
+
 // TODO: nx print
 
 static void *log_alloc(void *ctx, nx_usize size);

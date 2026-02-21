@@ -2,7 +2,6 @@
 
 #include "nx/core/type.h"
 #include "nx/core/assert.h"
-#include "nx/core/limit.h"
 
 #ifdef __cplusplus
 extern "C" {
