@@ -5,10 +5,6 @@
 #include "nx/core/result.h"
 #include "nx/str/str_view.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* Contract:
  * - Invalid usage is programmer error (NX_ASSERT).
  * - Functions that may fail due to internal reasons report:
@@ -72,7 +68,3 @@ nx_status nx_str_append_cstr(nx_str *self, const nx_char *cstr);
 /* ========== view ========== */
 
 nx_str_view nx_str_as_view(const nx_str *self);
-
-#ifdef __cplusplus
-}
-#endif

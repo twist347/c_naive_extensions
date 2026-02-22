@@ -4,10 +4,6 @@
 
 #include "nx/mem/alloc.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * Logging allocator - wraps another allocator and logs all operations
  *
@@ -22,7 +18,3 @@ extern "C" {
  */
 nx_al *nx_al_log_new(nx_al *wrapped, FILE *stream);
 void nx_al_log_drop(nx_al *al);
-
-#ifdef __cplusplus
-}
-#endif

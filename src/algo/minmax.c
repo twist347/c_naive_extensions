@@ -21,7 +21,7 @@ nx_isize nx_min_element(nx_cspan s, nx_cmp cmp) {
         }
     }
 
-    return (ptrdiff_t) best;
+    return (nx_isize) best;
 }
 
 nx_isize nx_max_element(nx_cspan s, nx_cmp cmp) {
@@ -43,7 +43,7 @@ nx_isize nx_max_element(nx_cspan s, nx_cmp cmp) {
         }
     }
 
-    return (ptrdiff_t) best;
+    return (nx_isize) best;
 }
 
 nx_minmax nx_minmax_element(nx_cspan s, nx_cmp cmp) {

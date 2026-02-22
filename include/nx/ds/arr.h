@@ -7,10 +7,6 @@
 #include "nx/core/result.h"
 #include "nx/mem/alloc.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* Contract:
  * - All invalid usage (NULL, bounds, invariants, type_size mismatch, size overflow, etc.)
  *   is a programmer error guarded by NX_ASSERT in debug builds. Release behavior is unspecified.
@@ -126,7 +122,3 @@ nx_cspan nx_arr_to_cspan(const nx_arr *self);
 #define NX_ARR_DATA_AS_C(T, self)                   \
     (NX_ASSERT(nx_arr_tsz((self)) == sizeof(T)),    \
     (const T *) nx_arr_data_c((self)))
-
-#ifdef __cplusplus
-}
-#endif

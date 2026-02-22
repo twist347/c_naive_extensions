@@ -13,13 +13,8 @@
 
 /* ========== constructors ========== */
 
-#ifdef __cplusplus
-    #define NX_RES_NEW_OK(name, v)     (name{NX_STATUS_OK, (v)})
-    #define NX_RES_NEW_ERR(name, e)    (name{(e), {}})
-#else
-    #define NX_RES_NEW_OK(name, v)     ((name){.st = NX_STATUS_OK, .val = (v)})
-    #define NX_RES_NEW_ERR(name, e)    ((name){.st = (e)})
-#endif
+#define NX_RES_NEW_OK(name, v)     ((name){.st = NX_STATUS_OK, .val = (v)})
+#define NX_RES_NEW_ERR(name, e)    ((name){.st = (e)})
 
 /* ========== queries ========== */
 

@@ -6,10 +6,6 @@
 #include "nx/ds/span.h"
 #include "nx/core/result.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* Contract:
  * - All invalid usage (NULL, bounds, invariants, type_size mismatch, size overflow, etc.)
  *   is a programmer error guarded by NX_ASSERT in debug builds. Release behavior is unspecified.
@@ -156,8 +152,3 @@ nx_cspan nx_vec_to_cspan(const nx_vec *self);
 #define NX_VEC_POP_PTR(T, self)                     \
     (NX_ASSERT(nx_vec_tsz((self)) == sizeof(T)),    \
     (T *) nx_vec_pop((self)))
-
-#ifdef __cplusplus
-}
-#endif
-

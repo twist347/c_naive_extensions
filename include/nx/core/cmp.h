@@ -1,9 +1,5 @@
 #pragma once
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 // TODO: add generics
 
 // TODO: use this instead of int
@@ -39,7 +35,3 @@ int nx_cmp_f32(const void *lhs, const void *rhs);
 int nx_cmp_f64(const void *lhs, const void *rhs);
 
 int nx_cmp_cstr(const void *lhs, const void *rhs);
-
-#ifdef __cplusplus
-}
-#endif

@@ -62,3 +62,25 @@ void nx_rotate(nx_span s, nx_usize mid) {
     // reverse entire range
     nx_reverse(s);
 }
+
+void nx_transform(nx_span dst, nx_cspan src, nx_transform_fn fn) {
+    NX_SPAN_ANY_ASSERT(dst);
+    NX_SPAN_ANY_ASSERT(src);
+    NX_ASSERT(dst.len == src.len);
+    NX_ASSERT(dst.tsz == src.tsz);
+    NX_ASSERT(fn);
+
+    for (nx_usize i = 0; i < src.len; ++i) {
+        fn(nx_span_get(dst, i), nx_cspan_get_c(src, i));
+    }
+}
+
+void nx_apply(nx_span s, nx_apply_fn fn) {
+    NX_SPAN_ANY_ASSERT(s);
+    NX_ASSERT(fn);
+
+    for (nx_usize i = 0; i < s.len; ++i) {
+        fn(nx_span_get(s, i));
+    }
+}
+

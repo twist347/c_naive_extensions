@@ -3,10 +3,6 @@
 #include "nx/core/type.h"
 #include "nx/core/assert.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef struct {
     void *data;
     nx_usize len;
@@ -108,7 +104,3 @@ nx_cspan nx_cspan_tail(nx_cspan s, nx_usize offset);
         const T nx_tmp_ = (expr);             \
         nx_span_set((s), (idx), &nx_tmp_);    \
     } while (0)
-
-#ifdef __cplusplus
-}
-#endif

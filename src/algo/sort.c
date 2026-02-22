@@ -3,6 +3,8 @@
 #include <stdlib.h>
 
 #include "nx/core/assert.h"
+#include "nx/core/panic.h"
+#include "nx/core/util.h"
 
 void nx_sort(nx_span s, nx_cmp cmp) {
     NX_SPAN_ANY_ASSERT(s);
@@ -15,7 +17,41 @@ void nx_sort(nx_span s, nx_cmp cmp) {
     qsort(s.data, s.len, s.tsz, cmp);
 }
 
-nx_bool nx_is_sorted(nx_cspan s, nx_cmp cmp) {
+void nx_sort_ctx(nx_span s, nx_cmp cmp, void *ctx) {
+    NX_UNUSED(s);
+    NX_UNUSED(cmp);
+    NX_UNUSED(ctx);
+    NX_UNIMPLEMENTED();
+}
+
+void nx_sort_stable(nx_span s, nx_cmp cmp) {
+    NX_UNUSED(s);
+    NX_UNUSED(cmp);
+    NX_UNIMPLEMENTED();
+}
+
+void nx_sort_stable_ctx(nx_span s, nx_cmp cmp, void *ctx) {
+    NX_UNUSED(s);
+    NX_UNUSED(cmp);
+    NX_UNUSED(ctx);
+    NX_UNIMPLEMENTED();
+}
+
+void nx_partial_sort(nx_span s, nx_usize k, nx_cmp cmp) {
+    NX_UNUSED(s);
+    NX_UNUSED(k);
+    NX_UNUSED(cmp);
+    NX_UNIMPLEMENTED();
+}
+
+void nx_nth_element(nx_span s, nx_usize nth, nx_cmp cmp) {
+    NX_UNUSED(s);
+    NX_UNUSED(nth);
+    NX_UNUSED(cmp);
+    NX_UNIMPLEMENTED();
+}
+
+nx_bool nx_is_sorted_asc(nx_cspan s, nx_cmp cmp) {
     NX_SPAN_ANY_ASSERT(s);
     NX_ASSERT(cmp);
 
@@ -31,4 +67,10 @@ nx_bool nx_is_sorted(nx_cspan s, nx_cmp cmp) {
         }
     }
     return true;
+}
+
+nx_bool nx_is_sorted_desc(nx_cspan s, nx_cmp cmp) {
+    NX_UNUSED(s);
+    NX_UNUSED(cmp);
+    NX_UNIMPLEMENTED();
 }

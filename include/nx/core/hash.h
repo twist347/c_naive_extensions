@@ -2,10 +2,6 @@
 
 #include "nx/core/type.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef nx_u64 nx_hash;
 
 nx_hash nx_hash_i8(nx_i8 x);
@@ -26,7 +22,3 @@ nx_hash nx_hash_cstr(const nx_char *s);
 nx_hash nx_hash_ptr(const void *ptr);
 
 nx_hash nx_hash_combine(nx_hash h, nx_hash x);
-
-#ifdef __cplusplus
-}
-#endif

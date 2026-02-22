@@ -2,10 +2,6 @@
 
 #include "nx/core/type.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef struct {
     const nx_char *data;
     nx_usize len;
@@ -51,7 +47,3 @@ nx_isize nx_str_view_find_char(nx_str_view s, nx_char ch);
 nx_str_view nx_str_view_trim_start(nx_str_view s);
 nx_str_view nx_str_view_trim_end(nx_str_view s);
 nx_str_view nx_str_view_trim(nx_str_view s);
-
-#ifdef __cplusplus
-}
-#endif

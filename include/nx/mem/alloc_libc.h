@@ -2,10 +2,6 @@
 
 #include "nx/mem/alloc.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * Create libc allocator (malloc/calloc/realloc/free wrapper)
  *
@@ -25,7 +21,3 @@ void nx_al_libc_drop(nx_al *al);
  * This is the recommended default allocator for most use cases
  */
 nx_al *nx_al_libc_default_g(void);
-
-#ifdef __cplusplus
-}
-#endif

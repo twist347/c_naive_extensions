@@ -1,7 +1,6 @@
 #include "nx/core/cmp.h"
 
 #include <math.h>
-#include <stddef.h>
 #include <string.h>
 
 #include "nx/core/type.h"

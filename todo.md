@@ -10,3 +10,6 @@
 - [ ] make OBJECT in cmakelists instead of two builds (static/shared)
 - [ ] add overflow funcs (do not use from C23 because of C++)
 - [ ] split algo_numeric into min_max, sat, ckd
+- [ ] add _Generic wrapper under unity asserts
+- [ ] think about duplicates between nx and libc
+- [ ] use fn postfix for pointers to funcs

@@ -2,10 +2,6 @@
 
 #include "nx/core/type.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * Allocator interface
  *
@@ -47,7 +43,3 @@ nx_bool nx_al_neq(const nx_al *a, const nx_al *b);
 
 #define NX_AL_DEALLOC(T, al, ptr, count) \
     nx_al_dealloc((al), (ptr), (count) * sizeof(T))
-
-#ifdef __cplusplus
-}
-#endif

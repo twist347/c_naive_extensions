@@ -48,11 +48,11 @@ set(NX_RAND_SOURCES
 )
 
 set(NX_NUMERIC_SOURCES
-    src/numeric/abs.c
-    src/numeric/ckd.c
-    src/numeric/sat.c
-    src/numeric/sign.c
-    src/numeric/minmax.c
+        src/numeric/abs.c
+        src/numeric/ckd.c
+        src/numeric/sat.c
+        src/numeric/sign.c
+        src/numeric/minmax.c
 )
 
 set(NX_SOURCES

@@ -6,10 +6,6 @@
 #include "../ds/span.h"
 #include "nx/core/type.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #define NX_FMT_I8         "%" PRId8
 #define NX_FMT_I16        "%" PRId16
 #define NX_FMT_I32        "%" PRId32
@@ -65,8 +61,3 @@ void nx_fprint_f64(FILE *stream, const void *data);
 
 void nx_fprintln_span(FILE *stream, nx_span s, nx_fprint_fn f);
 void nx_fprintln_cspan(FILE *stream, nx_cspan s, nx_fprint_fn f);
-
-#ifdef __cplusplus
-}
-#endif
-

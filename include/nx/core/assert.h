@@ -1,9 +1,5 @@
 #pragma once
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 [[noreturn]] void nx_assert_fail(
     const char *type,
     const char *assertion,
@@ -12,10 +8,6 @@ extern "C" {
     const char *func,
     const char *msg
 );
-
-#ifdef __cplusplus
-}
-#endif
 
 #if defined(NDEBUG)
     #define NX_DEBUG 0

@@ -3,7 +3,6 @@
 #include <stdarg.h>
 
 #include "nx/core/assert.h"
-#include "nx/core/panic.h"
 
 nx_i32 nx_fprintf(FILE *stream, const char *fmt, ...) {
     NX_ASSERT(stream);
