@@ -2,6 +2,8 @@
 
 #include "nx/core/type.h"
 
+// TODO: aligned alloc (for the future)
+
 /**
  * Allocator interface
  *

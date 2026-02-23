@@ -52,7 +52,7 @@ set(NX_NUMERIC_SOURCES
         src/numeric/ckd.c
         src/numeric/sat.c
         src/numeric/sign.c
-        src/numeric/minmax.c
+        src/numeric/bounds.c
 )
 
 set(NX_SOURCES

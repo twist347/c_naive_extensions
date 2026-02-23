@@ -2,7 +2,7 @@
 
 #include "nx/core/assert.h"
 
-nx_isize nx_find(nx_cspan s, const void *key, nx_cmp cmp) {
+nx_isize nx_find(nx_cspan s, const void *key, nx_cmp_fn cmp) {
     NX_SPAN_ANY_ASSERT(s);
     NX_ASSERT(key);
     NX_ASSERT(cmp);
@@ -16,11 +16,11 @@ nx_isize nx_find(nx_cspan s, const void *key, nx_cmp cmp) {
     return -1;
 }
 
-nx_bool nx_contains(nx_cspan s, const void *key, nx_cmp cmp) {
+nx_bool nx_contains(nx_cspan s, const void *key, nx_cmp_fn cmp) {
     return nx_find(s, key, cmp) != -1;
 }
 
-nx_usize nx_count(nx_cspan s, const void *key, nx_cmp cmp) {
+nx_usize nx_count(nx_cspan s, const void *key, nx_cmp_fn cmp) {
     NX_SPAN_ANY_ASSERT(s);
     NX_ASSERT(key);
     NX_ASSERT(cmp);
@@ -35,7 +35,7 @@ nx_usize nx_count(nx_cspan s, const void *key, nx_cmp cmp) {
     return count;
 }
 
-nx_usize nx_lower_bound(nx_cspan s, const void *key, nx_cmp cmp) {
+nx_usize nx_lower_bound(nx_cspan s, const void *key, nx_cmp_fn cmp) {
     NX_SPAN_ANY_ASSERT(s);
     NX_ASSERT(key);
     NX_ASSERT(cmp);
@@ -57,7 +57,7 @@ nx_usize nx_lower_bound(nx_cspan s, const void *key, nx_cmp cmp) {
     return lo;
 }
 
-nx_usize nx_upper_bound(nx_cspan s, const void *key, nx_cmp cmp) {
+nx_usize nx_upper_bound(nx_cspan s, const void *key, nx_cmp_fn cmp) {
     NX_SPAN_ANY_ASSERT(s);
     NX_ASSERT(key);
     NX_ASSERT(cmp);
@@ -79,7 +79,7 @@ nx_usize nx_upper_bound(nx_cspan s, const void *key, nx_cmp cmp) {
     return lo;
 }
 
-nx_isize nx_bsearch(nx_cspan s, const void *key, nx_cmp cmp) {
+nx_isize nx_bsearch(nx_cspan s, const void *key, nx_cmp_fn cmp) {
     NX_SPAN_ANY_ASSERT(s);
     NX_ASSERT(key);
     NX_ASSERT(cmp);

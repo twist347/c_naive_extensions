@@ -19,5 +19,7 @@ void nx_al_libc_drop(nx_al *al);
  * Use this when you need a default allocator without allocation overhead
  *
  * This is the recommended default allocator for most use cases
+ *
+ * DO NOT modify fields.
  */
 nx_al *nx_al_libc_default_g(void);

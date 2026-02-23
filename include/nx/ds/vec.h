@@ -3,8 +3,9 @@
 #include "nx/core/type.h"
 #include "nx/core/assert.h"
 #include "nx/core/status.h"
-#include "nx/ds/span.h"
 #include "nx/core/result.h"
+#include "nx/ds/span.h"
+#include "nx/mem/alloc.h"
 
 /* Contract:
  * - All invalid usage (NULL, bounds, invariants, type_size mismatch, size overflow, etc.)
@@ -18,8 +19,16 @@
  *   - st == NX_STATUS_OK => val is valid.
  *   - st != NX_STATUS_OK => val must not be used.
  *
- * - zero-length <-> null data
- */
+ * - Zero-length <-> null data
+ *
+ * - Allocator:
+ *   - Each vector holds a pointer to an allocator (NOT owned)
+ *   - Allocator must outlive all vectors using it
+ *   - Simple API uses default allocator (nx_al_libc_default_g())
+ *   - For custom allocator, use nx_vec_new_p with params
+ *
+ * - No overflow checking
+*/
 
 typedef struct nx_vec nx_vec;
 
@@ -31,6 +40,7 @@ typedef struct nx_vec_params {
     nx_usize len;
     nx_usize cap;
     nx_usize tsz; // type size
+    nx_al *al;    // must not be null
 } nx_vec_params;
 
 /* ========== lifetime ========== */
@@ -45,6 +55,7 @@ void nx_vec_drop(nx_vec *self);
 /* ========== copy/move semantic ========== */
 
 nx_vec_res nx_vec_copy(const nx_vec *src);
+nx_vec_res nx_vec_copy_a(const nx_vec *src, nx_al *al);
 nx_vec *nx_vec_move(nx_vec **src);
 nx_status nx_vec_copy_assign(nx_vec *self, const nx_vec *src);
 void nx_vec_move_assign(nx_vec *self, nx_vec *src);
@@ -55,6 +66,7 @@ nx_usize nx_vec_len(const nx_vec *self);
 nx_bool nx_vec_empty(const nx_vec *self);
 nx_usize nx_vec_cap(const nx_vec *self);
 nx_usize nx_vec_tsz(const nx_vec *self);
+nx_al *nx_vec_al(const nx_vec *self);
 
 /* ========== access ========== */
 

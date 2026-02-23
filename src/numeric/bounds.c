@@ -1,4 +1,4 @@
-#include "nx/numeric/minmax.h"
+#include "nx/numeric/bounds.h"
 
 #include "nx/core/assert.h"
 

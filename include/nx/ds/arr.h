@@ -3,8 +3,8 @@
 #include "nx/core/type.h"
 #include "nx/core/assert.h"
 #include "nx/core/status.h"
-#include "nx/ds/span.h"
 #include "nx/core/result.h"
+#include "nx/ds/span.h"
 #include "nx/mem/alloc.h"
 
 /* Contract:
@@ -26,6 +26,8 @@
  *   - Allocator must outlive all arrays using it
  *   - Simple API uses default allocator (nx_al_default())
  *   - For custom allocator, use nx_arr_new_p with params
+ *
+ * - No overflow checking
  */
 
 typedef struct nx_arr nx_arr;

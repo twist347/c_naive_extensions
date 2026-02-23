@@ -1,2 +1,5 @@
-#nx_add_criterion_test(test_nx_algo test_algo_span.c)
-#nx_add_criterion_test(test_nx_numeric test_algo_numeric.c)
+nx_add_test(test_compare test_compare.c)
+nx_add_test(test_minmax test_minmax.c)
+nx_add_test(test_search test_search.c)
+nx_add_test(test_sort test_sort.c)
+nx_add_test(test_transform.c test_transform.c)

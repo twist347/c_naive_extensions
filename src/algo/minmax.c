@@ -2,7 +2,7 @@
 
 #include "nx/core/assert.h"
 
-nx_isize nx_min_element(nx_cspan s, nx_cmp cmp) {
+nx_isize nx_min_element(nx_cspan s, nx_cmp_fn cmp) {
     NX_SPAN_ANY_ASSERT(s);
     NX_ASSERT(cmp);
 
@@ -24,7 +24,7 @@ nx_isize nx_min_element(nx_cspan s, nx_cmp cmp) {
     return (nx_isize) best;
 }
 
-nx_isize nx_max_element(nx_cspan s, nx_cmp cmp) {
+nx_isize nx_max_element(nx_cspan s, nx_cmp_fn cmp) {
     NX_SPAN_ANY_ASSERT(s);
     NX_ASSERT(cmp);
 
@@ -46,7 +46,7 @@ nx_isize nx_max_element(nx_cspan s, nx_cmp cmp) {
     return (nx_isize) best;
 }
 
-nx_minmax nx_minmax_element(nx_cspan s, nx_cmp cmp) {
+nx_minmax nx_minmax_element(nx_cspan s, nx_cmp_fn cmp) {
     NX_SPAN_ANY_ASSERT(s);
     NX_ASSERT(cmp);
 

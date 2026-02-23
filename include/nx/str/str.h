@@ -5,6 +5,8 @@
 #include "nx/core/result.h"
 #include "nx/str/str_view.h"
 
+// TODO: add nx_al
+
 /* Contract:
  * - Invalid usage is programmer error (NX_ASSERT).
  * - Functions that may fail due to internal reasons report:
@@ -15,6 +17,8 @@
  * Result convention:
  * - st == NX_STATUS_OK  => val is valid
  * - st != NX_STATUS_OK  => val must not be used (NX_RES_GET_VAL asserts)
+ *
+ * - No overflow checking
  */
 
 typedef struct nx_str nx_str;

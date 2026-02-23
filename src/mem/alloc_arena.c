@@ -6,10 +6,9 @@
 
 #include "nx/core/assert.h"
 #include "nx/core/util.h"
+#include "nx/mem/ptr.h"
 
 constexpr nx_usize DEFAULT_ALIGNMENT = alignof(max_align_t);
-
-static nx_usize align_up(nx_usize size, nx_usize alignment);
 
 static void *arena_alloc(void *ctx, nx_usize size);
 static void *arena_calloc(void *ctx, nx_usize num, nx_usize size);
@@ -94,11 +93,6 @@ nx_al_arena_stats nx_al_arena_get_stats(const nx_al *al) {
     };
 }
 
-static nx_usize align_up(nx_usize size, nx_usize alignment) {
-    NX_ASSERT(alignment > 0 && (alignment & (alignment - 1)) == 0);
-    return (size + alignment - 1) & ~(alignment - 1);
-}
-
 static void *arena_alloc(void *ctx, nx_usize size) {
     NX_ASSERT(ctx);
 
@@ -108,7 +102,7 @@ static void *arena_alloc(void *ctx, nx_usize size) {
         return nx_null;
     }
 
-    const nx_usize aligned_size = align_up(size, DEFAULT_ALIGNMENT);
+    const nx_usize aligned_size = nx_align_up(size, DEFAULT_ALIGNMENT);
     if (arena->offset + aligned_size > arena->cap) {
         return nx_null;
     }

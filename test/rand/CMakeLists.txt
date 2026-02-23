@@ -1,0 +1,1 @@
+nx_add_test(test_rand test_rand.c)

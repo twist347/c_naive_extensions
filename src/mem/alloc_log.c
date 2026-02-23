@@ -110,6 +110,6 @@ static void log_dealloc(void *ctx, void *ptr, nx_usize size) {
     NX_ASSERT(log_ctx->wrapped->dealloc);
 
     log_ctx->wrapped->dealloc(log_ctx->wrapped->ctx, ptr, size);
-    fprintf(log_ctx->stream, "[NX] dealloc size = %zu -> %p\n", size, ptr);
+    fprintf(log_ctx->stream, "[NX] dealloc %p size = %zu\n", ptr, size);
     fflush(log_ctx->stream);
 }

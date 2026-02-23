@@ -3,6 +3,8 @@
 #include "nx/core/type.h"
 #include "nx/core/assert.h"
 
+// - No overflow checking
+
 typedef struct {
     void *data;
     nx_usize len;

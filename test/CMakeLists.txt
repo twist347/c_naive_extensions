@@ -1,4 +1,4 @@
-function(nx_add_criterion_test target_name source_file)
+function(nx_add_test target_name source_file)
     add_executable(${target_name} ${source_file})
 
     target_link_libraries(${target_name} PRIVATE nx_static unity::framework)

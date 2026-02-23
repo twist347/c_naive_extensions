@@ -9,10 +9,10 @@ typedef enum {
     NX_ORDERING_GREATER = 1,
 } nx_ordering;
 
-typedef int (*nx_cmp)(const void *, const void *);
+typedef int (*nx_cmp_fn)(const void *, const void *);
 
 // TODO: not used
-typedef int (*nx_cmp_ctx)(const void *, const void *, void *);
+typedef int (*nx_cmp_ctx_fn)(const void *, const void *, void *);
 
 int nx_cmp_i8(const void *lhs, const void *rhs);
 int nx_cmp_i16(const void *lhs, const void *rhs);

@@ -25,6 +25,7 @@ void *nx_al_calloc(nx_al *al, nx_usize num, nx_usize size) {
             return nx_null;
         }
         memset(ptr, 0, total);
+        return ptr;
     }
 
     return al->calloc(al->ctx, num, size);

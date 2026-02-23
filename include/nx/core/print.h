@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <inttypes.h>
 
-#include "../ds/span.h"
+#include "nx/ds/span.h"
 #include "nx/core/type.h"
 
 #define NX_FMT_I8         "%" PRId8

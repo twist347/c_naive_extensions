@@ -1,6 +1,6 @@
 #include "unity.h"
 
-#include "nx/core/print.h"
+#include "nx/core/type.h"
 
 // TODO: impl
 

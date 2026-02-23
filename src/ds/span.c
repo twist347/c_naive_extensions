@@ -5,19 +5,12 @@
 #include "nx/mem/ptr.h"
 #include "../../include/nx/numeric/limit.h"
 
-#define ASSERT_MUL_OK(a, b, m)          \
-    do {                                \
-        NX_ASSERT((b) != 0);            \
-        NX_ASSERT((a) <= (m) / (b));    \
-    } while (0)
-
 /* ========== assert ========== */
 
 #if NX_DEBUG
     void nx_span_any_assert_(const void *data, nx_usize len, nx_usize tsz) {
         NX_ASSERT(tsz > 0);
         NX_ASSERT(len == 0 || data != nx_null);
-        ASSERT_MUL_OK(len, tsz, NX_USIZE_MAX);
     }
 #endif
 
