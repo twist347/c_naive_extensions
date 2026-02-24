@@ -36,7 +36,7 @@ NX_DEF_RES_TYPE(nx_vec_res, nx_vec *);
 
 /* ========== params ========== */
 
-typedef struct nx_vec_params {
+typedef struct {
     nx_usize len;
     nx_usize cap;
     nx_usize tsz; // type size
@@ -112,55 +112,56 @@ nx_cspan nx_vec_to_cspan(const nx_vec *self);
 #define NX_VEC_FROM_DATA(T, data, len) \
     nx_vec_from_data((data), (len), sizeof(T))
 
-#define NX_VEC_GET_AS(T, self, idx)                 \
-    (NX_ASSERT(nx_vec_tsz((self)) == sizeof(T)),    \
+#define NX_VEC_GET_AS(T, self, idx)              \
+    (NX_ASSERT(nx_vec_tsz((self)) == sizeof(T)), \
     (T *) nx_vec_get((self), (idx)))
 
-#define NX_VEC_GET_AS_C(T, self, idx)               \
-    (NX_ASSERT(nx_vec_tsz((self)) == sizeof(T)),    \
+#define NX_VEC_GET_AS_C(T, self, idx)            \
+    (NX_ASSERT(nx_vec_tsz((self)) == sizeof(T)), \
     (const T *) nx_vec_get_c((self), (idx)))
 
-#define NX_VEC_AT_AS(T, self, idx)                  \
-    (NX_ASSERT(nx_vec_tsz((self)) == sizeof(T)),    \
+#define NX_VEC_AT_AS(T, self, idx)               \
+    (NX_ASSERT(nx_vec_tsz((self)) == sizeof(T)), \
     (T *) nx_vec_at((self), (idx)))
 
-#define NX_VEC_AT_AS_C(T, self, idx)                \
-    (NX_ASSERT(nx_vec_tsz((self)) == sizeof(T)),    \
+#define NX_VEC_AT_AS_C(T, self, idx)             \
+    (NX_ASSERT(nx_vec_tsz((self)) == sizeof(T)), \
     (const T *) nx_vec_at_c((self), (idx)))
 
-#define NX_VEC_SET(T, self, idx, expr)                 \
-    do {                                               \
-        NX_ASSERT(nx_vec_tsz((self)) == sizeof(T));    \
-        const T nx_tmp_ = (expr);                      \
-        nx_vec_set((self), (idx), &nx_tmp_);           \
+#define NX_VEC_SET(T, self, idx, expr)              \
+    do {                                            \
+        NX_ASSERT(nx_vec_tsz((self)) == sizeof(T)); \
+        const T nx_tmp_ = (expr);                   \
+        nx_vec_set((self), (idx), &nx_tmp_);        \
     } while (0)
 
-#define NX_VEC_DATA_AS(T, self)                     \
-    (NX_ASSERT(nx_vec_tsz((self)) == sizeof(T)),    \
+#define NX_VEC_DATA_AS(T, self)                  \
+    (NX_ASSERT(nx_vec_tsz((self)) == sizeof(T)), \
     (T *) nx_vec_data((self)))
 
-#define NX_VEC_DATA_AS_C(T, self)                   \
-    (NX_ASSERT(nx_vec_tsz((self)) == sizeof(T)),    \
+#define NX_VEC_DATA_AS_C(T, self)                \
+    (NX_ASSERT(nx_vec_tsz((self)) == sizeof(T)), \
     (const T *) nx_vec_data_c((self)))
 
 /* ops that may allocate: return nx_status */
 
-#define NX_VEC_PUSH_EXPR(T, self, expr)                              \
-    do {                                                             \
-        NX_ASSERT(nx_vec_tsz((self)) == sizeof(T));                  \
-        const T nx_tmp_ = (expr);                                    \
-        NX_ASSERT(nx_vec_push((self), &nx_tmp_) == NX_STATUS_OK);    \
+#define NX_VEC_PUSH_EXPR(T, self, expr)                         \
+    do {                                                        \
+        NX_ASSERT(nx_vec_tsz((self)) == sizeof(T));             \
+        const T nx_tmp_ = (expr);                               \
+        const nx_status nx_st_ = nx_vec_push((self), &nx_tmp_); \
+        NX_ASSERT(nx_st_ == NX_STATUS_OK);                      \
     } while (0)
 
-#define NX_VEC_INSERT_EXPR(T, self, idx, expr)                              \
-    do {                                                                    \
-        NX_ASSERT(nx_vec_tsz((self)) == sizeof(T));                         \
-        const T nx_tmp_ = (expr);                                           \
-        const nx_status nx_st_ = nx_vec_insert((self), (idx), &nx_tmp_);    \
-        NX_ASSERT(nx_st_ == NX_STATUS_OK);                                  \
+#define NX_VEC_INSERT_EXPR(T, self, idx, expr)                           \
+    do {                                                                 \
+        NX_ASSERT(nx_vec_tsz((self)) == sizeof(T));                      \
+        const T nx_tmp_ = (expr);                                        \
+        const nx_status nx_st_ = nx_vec_insert((self), (idx), &nx_tmp_); \
+        NX_ASSERT(nx_st_ == NX_STATUS_OK);                               \
     } while (0)
 
 /* pop returns pointer to last element storage (valid to read immediately) */
-#define NX_VEC_POP_PTR(T, self)                     \
-    (NX_ASSERT(nx_vec_tsz((self)) == sizeof(T)),    \
+#define NX_VEC_POP_PTR(T, self)                  \
+    (NX_ASSERT(nx_vec_tsz((self)) == sizeof(T)), \
     (T *) nx_vec_pop((self)))

@@ -70,39 +70,39 @@ nx_cspan nx_cspan_tail(nx_cspan s, nx_usize offset);
 
 /* ========== macros ========== */
 
-#define NX_SPAN_FROM_PTR(ptr, len)    \
+#define NX_SPAN_FROM_PTR(ptr, len) \
     nx_span_new((ptr), (len), sizeof((ptr)[0]))
 
-#define NX_CSPAN_FROM_PTR(ptr, len)    \
+#define NX_CSPAN_FROM_PTR(ptr, len) \
     nx_cspan_new((ptr), (len), sizeof((ptr)[0]))
 
-#define NX_SPAN_GET_AS(T, s, idx)        \
-    (NX_ASSERT((s).tsz == sizeof(T)),    \
+#define NX_SPAN_GET_AS(T, s, idx)     \
+    (NX_ASSERT((s).tsz == sizeof(T)), \
     (T *) nx_span_get((s), (idx)))
 
-#define NX_SPAN_GET_AS_C(T, s, idx)          \
-    (NX_ASSERT((s).tsz == sizeof(T)),        \
+#define NX_SPAN_GET_AS_C(T, s, idx)   \
+    (NX_ASSERT((s).tsz == sizeof(T)), \
     (const T *) nx_span_get_c((s), (idx)))
 
-#define NX_CSPAN_GET_AS_C(T, s, idx)     \
-    (NX_ASSERT((s).tsz == sizeof(T)),    \
+#define NX_CSPAN_GET_AS_C(T, s, idx)  \
+    (NX_ASSERT((s).tsz == sizeof(T)), \
     (const T *) nx_cspan_get_c((s), (idx)))
 
-#define NX_SPAN_AT_AS(T, s, idx)         \
-    (NX_ASSERT((s).tsz == sizeof(T)),    \
+#define NX_SPAN_AT_AS(T, s, idx)      \
+    (NX_ASSERT((s).tsz == sizeof(T)), \
     (T *) nx_span_at((s), (idx)))
 
-#define NX_SPAN_AT_AS_C(T, s, idx)           \
-    (NX_ASSERT((s).tsz == sizeof(T)),        \
+#define NX_SPAN_AT_AS_C(T, s, idx)    \
+    (NX_ASSERT((s).tsz == sizeof(T)), \
     (const T *) nx_span_at_c((s), (idx)))
 
-#define NX_CSPAN_AT_AS_C(T, s, idx)      \
-    (NX_ASSERT((s).tsz == sizeof(T)),    \
+#define NX_CSPAN_AT_AS_C(T, s, idx)   \
+    (NX_ASSERT((s).tsz == sizeof(T)), \
     (const T *) nx_cspan_at_c((s), (idx)))
 
-#define NX_SPAN_SET(T, s, idx, expr)          \
-    do {                                      \
-        NX_ASSERT((s).tsz == sizeof(T));      \
-        const T nx_tmp_ = (expr);             \
-        nx_span_set((s), (idx), &nx_tmp_);    \
+#define NX_SPAN_SET(T, s, idx, expr)       \
+    do {                                   \
+        NX_ASSERT((s).tsz == sizeof(T));   \
+        const T nx_tmp_ = (expr);          \
+        nx_span_set((s), (idx), &nx_tmp_); \
     } while (0)

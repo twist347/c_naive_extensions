@@ -16,14 +16,13 @@ struct nx_vec {
 };
 
 #if NX_DEBUG
-static void vec_assert_impl(const nx_vec *self) {
-    NX_ASSERT(self != nx_null);
-    NX_ASSERT(self->tsz > 0);
-    NX_ASSERT(self->al != nx_null);
-    NX_ASSERT(self->len <= self->cap);
-    NX_ASSERT((self->cap == 0) == (self->data == nx_null));
-}
-
+    static void vec_assert_impl(const nx_vec *self) {
+        NX_ASSERT(self != nx_null);
+        NX_ASSERT(self->tsz > 0);
+        NX_ASSERT(self->al != nx_null);
+        NX_ASSERT(self->len <= self->cap);
+        NX_ASSERT((self->cap == 0) == (self->data == nx_null));
+    }
 #define VEC_ASSERT(self)    \
     do { vec_assert_impl((self)); } while (0)
 #else
@@ -121,7 +120,7 @@ nx_vec_res nx_vec_copy_a(const nx_vec *src, nx_al *al) {
     VEC_ASSERT(src);
     NX_ASSERT(al);
 
-    nx_vec *dst = nx_al_alloc(al, sizeof(nx_vec));
+    nx_vec *dst = malloc(sizeof(nx_vec));
     if (!dst) {
         return NX_RES_NEW_ERR(nx_vec_res, NX_STATUS_OUT_OF_MEMORY);
     }
@@ -541,10 +540,8 @@ static nx_status alloc_and_copy_data(void **out, const nx_vec *src, nx_al *al) {
 
 static void free_data(nx_vec *self) {
     if (self->data) {
-        nx_al_dealloc(self->al, self->data, self->cap * self->tsz);
-        self->data = nx_null;
-        self->cap = 0;
-        self->len = 0;
+        const nx_usize cap_bytes = self->cap * self->tsz;
+        nx_al_dealloc(self->al, self->data, cap_bytes);
     }
 }
 

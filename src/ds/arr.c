@@ -15,13 +15,12 @@ struct nx_arr {
 };
 
 #if NX_DEBUG
-static void arr_assert_impl(const nx_arr *self) {
-    NX_ASSERT(self != nx_null);
-    NX_ASSERT(self->tsz > 0);
-    NX_ASSERT(self->al != nx_null);
-    NX_ASSERT(((self->len == 0) == (self->data == nx_null)));
-}
-
+    static void arr_assert_impl(const nx_arr *self) {
+        NX_ASSERT(self != nx_null);
+        NX_ASSERT(self->tsz > 0);
+        NX_ASSERT(self->al != nx_null);
+        NX_ASSERT(((self->len == 0) == (self->data == nx_null)));
+    }
 #define ARR_ASSERT(self)    \
     do { arr_assert_impl((self)); } while (0)
 #else
@@ -364,7 +363,5 @@ static void free_data(nx_arr *self) {
     if (self->data) {
         const nx_usize bytes = calc_bytes(self->len, self->tsz);
         nx_al_dealloc(self->al, self->data, bytes);
-        self->data = nx_null;
-        self->len = 0;
     }
 }

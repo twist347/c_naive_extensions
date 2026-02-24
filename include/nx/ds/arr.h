@@ -36,7 +36,7 @@ NX_DEF_RES_TYPE(nx_arr_res, nx_arr *);
 
 /* ========== params ========== */
 
-typedef struct nx_arr_params {
+typedef struct {
     nx_usize len;
     nx_usize tsz; // type size
     nx_al *al;    // must not be null
@@ -94,33 +94,33 @@ nx_cspan nx_arr_to_cspan(const nx_arr *self);
 #define NX_ARR_FROM_DATA(T, data, len) \
     nx_arr_from_data((data), (len), sizeof(T))
 
-#define NX_ARR_GET_AS(T, self, idx)                 \
-    (NX_ASSERT(nx_arr_tsz((self)) == sizeof(T)),    \
+#define NX_ARR_GET_AS(T, self, idx)              \
+    (NX_ASSERT(nx_arr_tsz((self)) == sizeof(T)), \
     (T *) nx_arr_get((self), (idx)))
 
-#define NX_ARR_GET_AS_C(T, self, idx)               \
-    (NX_ASSERT(nx_arr_tsz((self)) == sizeof(T)),    \
+#define NX_ARR_GET_AS_C(T, self, idx)            \
+    (NX_ASSERT(nx_arr_tsz((self)) == sizeof(T)), \
     (const T *) nx_arr_get_c((self), (idx)))
 
-#define NX_ARR_AT_AS(T, self, idx)                  \
-    (NX_ASSERT(nx_arr_tsz((self)) == sizeof(T)),    \
+#define NX_ARR_AT_AS(T, self, idx)               \
+    (NX_ASSERT(nx_arr_tsz((self)) == sizeof(T)), \
     (T *) nx_arr_at((self), (idx)))
 
-#define NX_ARR_AT_AS_C(T, self, idx)                \
-    (NX_ASSERT(nx_arr_tsz((self)) == sizeof(T)),    \
+#define NX_ARR_AT_AS_C(T, self, idx)             \
+    (NX_ASSERT(nx_arr_tsz((self)) == sizeof(T)), \
     (const T *) nx_arr_at_c((self), (idx)))
 
-#define NX_ARR_SET_EXPR(T, self, idx, expr)            \
-    do {                                               \
-        NX_ASSERT(nx_arr_tsz((self)) == sizeof(T));    \
-        const T nx_tmp_ = (expr);                      \
-        nx_arr_set((self), (idx), &nx_tmp_);           \
+#define NX_ARR_SET_EXPR(T, self, idx, expr)         \
+    do {                                            \
+        NX_ASSERT(nx_arr_tsz((self)) == sizeof(T)); \
+        const T nx_tmp_ = (expr);                   \
+        nx_arr_set((self), (idx), &nx_tmp_);        \
     } while (0)
 
-#define NX_ARR_DATA_AS(T, self)                     \
-    (NX_ASSERT(nx_arr_tsz((self)) == sizeof(T)),    \
+#define NX_ARR_DATA_AS(T, self)                  \
+    (NX_ASSERT(nx_arr_tsz((self)) == sizeof(T)), \
     (T *) nx_arr_data((self)))
 
-#define NX_ARR_DATA_AS_C(T, self)                   \
-    (NX_ASSERT(nx_arr_tsz((self)) == sizeof(T)),    \
+#define NX_ARR_DATA_AS_C(T, self)                \
+    (NX_ASSERT(nx_arr_tsz((self)) == sizeof(T)), \
     (const T *) nx_arr_data_c((self)))

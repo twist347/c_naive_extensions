@@ -5,7 +5,7 @@
 
 #include "nx/core/assert.h"
 
-/* ---------- assert ---------- */
+/* ========== assert ========== */
 
 void nx_str_view_assert_(nx_str_view sv) {
     NX_ASSERT(sv.len == 0 || sv.data != nx_null);

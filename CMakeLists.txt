@@ -81,10 +81,10 @@ set_target_properties(nx_shared PROPERTIES
         OUTPUT_NAME nx
 )
 
-foreach (tgt IN ITEMS nx_static nx_shared)
-    target_include_directories(${tgt} PUBLIC ${PROJECT_SOURCE_DIR}/include)
-    target_compile_options(${tgt} PRIVATE -Wall -Wextra -pedantic)
-    target_link_libraries(${tgt} PUBLIC m)
+foreach (target IN ITEMS nx_static nx_shared)
+    target_include_directories(${target} PUBLIC ${PROJECT_SOURCE_DIR}/include)
+    target_compile_options(${target} PRIVATE -Wall -Wextra -pedantic)
+    target_link_libraries(${target} PUBLIC m)
 endforeach ()
 
 option(BUILD_TEST "Build unit tests" ON)

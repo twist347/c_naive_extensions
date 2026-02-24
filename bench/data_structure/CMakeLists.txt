@@ -1,1 +1,0 @@
-nx_add_ubench_bench(bench_nx_vec bench_nx_vec.c)

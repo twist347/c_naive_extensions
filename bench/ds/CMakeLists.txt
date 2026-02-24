@@ -1,0 +1,1 @@
+nx_add_bench(bench_vec bench_vec.c)

@@ -1,9 +1,8 @@
 #pragma once
 
 #include "nx/core/status.h"
-#include "nx/core/type.h"
-#include "nx/core/assert.h"
 #include "nx/core/panic.h"
+#include "nx/core/util.h"
 
 #define NX_DEF_RES_TYPE(name, T)    \
     typedef struct {                \
@@ -29,8 +28,18 @@
 
 /* ========== value extraction ========== */
 
-#define NX_RES_UNWRAP(res) \
-    (NX_VERIFY((res).st == NX_STATUS_OK), (res).val)
+/// requires lvalue
+#define NX_RES_UNWRAP(res_lvalue)                \
+    (NX_REQUIRE_LVALUE(res_lvalue),              \
+     NX_VERIFY((res_lvalue).st == NX_STATUS_OK), \
+     (res_lvalue).val)
+
+#define NX_RES_UNWRAP_INTO(out_lvalue, expr) \
+    do {                                     \
+        typeof(expr) _r_ = (expr);           \
+        NX_VERIFY(_r_.st == NX_STATUS_OK);   \
+        (out_lvalue) = _r_.val;              \
+    } while (0)
 
 #define NX_RES_UNWRAP_UNCHECKED(res) \
     ((res).val)

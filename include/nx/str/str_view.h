@@ -7,7 +7,7 @@ typedef struct {
     nx_usize len;
 } nx_str_view;
 
-/* ---------- assert ---------- */
+/* ========== assert ========== */
 
 #if NX_DEBUG
     void nx_str_view_assert_(nx_str_view s);
