@@ -8,27 +8,26 @@
 #include "nx/mem/alloc.h"
 
 /* Contract:
- * - All invalid usage (NULL, bounds, invariants, type_size mismatch, size overflow, etc.)
- *   is a programmer error guarded by NX_ASSERT in debug builds. Release behavior is unspecified.
+ * - Invalid usage (null, bounds, invariants, type mismatch) is a programmer
+ *   error guarded by NX_ASSERT. Release behavior is unspecified.
  *
- * - The only recoverable failures are allocation failures:
- *   - operations that may allocate return nx_status,
- *   - constructors/factories return nx_vec_res.
+ * - The only recoverable failure is allocation failure:
+ *   - constructors return nx_*_res
+ *   - mutating operations return nx_status
  *
  * - Result convention:
- *   - st == NX_STATUS_OK => val is valid.
- *   - st != NX_STATUS_OK => val must not be used.
+ *   - st == NX_STATUS_OK  => val is valid
+ *   - st != NX_STATUS_OK  => val must not be used
  *
- * - Zero-length <-> null data
+ * - Null data <--> zero length
  *
  * - Allocator:
- *   - Each vector holds a pointer to an allocator (NOT owned)
- *   - Allocator must outlive all vectors using it
- *   - Simple API uses default allocator (nx_al_libc_default_g())
- *   - For custom allocator, use nx_vec_new_p with params
+ *   - NOT owned; must outlive the container
+ *   - Simple API uses nx_al_libc_default_g()
+ *   - For custom allocator, use nx_*_new_p with params
  *
  * - No overflow checking
-*/
+ */
 
 typedef struct nx_vec nx_vec;
 

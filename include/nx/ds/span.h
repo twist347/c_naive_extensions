@@ -3,7 +3,19 @@
 #include "nx/core/type.h"
 #include "nx/core/assert.h"
 
-// - No overflow checking
+/* Contract:
+ * - Invalid usage (null, bounds, invariants, type mismatch) is a programmer
+ *   error guarded by NX_ASSERT. Release behavior is unspecified.
+ *
+ * - Non-owning view: does not allocate or free memory.
+ *   The referenced data must outlive the span.
+ *
+ * - Null data --> zero length
+ *
+ * - Passed by value (small struct, no heap allocation)
+ *
+ * - No overflow checking
+ */
 
 typedef struct {
     void *data;
@@ -21,7 +33,6 @@ typedef struct {
 
 #if NX_DEBUG
     void nx_span_any_assert_(const void *data, nx_usize len, nx_usize tsz);
-
 #define NX_SPAN_ANY_ASSERT(s) \
     do { nx_span_any_assert_((s).data, (s).len, (s).tsz); } while (0)
 #else

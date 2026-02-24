@@ -7,21 +7,28 @@
 #include "nx/mem/alloc.h"
 
 /* Contract:
- * - Invalid usage is programmer error (NX_ASSERT).
- * - Functions that may fail due to internal reasons report:
- *     - nx_str_res for factories (returning a new nx_str*)
- *     - nx_status for mutating operations
- *   Errors: OUT_OF_MEMORY.
+ * - Invalid usage (null, bounds, invariants, type mismatch) is a programmer
+ *   error guarded by NX_ASSERT. Release behavior is unspecified.
  *
- * Result convention:
- * - st == NX_STATUS_OK  => val is valid
- * - st != NX_STATUS_OK  => val must not be used
+ * - The only recoverable failure is allocation failure:
+ *   - constructors return nx_str_res
+ *   - mutating operations return nx_status
  *
- * Allocator:
- * - Each string holds a pointer to an allocator (NOT owned)
- * - Allocator must outlive all strings using it
- * - Simple API uses default allocator (nx_al_libc_default_g())
- * - For custom allocator, use nx_str_new_p with params
+ * - Result convention:
+ *   - st == NX_STATUS_OK  => val is valid
+ *   - st != NX_STATUS_OK  => val must not be used
+ *
+ * - Null data <--> zero length
+ *
+ * - Null terminator:
+ *   - Always maintained; data[len] == '\0' when data != null
+ *   - len and cap exclude the trailing '\0'
+ *   - Allocated size is cap + 1
+ *
+ * - Allocator:
+ *   - NOT owned; must outlive the string
+ *   - Simple API uses nx_al_libc_default_g()
+ *   - For custom allocator, use nx_str_new_p with params
  *
  * - No overflow checking
  */
@@ -31,8 +38,8 @@ typedef struct nx_str nx_str;
 NX_DEF_RES_TYPE(nx_str_res, nx_str *);
 
 typedef struct {
-    nx_usize len;
-    nx_usize cap;
+    nx_usize len; // excludes trailing '\0'
+    nx_usize cap; // usable capacity, excludes trailing '\0'
     nx_al *al;    // must not be null
 } nx_str_params;
 

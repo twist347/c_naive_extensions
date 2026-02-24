@@ -9,9 +9,9 @@
 
 struct nx_str {
     nx_char *data;
-    nx_usize len; /* excludes trailing '\0' */
-    nx_usize cap; /* usable capacity, excludes trailing '\0' */
-    nx_al *al;
+    nx_usize len; // excludes trailing '\0'
+    nx_usize cap; // usable capacity, excludes trailing '\0'
+    nx_al *al;    // must not be null
 };
 
 #if NX_DEBUG
@@ -33,13 +33,8 @@ struct nx_str {
 // internals decls
 
 static nx_status new_impl(nx_str **out, nx_usize len, nx_usize cap, nx_al *al);
-
 static nx_status ensure_cap(nx_str *self, nx_usize needed_cap);
-
 static nx_status alloc_and_copy_str(nx_char **out, nx_al *al, const nx_char *src, nx_usize len, nx_usize cap);
-
-static void free_data(nx_str *self);
-
 static void set_fields(nx_str *self, nx_char *data, nx_usize len, nx_usize cap, nx_al *al);
 
 /* ========== lifetime ========== */
@@ -112,7 +107,7 @@ void nx_str_drop(nx_str *self) {
         return;
     }
 
-    free_data(self);
+    nx_al_dealloc(self->al, self->data, self->cap + 1);
     free(self);
 }
 
@@ -188,7 +183,7 @@ nx_status nx_str_copy_assign(nx_str *self, const nx_str *src) {
     if (st != NX_STATUS_OK) {
         return st;
     }
-    free_data(self);
+    nx_al_dealloc(self->al, self->data, self->cap + 1);
     set_fields(self, data, src->len, src->cap, self->al);
     return NX_STATUS_OK;
 }
@@ -202,7 +197,7 @@ void nx_str_move_assign(nx_str *self, nx_str *src) {
         return;
     }
 
-    free_data(self);
+    nx_al_dealloc(self->al, self->data, self->cap + 1);
 
     self->data = src->data;
     self->len = src->len;
@@ -464,12 +459,6 @@ static nx_status alloc_and_copy_str(nx_char **out, nx_al *al, const nx_char *src
 
     *out = data;
     return NX_STATUS_OK;
-}
-
-static void free_data(nx_str *self) {
-    if (self->data) {
-        nx_al_dealloc(self->al, self->data, self->cap + 1);
-    }
 }
 
 static void set_fields(nx_str *self, nx_char *data, nx_usize len, nx_usize cap, nx_al *al) {

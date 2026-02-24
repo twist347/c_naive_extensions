@@ -25,6 +25,7 @@ typedef struct {
 void *nx_al_alloc(nx_al *al, nx_usize size);
 void *nx_al_calloc(nx_al *al, nx_usize num, nx_usize size);
 void *nx_al_realloc(nx_al *al, void *ptr, nx_usize old_size, nx_usize new_size);
+/// no-op for null
 void nx_al_dealloc(nx_al *al, void *ptr, nx_usize size);
 
 /* ========== relation ========== */

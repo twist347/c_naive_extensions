@@ -81,6 +81,13 @@ set_target_properties(nx_shared PROPERTIES
         OUTPUT_NAME nx
 )
 
+#option(NX_SANITIZE "Enable sanitizers" OFF)
+#
+#if(NX_SANITIZE)
+#    add_compile_options(-fsanitize=address,undefined -fno-omit-frame-pointer)
+#    add_link_options(-fsanitize=address,undefined)
+#endif()
+
 foreach (target IN ITEMS nx_static nx_shared)
     target_include_directories(${target} PUBLIC ${PROJECT_SOURCE_DIR}/include)
     target_compile_options(${target} PRIVATE -Wall -Wextra -pedantic)

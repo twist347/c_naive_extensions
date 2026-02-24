@@ -2,6 +2,22 @@
 
 #include "nx/core/type.h"
 
+/* Contract:
+ * - Invalid usage (null, bounds) is a programmer error guarded by
+ *   NX_ASSERT. Release behavior is unspecified.
+ *
+ * - Non-owning view: does not allocate or free memory.
+ *   The referenced data must outlive the view.
+ *
+ * - Null data --> zero length
+ *
+ * - NOT null-terminated: len bytes from data, no '\0' assumed
+ *
+ * - Passed by value (small struct, no heap allocation)
+ *
+ * - No overflow checking
+ */
+
 typedef struct {
     const nx_char *data;
     nx_usize len;
@@ -11,7 +27,7 @@ typedef struct {
 
 #if NX_DEBUG
     void nx_str_view_assert_(nx_str_view s);
-#define NX_STR_VIEW_ASSERT(s)    \
+#define NX_STR_VIEW_ASSERT(s) \
     do { nx_str_view_assert_((s)); } while (0)
 #else
     #define NX_STR_VIEW_ASSERT(s) ((void) 0)

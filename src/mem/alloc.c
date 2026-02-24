@@ -60,6 +60,10 @@ void nx_al_dealloc(nx_al *al, void *ptr, nx_usize size) {
     NX_ASSERT(al);
     NX_ASSERT(al->dealloc);
 
+    if (!ptr) {
+        return;
+    }
+
     al->dealloc(al->ctx, ptr, size);
 }
 

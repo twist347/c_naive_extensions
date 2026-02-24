@@ -11,8 +11,8 @@ struct nx_vec {
     void *data;
     nx_usize len;
     nx_usize cap;
-    nx_usize tsz;
-    nx_al *al;
+    nx_usize tsz; // type size
+    nx_al *al;    // must not be null
 };
 
 #if NX_DEBUG
@@ -32,13 +32,9 @@ struct nx_vec {
 // internals decls
 
 static nx_status new_impl(nx_vec **out, nx_usize len, nx_usize cap, nx_usize tsz, nx_al *al);
-
 static nx_status ensure_cap(nx_vec *self, nx_usize needed_cap);
 static nx_status alloc_and_copy_data(void **out, const nx_vec *src, nx_al *al);
-static void free_data(nx_vec *self);
-
 static void set_fields(nx_vec *self, void *data, nx_usize len, nx_usize cap, nx_usize tsz, nx_al *al);
-
 static void shift_left(nx_vec *self, nx_usize idx);
 static void shift_right(nx_vec *self, nx_usize idx);
 
@@ -106,7 +102,7 @@ void nx_vec_drop(nx_vec *self) {
         return;
     }
 
-    free_data(self);
+    nx_al_dealloc(self->al, self->data, self->cap * self->tsz);
     free(self);
 }
 
@@ -181,7 +177,7 @@ nx_status nx_vec_copy_assign(nx_vec *self, const nx_vec *src) {
         return st;
     }
 
-    free_data(self);
+    nx_al_dealloc(self->al, self->data, self->cap * self->tsz);
     set_fields(self, data, src->len, src->cap, self->tsz, self->al);
     return NX_STATUS_OK;
 }
@@ -197,7 +193,7 @@ void nx_vec_move_assign(nx_vec *self, nx_vec *src) {
         return;
     }
 
-    free_data(self);
+    nx_al_dealloc(self->al, self->data, self->cap * self->tsz);
 
     self->data = src->data;
     self->len = src->len;
@@ -371,7 +367,7 @@ nx_status nx_vec_shrink_to_fit(nx_vec *self) {
     }
 
     if (self->len == 0) {
-        free_data(self);
+        nx_al_dealloc(self->al, self->data, self->cap * self->tsz);
         set_fields(self, nx_null, 0, 0, self->tsz, self->al);
         return NX_STATUS_OK;
     }
@@ -536,13 +532,6 @@ static nx_status alloc_and_copy_data(void **out, const nx_vec *src, nx_al *al) {
 
     *out = data;
     return NX_STATUS_OK;
-}
-
-static void free_data(nx_vec *self) {
-    if (self->data) {
-        const nx_usize cap_bytes = self->cap * self->tsz;
-        nx_al_dealloc(self->al, self->data, cap_bytes);
-    }
 }
 
 static void set_fields(nx_vec *self, void *data, nx_usize len, nx_usize cap, nx_usize tsz, nx_al *al) {

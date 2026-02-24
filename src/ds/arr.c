@@ -32,7 +32,6 @@ struct nx_arr {
 static nx_status new_impl(nx_arr **out, nx_usize len, nx_usize tsz, nx_al *al);
 static void set_fields(nx_arr *self, void *data, nx_usize len, nx_usize tsz, nx_al *al);
 static nx_status alloc_and_copy_data(void **out, nx_al *alloc, const void *src_data, nx_usize len, nx_usize tsz);
-static void free_data(nx_arr *self);
 
 /* ========== lifetime ========== */
 
@@ -78,7 +77,7 @@ void nx_arr_drop(nx_arr *self) {
         return;
     }
 
-    free_data(self);
+    nx_al_dealloc(self->al, self->data, self->len * self->tsz);
     free(self);
 }
 
@@ -137,7 +136,7 @@ nx_status nx_arr_copy_assign(nx_arr *self, const nx_arr *src) {
     }
 
     if (src->len == 0) {
-        free_data(self);
+        nx_al_dealloc(self->al, self->data, self->len * self->tsz);
         set_fields(self, nx_null, 0, src->tsz, self->al);
         return NX_STATUS_OK;
     }
@@ -156,7 +155,7 @@ nx_status nx_arr_copy_assign(nx_arr *self, const nx_arr *src) {
     }
 
     // free old data
-    free_data(self);
+    nx_al_dealloc(self->al, self->data, self->len * self->tsz);
 
     set_fields(self, data, src->len, self->tsz, self->al);
     return NX_STATUS_OK;
@@ -174,7 +173,7 @@ void nx_arr_move_assign(nx_arr *self, nx_arr *src) {
     }
 
     // free self's old data
-    free_data(self);
+    nx_al_dealloc(self->al, self->data, self->len * self->tsz);
 
     // take src's data
     self->data = src->data;
@@ -336,10 +335,6 @@ static void set_fields(nx_arr *self, void *data, nx_usize len, nx_usize tsz, nx_
     self->al = al;
 }
 
-static nx_usize calc_bytes(nx_usize len, nx_usize tsz) {
-    return len * tsz;
-}
-
 static nx_status alloc_and_copy_data(void **out, nx_al *alloc, const void *src_data, nx_usize len, nx_usize tsz) {
     NX_ASSERT(out);
     NX_ASSERT(alloc);
@@ -347,7 +342,7 @@ static nx_status alloc_and_copy_data(void **out, nx_al *alloc, const void *src_d
 
     *out = nx_null;
 
-    const nx_usize bytes = calc_bytes(len, tsz);
+    const nx_usize bytes = len * tsz;
 
     void *data = nx_al_alloc(alloc, bytes);
     if (!data) {
@@ -357,11 +352,4 @@ static nx_status alloc_and_copy_data(void **out, nx_al *alloc, const void *src_d
     memcpy(data, src_data, bytes);
     *out = data;
     return NX_STATUS_OK;
-}
-
-static void free_data(nx_arr *self) {
-    if (self->data) {
-        const nx_usize bytes = calc_bytes(self->len, self->tsz);
-        nx_al_dealloc(self->al, self->data, bytes);
-    }
 }
