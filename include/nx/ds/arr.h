@@ -28,6 +28,7 @@
  *
  * - No overflow checking
  */
+
 typedef struct nx_arr nx_arr;
 
 NX_DEF_RES_TYPE(nx_arr_res, nx_arr *);

@@ -4,5 +4,6 @@ function(nx_add_demo target_name source_file)
     target_compile_options(${target_name} PRIVATE -Wall -Wextra -pedantic)
 endfunction()
 
-add_subdirectory(data_structure)
+add_subdirectory(core)
+add_subdirectory(ds)
 add_subdirectory(str)
