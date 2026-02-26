@@ -22,7 +22,6 @@ set(NX_DS_SOURCES
 )
 
 set(NX_ALGO_SOURCES
-        src/algo/bit.c
         src/algo/compare.c
         src/algo/sort.c
         src/algo/search.c
@@ -30,9 +29,9 @@ set(NX_ALGO_SOURCES
         src/algo/minmax.c
 )
 
-set(NX_STR_SOURCES
-        src/str/str.c
-        src/str/str_view.c
+set(NX_STRING_SOURCES
+        src/string/str.c
+        src/string/str_view.c
 )
 
 set(NX_MEM_SOURCES
@@ -49,6 +48,7 @@ set(NX_RAND_SOURCES
 
 set(NX_NUMERIC_SOURCES
         src/numeric/abs.c
+        src/numeric/bit.c
         src/numeric/ckd.c
         src/numeric/sat.c
         src/numeric/sign.c
@@ -59,7 +59,7 @@ set(NX_SOURCES
         ${NX_CORE_SOURCES}
         ${NX_DS_SOURCES}
         ${NX_ALGO_SOURCES}
-        ${NX_STR_SOURCES}
+        ${NX_STRING_SOURCES}
         ${NX_MEM_SOURCES}
         ${NX_RAND_SOURCES}
         ${NX_NUMERIC_SOURCES}

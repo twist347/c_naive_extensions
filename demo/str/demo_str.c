@@ -1,4 +1,4 @@
-#include "nx/str/str.h"
+#include "nx/string/str.h"
 
 #include <stdio.h>
 #include <stdlib.h>

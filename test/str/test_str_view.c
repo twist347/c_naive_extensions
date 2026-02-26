@@ -1,6 +1,6 @@
 #include "unity.h"
 
-#include "nx/str/str_view.h"
+#include "nx/string/str_view.h"
 
 // TODO: impl
 

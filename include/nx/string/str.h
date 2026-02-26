@@ -3,7 +3,7 @@
 #include "nx/core/type.h"
 #include "nx/core/status.h"
 #include "nx/core/result.h"
-#include "nx/str/str_view.h"
+#include "nx/string/str_view.h"
 #include "nx/mem/alloc.h"
 
 /* Contract:

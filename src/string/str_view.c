@@ -1,4 +1,4 @@
-#include "nx/str/str_view.h"
+#include "nx/string/str_view.h"
 
 #include <ctype.h>
 #include <string.h>

@@ -27,6 +27,8 @@
 #define NX_FMT_F32        "%g"
 #define NX_FMT_F64        "%g"
 
+#define NX_FMT_STR        "%s"
+
 #define NX_FMT_PTR        "%p"
 
 #define NX_FMT_BOOL       "%s"
@@ -53,15 +55,17 @@ void nx_fprint_u16(FILE *stream, const void *data);
 void nx_fprint_u32(FILE *stream, const void *data);
 void nx_fprint_u64(FILE *stream, const void *data);
 
+void nx_fprint_f32(FILE *stream, const void *data);
+void nx_fprint_f64(FILE *stream, const void *data);
+
 void nx_fprint_usize(FILE *stream, const void *data);
 void nx_fprint_isize(FILE *stream, const void *data);
 
-void nx_fprint_bool(FILE *stream, const void *data);
 void nx_fprint_byte(FILE *stream, const void *data);
 void nx_fprint_char(FILE *stream, const void *data);
+void nx_fprint_bool(FILE *stream, const void *data);
 
-void nx_fprint_f32(FILE *stream, const void *data);
-void nx_fprint_f64(FILE *stream, const void *data);
+void nx_fprint_str(FILE *stream, const void *data);
 
 void nx_fprint_ptr(FILE *stream, const void *data);
 
@@ -76,28 +80,32 @@ void nx_println_span(nx_span s, nx_fprint_fn f);
 /* ========== debug ========== */
 
 /// nx_dbg(x) => prints "x = <value>\n" with auto format
-#define nx_dbg(x) _Generic((x),                           \
-    nx_i8:    nx_printf(#x " = " NX_FMT_I8    "\n", (x)), \
-    nx_i16:   nx_printf(#x " = " NX_FMT_I16   "\n", (x)), \
-    nx_i32:   nx_printf(#x " = " NX_FMT_I32   "\n", (x)), \
-    nx_i64:   nx_printf(#x " = " NX_FMT_I64   "\n", (x)), \
-    nx_u8:    nx_printf(#x " = " NX_FMT_U8    "\n", (x)), \
-    nx_u16:   nx_printf(#x " = " NX_FMT_U16   "\n", (x)), \
-    nx_u32:   nx_printf(#x " = " NX_FMT_U32   "\n", (x)), \
-    nx_u64:   nx_printf(#x " = " NX_FMT_U64   "\n", (x)), \
-    nx_f32:   nx_printf(#x " = " NX_FMT_F32   "\n", (x)), \
-    nx_f64:   nx_printf(#x " = " NX_FMT_F64   "\n", (x))  \
+#define nx_dbg(x) _Generic((x),                                    \
+    nx_i8:             nx_printf(#x " = " NX_FMT_I8    "\n", (x)), \
+    nx_i16:            nx_printf(#x " = " NX_FMT_I16   "\n", (x)), \
+    nx_i32:            nx_printf(#x " = " NX_FMT_I32   "\n", (x)), \
+    nx_i64:            nx_printf(#x " = " NX_FMT_I64   "\n", (x)), \
+    nx_u8:             nx_printf(#x " = " NX_FMT_U8    "\n", (x)), \
+    nx_u16:            nx_printf(#x " = " NX_FMT_U16   "\n", (x)), \
+    nx_u32:            nx_printf(#x " = " NX_FMT_U32   "\n", (x)), \
+    nx_u64:            nx_printf(#x " = " NX_FMT_U64   "\n", (x)), \
+    nx_f32:            nx_printf(#x " = " NX_FMT_F32   "\n", (x)), \
+    nx_f64:            nx_printf(#x " = " NX_FMT_F64   "\n", (x)), \
+    nx_char *:         nx_printf(#x " = " NX_FMT_STR   "\n", (x)), \
+    const nx_char *:   nx_printf(#x " = " NX_FMT_STR   "\n", (x))  \
 )
 
-#define nx_fdbg(stream, x) _Generic((x),                             \
-    nx_i8:    nx_fprintf((stream), #x " = " NX_FMT_I8    "\n", (x)), \
-    nx_i16:   nx_fprintf((stream), #x " = " NX_FMT_I16   "\n", (x)), \
-    nx_i32:   nx_fprintf((stream), #x " = " NX_FMT_I32   "\n", (x)), \
-    nx_i64:   nx_fprintf((stream), #x " = " NX_FMT_I64   "\n", (x)), \
-    nx_u8:    nx_fprintf((stream), #x " = " NX_FMT_U8    "\n", (x)), \
-    nx_u16:   nx_fprintf((stream), #x " = " NX_FMT_U16   "\n", (x)), \
-    nx_u32:   nx_fprintf((stream), #x " = " NX_FMT_U32   "\n", (x)), \
-    nx_u64:   nx_fprintf((stream), #x " = " NX_FMT_U64   "\n", (x)), \
-    nx_f32:   nx_fprintf((stream), #x " = " NX_FMT_F32   "\n", (x)), \
-    nx_f64:   nx_fprintf((stream), #x " = " NX_FMT_F64   "\n", (x))  \
+#define nx_fdbg(stream, x) _Generic((x),                                      \
+    nx_i8:             nx_fprintf((stream), #x " = " NX_FMT_I8    "\n", (x)), \
+    nx_i16:            nx_fprintf((stream), #x " = " NX_FMT_I16   "\n", (x)), \
+    nx_i32:            nx_fprintf((stream), #x " = " NX_FMT_I32   "\n", (x)), \
+    nx_i64:            nx_fprintf((stream), #x " = " NX_FMT_I64   "\n", (x)), \
+    nx_u8:             nx_fprintf((stream), #x " = " NX_FMT_U8    "\n", (x)), \
+    nx_u16:            nx_fprintf((stream), #x " = " NX_FMT_U16   "\n", (x)), \
+    nx_u32:            nx_fprintf((stream), #x " = " NX_FMT_U32   "\n", (x)), \
+    nx_u64:            nx_fprintf((stream), #x " = " NX_FMT_U64   "\n", (x)), \
+    nx_f32:            nx_fprintf((stream), #x " = " NX_FMT_F32   "\n", (x)), \
+    nx_f64:            nx_fprintf((stream), #x " = " NX_FMT_F64   "\n", (x)), \
+    nx_char *:         nx_fprintf((stream), #x " = " NX_FMT_STR   "\n", (x)), \
+    const nx_char *:   nx_fprintf((stream), #x " = " NX_FMT_STR   "\n", (x))  \
 )
