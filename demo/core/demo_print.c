@@ -9,7 +9,7 @@ int main(void) {
 
     const nx_i32 arr[] = {1, 2, 3, 4, 5};
 
-    nx_cspan cs = NX_CSPAN_FROM_PTR(arr, 5);
+    nx_CSpan cs = NX_CSPAN_FROM_PTR(arr, 5);
 
     nx_println_cspan(cs, nx_fprint_i32);
 

@@ -4,7 +4,7 @@
 
 #include "nx/core/panic.h"
 
-void nx_fill(nx_span s, const void *elem) {
+void nx_fill(nx_Span s, const void *elem) {
     NX_SPAN_ANY_ASSERT(s);
     NX_ASSERT(elem);
 
@@ -22,7 +22,7 @@ void nx_fill(nx_span s, const void *elem) {
     }
 }
 
-void nx_reverse(nx_span s) {
+void nx_reverse(nx_Span s) {
     NX_SPAN_ANY_ASSERT(s);
 
     if (s.len < 2) {
@@ -39,11 +39,11 @@ void nx_reverse(nx_span s) {
     }
 }
 
-void nx_swap_elements(nx_span s, nx_usize i, nx_usize j) {
+void nx_swap_elements(nx_Span s, nx_usize i, nx_usize j) {
     NX_UNIMPLEMENTED();
 }
 
-void nx_rotate(nx_span s, nx_usize mid) {
+void nx_rotate(nx_Span s, nx_usize mid) {
     NX_SPAN_ANY_ASSERT(s);
     NX_ASSERT(mid <= s.len);
 
@@ -52,18 +52,18 @@ void nx_rotate(nx_span s, nx_usize mid) {
     }
 
     // reverse [0, mid)
-    const nx_span left = nx_span_sub(s, 0, mid);
+    const nx_Span left = nx_span_sub(s, 0, mid);
     nx_reverse(left);
 
     // reverse [mid, len)
-    const nx_span right = nx_span_sub(s, mid, s.len - mid);
+    const nx_Span right = nx_span_sub(s, mid, s.len - mid);
     nx_reverse(right);
 
     // reverse entire range
     nx_reverse(s);
 }
 
-void nx_transform(nx_span dst, nx_cspan src, nx_transform_fn fn) {
+void nx_transform(nx_Span dst, nx_CSpan src, nx_transform_fn fn) {
     NX_SPAN_ANY_ASSERT(dst);
     NX_SPAN_ANY_ASSERT(src);
     NX_ASSERT(dst.len == src.len);
@@ -75,7 +75,7 @@ void nx_transform(nx_span dst, nx_cspan src, nx_transform_fn fn) {
     }
 }
 
-void nx_apply(nx_span s, nx_apply_fn fn) {
+void nx_apply(nx_Span s, nx_apply_fn fn) {
     NX_SPAN_ANY_ASSERT(s);
     NX_ASSERT(fn);
 

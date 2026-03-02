@@ -76,7 +76,7 @@ void nx_fprint_ptr(FILE *stream, const void *data) {
 
 /* ========== span printing ========== */
 
-void nx_fprintln_cspan(FILE *stream, nx_cspan s, nx_fprint_fn f) {
+void nx_fprintln_cspan(FILE *stream, nx_CSpan s, nx_fprint_fn f) {
     NX_ASSERT(stream);
     NX_SPAN_ANY_ASSERT(s);
     NX_ASSERT(f);
@@ -91,14 +91,14 @@ void nx_fprintln_cspan(FILE *stream, nx_cspan s, nx_fprint_fn f) {
     fputs("]\n", stream);
 }
 
-void nx_fprintln_span(FILE *stream, nx_span s, nx_fprint_fn f) {
+void nx_fprintln_span(FILE *stream, nx_Span s, nx_fprint_fn f) {
     nx_fprintln_cspan(stream, nx_cspan_from_span(s), f);
 }
 
-void nx_println_cspan(nx_cspan s, nx_fprint_fn f) {
+void nx_println_cspan(nx_CSpan s, nx_fprint_fn f) {
     nx_fprintln_cspan(stdout, s, f);
 }
 
-void nx_println_span(nx_span s, nx_fprint_fn f) {
+void nx_println_span(nx_Span s, nx_fprint_fn f) {
     nx_fprintln_span(stdout, s, f);
 }

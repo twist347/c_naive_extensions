@@ -15,11 +15,11 @@ static void log_dealloc(void *ctx, void *ptr, nx_usize size);
 /* ========== context ========== */
 
 typedef struct {
-    nx_al *wrapped;
+    nx_Al *wrapped;
     FILE *stream;
 } nx_al_log_ctx;
 
-nx_al *nx_al_log_new(nx_al *wrapped, FILE *stream) {
+nx_Al *nx_al_log_new(nx_Al *wrapped, FILE *stream) {
     NX_ASSERT(wrapped);
 
     nx_al_log_ctx *ctx = malloc(sizeof(nx_al_log_ctx));
@@ -30,7 +30,7 @@ nx_al *nx_al_log_new(nx_al *wrapped, FILE *stream) {
     ctx->wrapped = wrapped;
     ctx->stream = stream ? stream : stdout;
 
-    nx_al *a = malloc(sizeof(nx_al));
+    nx_Al *a = malloc(sizeof(nx_Al));
     if (!a) {
         free(ctx);
         return nx_null;
@@ -48,7 +48,7 @@ nx_al *nx_al_log_new(nx_al *wrapped, FILE *stream) {
     return a;
 }
 
-void nx_al_log_drop(nx_al *al) {
+void nx_al_log_drop(nx_Al *al) {
     if (!al) {
         return;
     }

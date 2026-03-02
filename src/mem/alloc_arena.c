@@ -20,7 +20,7 @@ typedef struct {
     nx_usize offset;
 } nx_al_arena_ctx;
 
-nx_al *nx_al_arena_new(nx_usize cap) {
+nx_Al *nx_al_arena_new(nx_usize cap) {
     NX_ASSERT(cap != 0);
 
     // allocate context
@@ -41,7 +41,7 @@ nx_al *nx_al_arena_new(nx_usize cap) {
     ctx->offset = 0;
 
     // allocate allocator
-    nx_al *al = malloc(sizeof(nx_al));
+    nx_Al *al = malloc(sizeof(nx_Al));
     if (!al) {
         free(data);
         free(ctx);
@@ -57,7 +57,7 @@ nx_al *nx_al_arena_new(nx_usize cap) {
     return al;
 }
 
-void nx_al_arena_drop(nx_al *al) {
+void nx_al_arena_drop(nx_Al *al) {
     if (!al) {
         return;
     }
@@ -72,7 +72,7 @@ void nx_al_arena_drop(nx_al *al) {
     free(al);
 }
 
-void nx_al_arena_reset(nx_al *al) {
+void nx_al_arena_reset(nx_Al *al) {
     NX_ASSERT(al);
     NX_ASSERT(al->ctx);
 
@@ -80,13 +80,13 @@ void nx_al_arena_reset(nx_al *al) {
     ctx->offset = 0;
 }
 
-nx_al_arena_stats nx_al_arena_get_stats(const nx_al *al) {
+nx_AlArenaStats nx_al_arena_get_stats(const nx_Al *al) {
     NX_ASSERT(al);
     NX_ASSERT(al->ctx);
 
     const nx_al_arena_ctx *ctx = al->ctx;
 
-    return (nx_al_arena_stats){
+    return (nx_AlArenaStats){
         .cap = ctx->cap,
         .used = ctx->offset,
         .available = ctx->cap - ctx->offset,

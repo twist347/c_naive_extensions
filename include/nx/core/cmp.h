@@ -7,7 +7,7 @@ typedef enum {
     NX_ORDERING_LESS = -1,
     NX_ORDERING_EQUAL = 0,
     NX_ORDERING_GREATER = 1,
-} nx_ordering;
+} nx_Ordering;
 
 typedef int (*nx_cmp_fn)(const void *, const void *);
 

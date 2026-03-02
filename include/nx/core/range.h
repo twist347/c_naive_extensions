@@ -8,4 +8,4 @@
 typedef struct {
     nx_isize first;
     nx_isize last;
-} nx_range;
+} nx_Range;

@@ -29,61 +29,61 @@
  * - No overflow checking
  */
 
-typedef struct nx_arr nx_arr;
+typedef struct nx_Arr nx_Arr;
 
-NX_DEF_RES_TYPE(nx_arr_res, nx_arr *);
+NX_DEF_RES_TYPE(nx_ArrRes, nx_Arr *);
 
 /* ========== params ========== */
 
 typedef struct {
     nx_usize len;
     nx_usize tsz; // type size
-    nx_al *al;    // must not be null
-} nx_arr_params;
+    nx_Al *al;    // must not be null
+} nx_ArrParams;
 
 /* ========== lifetime ========== */
 
-nx_arr_res nx_arr_new_p(nx_arr_params p);
-nx_arr_res nx_arr_new_len(nx_usize len, nx_usize tsz);
-nx_arr_res nx_arr_from_data(const void *data, nx_usize len, nx_usize tsz);
-void nx_arr_drop(nx_arr *self);
+nx_ArrRes nx_arr_new_p(nx_ArrParams p);
+nx_ArrRes nx_arr_new_len(nx_usize len, nx_usize tsz);
+nx_ArrRes nx_arr_from_data(const void *data, nx_usize len, nx_usize tsz);
+void nx_arr_drop(nx_Arr *self);
 
 /* ========== copy/move semantic ========== */
 
-nx_arr_res nx_arr_copy(const nx_arr *src);
-nx_arr_res nx_arr_copy_a(const nx_arr *src, nx_al *al);
-nx_arr *nx_arr_move(nx_arr **src);
-nx_status nx_arr_copy_assign(nx_arr *self, const nx_arr *src);
-void nx_arr_move_assign(nx_arr *self, nx_arr *src);
+nx_ArrRes nx_arr_copy(const nx_Arr *src);
+nx_ArrRes nx_arr_copy_a(const nx_Arr *src, nx_Al *al);
+nx_Arr *nx_arr_move(nx_Arr **src);
+nx_Status nx_arr_copy_assign(nx_Arr *self, const nx_Arr *src);
+void nx_arr_move_assign(nx_Arr *self, nx_Arr *src);
 
 /* ========== info ========== */
 
-nx_usize nx_arr_len(const nx_arr *self);
-nx_bool nx_arr_empty(const nx_arr *self);
-nx_usize nx_arr_tsz(const nx_arr *self);
-nx_al *nx_arr_al(const nx_arr *self);
+nx_usize nx_arr_len(const nx_Arr *self);
+nx_bool nx_arr_empty(const nx_Arr *self);
+nx_usize nx_arr_tsz(const nx_Arr *self);
+nx_Al *nx_arr_al(const nx_Arr *self);
 
 /* ========== access ========== */
 
-void *nx_arr_get(nx_arr *self, nx_usize idx);
-const void *nx_arr_get_c(const nx_arr *self, nx_usize idx);
-void *nx_arr_at(nx_arr *self, nx_usize idx);
-const void *nx_arr_at_c(const nx_arr *self, nx_usize idx);
+void *nx_arr_get(nx_Arr *self, nx_usize idx);
+const void *nx_arr_get_c(const nx_Arr *self, nx_usize idx);
+void *nx_arr_at(nx_Arr *self, nx_usize idx);
+const void *nx_arr_at_c(const nx_Arr *self, nx_usize idx);
 
 /// val must not point to an element within the same array.
-void nx_arr_set(nx_arr *self, nx_usize idx, const void *val);
+void nx_arr_set(nx_Arr *self, nx_usize idx, const void *val);
 
-void *nx_arr_data(nx_arr *self);
-const void *nx_arr_data_c(const nx_arr *self);
+void *nx_arr_data(nx_Arr *self);
+const void *nx_arr_data_c(const nx_Arr *self);
 
 /* ========== mods ========== */
 
-void nx_arr_swap(nx_arr *a, nx_arr *b);
+void nx_arr_swap(nx_Arr *a, nx_Arr *b);
 
 /* ========== to span ========== */
 
-nx_span nx_arr_to_span(nx_arr *self);
-nx_cspan nx_arr_to_cspan(const nx_arr *self);
+nx_Span nx_arr_to_span(nx_Arr *self);
+nx_CSpan nx_arr_to_cspan(const nx_Arr *self);
 
 /* ========== macros ========== */
 

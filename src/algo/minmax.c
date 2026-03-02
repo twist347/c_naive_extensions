@@ -2,7 +2,7 @@
 
 #include "nx/core/assert.h"
 
-nx_isize nx_min_element(nx_cspan s, nx_cmp_fn cmp) {
+nx_isize nx_min_element(nx_CSpan s, nx_cmp_fn cmp) {
     NX_SPAN_ANY_ASSERT(s);
     NX_ASSERT(cmp);
 
@@ -24,7 +24,7 @@ nx_isize nx_min_element(nx_cspan s, nx_cmp_fn cmp) {
     return (nx_isize) best;
 }
 
-nx_isize nx_max_element(nx_cspan s, nx_cmp_fn cmp) {
+nx_isize nx_max_element(nx_CSpan s, nx_cmp_fn cmp) {
     NX_SPAN_ANY_ASSERT(s);
     NX_ASSERT(cmp);
 
@@ -46,12 +46,12 @@ nx_isize nx_max_element(nx_cspan s, nx_cmp_fn cmp) {
     return (nx_isize) best;
 }
 
-nx_minmax nx_minmax_element(nx_cspan s, nx_cmp_fn cmp) {
+nx_MinMax nx_minmax_element(nx_CSpan s, nx_cmp_fn cmp) {
     NX_SPAN_ANY_ASSERT(s);
     NX_ASSERT(cmp);
 
     if (s.len == 0) {
-        return (nx_minmax){.min = -1, .max = -1};
+        return (nx_MinMax){.min = -1, .max = -1};
     }
 
     nx_usize min_idx = 0;
@@ -73,7 +73,7 @@ nx_minmax nx_minmax_element(nx_cspan s, nx_cmp_fn cmp) {
         }
     }
 
-    return (nx_minmax){
+    return (nx_MinMax){
         .min = (nx_isize) min_idx,
         .max = (nx_isize) max_idx
     };

@@ -6,14 +6,14 @@
 
 /* ========== wrappers ========== */
 
-void *nx_al_alloc(nx_al *al, nx_usize size) {
+void *nx_al_alloc(nx_Al *al, nx_usize size) {
     NX_ASSERT(al);
     NX_ASSERT(al->alloc);
 
     return al->alloc(al->ctx, size);
 }
 
-void *nx_al_calloc(nx_al *al, nx_usize num, nx_usize size) {
+void *nx_al_calloc(nx_Al *al, nx_usize num, nx_usize size) {
     NX_ASSERT(al);
 
     // fallback
@@ -31,7 +31,7 @@ void *nx_al_calloc(nx_al *al, nx_usize num, nx_usize size) {
     return al->calloc(al->ctx, num, size);
 }
 
-void *nx_al_realloc(nx_al *al, void *ptr, nx_usize old_size, nx_usize new_size) {
+void *nx_al_realloc(nx_Al *al, void *ptr, nx_usize old_size, nx_usize new_size) {
     NX_ASSERT(al);
 
     // fallback
@@ -56,7 +56,7 @@ void *nx_al_realloc(nx_al *al, void *ptr, nx_usize old_size, nx_usize new_size) 
     return al->realloc(al->ctx, ptr, old_size, new_size);
 }
 
-void nx_al_dealloc(nx_al *al, void *ptr, nx_usize size) {
+void nx_al_dealloc(nx_Al *al, void *ptr, nx_usize size) {
     NX_ASSERT(al);
     NX_ASSERT(al->dealloc);
 
@@ -69,7 +69,7 @@ void nx_al_dealloc(nx_al *al, void *ptr, nx_usize size) {
 
 /* ========== relation ========== */
 
-nx_bool nx_al_eq(const nx_al *a, const nx_al *b) {
+nx_bool nx_al_eq(const nx_Al *a, const nx_Al *b) {
     NX_ASSERT(a);
     NX_ASSERT(b);
 
@@ -80,6 +80,6 @@ nx_bool nx_al_eq(const nx_al *a, const nx_al *b) {
            a->dealloc == b->dealloc;
 }
 
-nx_bool nx_al_neq(const nx_al *a, const nx_al *b) {
+nx_bool nx_al_neq(const nx_Al *a, const nx_Al *b) {
     return !nx_al_eq(a, b);
 }

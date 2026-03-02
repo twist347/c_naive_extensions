@@ -29,9 +29,9 @@
  * - No overflow checking
  */
 
-typedef struct nx_vec nx_vec;
+typedef struct nx_Vec nx_Vec;
 
-NX_DEF_RES_TYPE(nx_vec_res, nx_vec *);
+NX_DEF_RES_TYPE(nx_VecRes, nx_Vec *);
 
 /* ========== params ========== */
 
@@ -39,63 +39,63 @@ typedef struct {
     nx_usize len;
     nx_usize cap;
     nx_usize tsz; // type size
-    nx_al *al;    // must not be null
-} nx_vec_params;
+    nx_Al *al;    // must not be null
+} nx_VecParams;
 
 /* ========== lifetime ========== */
 
-nx_vec_res nx_vec_new_p(nx_vec_params p);
-nx_vec_res nx_vec_new(nx_usize tsz);
-nx_vec_res nx_vec_new_len(nx_usize len, nx_usize tsz);
-nx_vec_res nx_vec_new_cap(nx_usize cap, nx_usize tsz);
-nx_vec_res nx_vec_from_data(const void *data, nx_usize len, nx_usize tsz);
-void nx_vec_drop(nx_vec *self);
+nx_VecRes nx_vec_new_p(nx_VecParams p);
+nx_VecRes nx_vec_new(nx_usize tsz);
+nx_VecRes nx_vec_new_len(nx_usize len, nx_usize tsz);
+nx_VecRes nx_vec_new_cap(nx_usize cap, nx_usize tsz);
+nx_VecRes nx_vec_from_data(const void *data, nx_usize len, nx_usize tsz);
+void nx_vec_drop(nx_Vec *self);
 
 /* ========== copy/move semantic ========== */
 
-nx_vec_res nx_vec_copy(const nx_vec *src);
-nx_vec_res nx_vec_copy_a(const nx_vec *src, nx_al *al);
-nx_vec *nx_vec_move(nx_vec **src);
-nx_status nx_vec_copy_assign(nx_vec *self, const nx_vec *src);
-void nx_vec_move_assign(nx_vec *self, nx_vec *src);
+nx_VecRes nx_vec_copy(const nx_Vec *src);
+nx_VecRes nx_vec_copy_a(const nx_Vec *src, nx_Al *al);
+nx_Vec *nx_vec_move(nx_Vec **src);
+nx_Status nx_vec_copy_assign(nx_Vec *self, const nx_Vec *src);
+void nx_vec_move_assign(nx_Vec *self, nx_Vec *src);
 
 /* ========== info ========== */
 
-nx_usize nx_vec_len(const nx_vec *self);
-nx_bool nx_vec_empty(const nx_vec *self);
-nx_usize nx_vec_cap(const nx_vec *self);
-nx_usize nx_vec_tsz(const nx_vec *self);
-nx_al *nx_vec_al(const nx_vec *self);
+nx_usize nx_vec_len(const nx_Vec *self);
+nx_bool nx_vec_empty(const nx_Vec *self);
+nx_usize nx_vec_cap(const nx_Vec *self);
+nx_usize nx_vec_tsz(const nx_Vec *self);
+nx_Al *nx_vec_al(const nx_Vec *self);
 
 /* ========== access ========== */
 
-void *nx_vec_get(nx_vec *self, nx_usize idx);
-const void *nx_vec_get_c(const nx_vec *self, nx_usize idx);
-void *nx_vec_at(nx_vec *self, nx_usize idx);
-const void *nx_vec_at_c(const nx_vec *self, nx_usize idx);
+void *nx_vec_get(nx_Vec *self, nx_usize idx);
+const void *nx_vec_get_c(const nx_Vec *self, nx_usize idx);
+void *nx_vec_at(nx_Vec *self, nx_usize idx);
+const void *nx_vec_at_c(const nx_Vec *self, nx_usize idx);
 
 /// val must not point to an element within the same vector.
-void nx_vec_set(nx_vec *self, nx_usize idx, const void *val);
+void nx_vec_set(nx_Vec *self, nx_usize idx, const void *val);
 
-void *nx_vec_data(nx_vec *self);
-const void *nx_vec_data_c(const nx_vec *self);
+void *nx_vec_data(nx_Vec *self);
+const void *nx_vec_data_c(const nx_Vec *self);
 
 /* ========== mods ========== */
 
-nx_status nx_vec_push(nx_vec *self, const void *val);
-void *nx_vec_pop(nx_vec *self);
-void nx_vec_clear(nx_vec *self);
-nx_status nx_vec_reserve(nx_vec *self, nx_usize new_cap);
-nx_status nx_vec_resize(nx_vec *self, nx_usize new_len);
-nx_status nx_vec_shrink_to_fit(nx_vec *self);
-void nx_vec_swap(nx_vec *a, nx_vec *b);
-nx_status nx_vec_insert(nx_vec *self, nx_usize idx, const void *val);
-void nx_vec_erase(nx_vec *self, nx_usize idx);
+nx_Status nx_vec_push(nx_Vec *self, const void *val);
+void *nx_vec_pop(nx_Vec *self);
+void nx_vec_clear(nx_Vec *self);
+nx_Status nx_vec_reserve(nx_Vec *self, nx_usize new_cap);
+nx_Status nx_vec_resize(nx_Vec *self, nx_usize new_len);
+nx_Status nx_vec_shrink_to_fit(nx_Vec *self);
+void nx_vec_swap(nx_Vec *a, nx_Vec *b);
+nx_Status nx_vec_insert(nx_Vec *self, nx_usize idx, const void *val);
+void nx_vec_erase(nx_Vec *self, nx_usize idx);
 
 /* ========== to span ========== */
 
-nx_span nx_vec_to_span(nx_vec *self);
-nx_cspan nx_vec_to_cspan(const nx_vec *self);
+nx_Span nx_vec_to_span(nx_Vec *self);
+nx_CSpan nx_vec_to_cspan(const nx_Vec *self);
 
 /* ========== macros ========== */
 
@@ -148,7 +148,7 @@ nx_cspan nx_vec_to_cspan(const nx_vec *self);
     do {                                                        \
         NX_ASSERT(nx_vec_tsz((self)) == sizeof(T));             \
         const T nx_tmp_ = (expr);                               \
-        const nx_status nx_st_ = nx_vec_push((self), &nx_tmp_); \
+        const nx_Status nx_st_ = nx_vec_push((self), &nx_tmp_); \
         NX_ASSERT(nx_st_ == NX_STATUS_OK);                      \
     } while (0)
 
@@ -156,7 +156,7 @@ nx_cspan nx_vec_to_cspan(const nx_vec *self);
     do {                                                                 \
         NX_ASSERT(nx_vec_tsz((self)) == sizeof(T));                      \
         const T nx_tmp_ = (expr);                                        \
-        const nx_status nx_st_ = nx_vec_insert((self), (idx), &nx_tmp_); \
+        const nx_Status nx_st_ = nx_vec_insert((self), (idx), &nx_tmp_); \
         NX_ASSERT(nx_st_ == NX_STATUS_OK);                               \
     } while (0)
 

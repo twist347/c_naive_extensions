@@ -19,20 +19,20 @@
  * @param cap - size of arena buffer in bytes
  * @return new arena allocator or NULL on allocation failure
  */
-nx_al *nx_al_arena_new(nx_usize cap);
-void nx_al_arena_drop(nx_al *al);
+nx_Al *nx_al_arena_new(nx_usize cap);
+void nx_al_arena_drop(nx_Al *al);
 
 /**
  * Reset arena to empty state (offset = 0)
  * All previous allocations become invalid
  * Buffer is reused without reallocation
  */
-void nx_al_arena_reset(nx_al *al);
+void nx_al_arena_reset(nx_Al *al);
 
 typedef struct {
     nx_usize cap;        // total arena capacity
     nx_usize used;       // currently used bytes
     nx_usize available;  // available bytes
-} nx_al_arena_stats;
+} nx_AlArenaStats;
 
-nx_al_arena_stats nx_al_arena_get_stats(const nx_al *al);
+nx_AlArenaStats nx_al_arena_get_stats(const nx_Al *al);

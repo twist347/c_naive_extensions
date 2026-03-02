@@ -9,7 +9,7 @@
 #define NX_BENCH_N 1000000u
 #endif
 
-static nx_vec *g_vec = nx_null;
+static nx_Vec *g_vec = nx_null;
 
 static void bench_cleanup(void) {
     if (g_vec) {
@@ -23,7 +23,7 @@ UBENCH(vec, push_int_reserved) {
 
     for (nx_usize i = 0; i < (nx_usize) NX_BENCH_N; ++i) {
         int x = (int) i;
-        const nx_status st = nx_vec_push(g_vec, &x);
+        const nx_Status st = nx_vec_push(g_vec, &x);
         if (st != NX_STATUS_OK) {
             return;
         }
@@ -34,16 +34,16 @@ UBENCH(vec, push_int_reserved) {
 }
 
 UBENCH(vec, push_int_no_reserve) {
-    const nx_vec_res r = NX_VEC_NEW(int);
+    const nx_VecRes r = NX_VEC_NEW(int);
     if (r.st != NX_STATUS_OK) {
         return;
     }
 
-    nx_vec *v = r.val;
+    nx_Vec *v = r.val;
 
     for (nx_usize i = 0; i < (nx_usize)NX_BENCH_N; ++i) {
         int x = (int)i;
-        const nx_status st = nx_vec_push(v, &x);
+        const nx_Status st = nx_vec_push(v, &x);
         if (st != NX_STATUS_OK) break;
     }
 
@@ -56,7 +56,7 @@ UBENCH(vec, push_int_no_reserve) {
 UBENCH_STATE();
 
 int main(int argc, const char *const argv[]) {
-    const nx_vec_res r = NX_VEC_NEW_CAP(int, NX_BENCH_N);
+    const nx_VecRes r = NX_VEC_NEW_CAP(int, NX_BENCH_N);
     if (r.st != NX_STATUS_OK) {
         return 1;
     }

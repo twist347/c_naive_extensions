@@ -13,4 +13,4 @@ nx_f64 nx_rng_f64(nx_rng *r);
 
 // TODO: maybe move to algo/transform
 // fisher–Yates
-void nx_rng_shuffle_span(nx_rng *r, nx_span s);
+void nx_rng_shuffle_span(nx_rng *r, nx_Span s);

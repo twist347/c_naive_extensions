@@ -21,13 +21,13 @@ typedef struct {
     void *data;
     nx_usize len;
     nx_usize tsz;
-} nx_span;
+} nx_Span;
 
 typedef struct {
     const void *data;
     nx_usize len;
     nx_usize tsz;
-} nx_cspan;
+} nx_CSpan;
 
 /* ========== assert ========== */
 
@@ -41,43 +41,43 @@ typedef struct {
 
 /* ========== lifetime ========== */
 
-nx_span nx_span_new(void *data, nx_usize len, nx_usize tsz);
-nx_cspan nx_cspan_new(const void *data, nx_usize len, nx_usize tsz);
-nx_cspan nx_cspan_from_span(nx_span s);
+nx_Span nx_span_new(void *data, nx_usize len, nx_usize tsz);
+nx_CSpan nx_cspan_new(const void *data, nx_usize len, nx_usize tsz);
+nx_CSpan nx_cspan_from_span(nx_Span s);
 
 /* ========== access ========== */
 
-void *nx_span_get(nx_span s, nx_usize idx);
-const void *nx_span_get_c(nx_span s, nx_usize idx);
-const void *nx_cspan_get_c(nx_cspan s, nx_usize idx);
+void *nx_span_get(nx_Span s, nx_usize idx);
+const void *nx_span_get_c(nx_Span s, nx_usize idx);
+const void *nx_cspan_get_c(nx_CSpan s, nx_usize idx);
 
-void *nx_span_at(nx_span s, nx_usize idx);
-const void *nx_span_at_c(nx_span s, nx_usize idx);
-const void *nx_cspan_at_c(nx_cspan s, nx_usize idx);
+void *nx_span_at(nx_Span s, nx_usize idx);
+const void *nx_span_at_c(nx_Span s, nx_usize idx);
+const void *nx_cspan_at_c(nx_CSpan s, nx_usize idx);
 
 /// val must not point to an element within the same span.
-void nx_span_set(nx_span s, nx_usize idx, const void *val);
+void nx_span_set(nx_Span s, nx_usize idx, const void *val);
 
 /* ========== info ========== */
 
-nx_bool nx_span_empty(nx_span s);
-nx_bool nx_cspan_empty(nx_cspan s);
+nx_bool nx_span_empty(nx_Span s);
+nx_bool nx_cspan_empty(nx_CSpan s);
 
-nx_usize nx_span_size_bytes(nx_span s);
-nx_usize nx_cspan_size_bytes(nx_cspan s);
+nx_usize nx_span_size_bytes(nx_Span s);
+nx_usize nx_cspan_size_bytes(nx_CSpan s);
 
 /* ========== operations ========== */
 
 /// handles overlapping memory correctly
-void nx_span_copy(nx_span dst, nx_cspan src);
+void nx_span_copy(nx_Span dst, nx_CSpan src);
 
 /* ========== subspan ========== */
 
-nx_span nx_span_sub(nx_span s, nx_usize offset, nx_usize count);
-nx_cspan nx_cspan_sub(nx_cspan s, nx_usize offset, nx_usize count);
+nx_Span nx_span_sub(nx_Span s, nx_usize offset, nx_usize count);
+nx_CSpan nx_cspan_sub(nx_CSpan s, nx_usize offset, nx_usize count);
 
-nx_span nx_span_tail(nx_span s, nx_usize offset);
-nx_cspan nx_cspan_tail(nx_cspan s, nx_usize offset);
+nx_Span nx_span_tail(nx_Span s, nx_usize offset);
+nx_CSpan nx_cspan_tail(nx_CSpan s, nx_usize offset);
 
 /* ========== macros ========== */
 

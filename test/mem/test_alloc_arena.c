@@ -9,7 +9,7 @@ void tearDown(void) {
 }
 
 static void test_nx_al_arena_alloc(void) {
-    nx_al *al = nx_al_arena_new(1024); // 1KB
+    nx_Al *al = nx_al_arena_new(1024); // 1KB
     TEST_ASSERT_TRUE(al != nx_null);
 
     const nx_usize len = 10;
@@ -29,7 +29,7 @@ static void test_nx_al_arena_alloc(void) {
 }
 
 static void test_nx_al_arena_calloc(void) {
-    nx_al *al = nx_al_arena_new(1024);
+    nx_Al *al = nx_al_arena_new(1024);
     TEST_ASSERT_TRUE(al != nx_null);
 
     const nx_usize len = 10;
@@ -53,7 +53,7 @@ static void test_nx_al_arena_calloc(void) {
 }
 
 static void test_nx_al_arena_realloc(void) {
-    nx_al *al = nx_al_arena_new(2048); // 2KB
+    nx_Al *al = nx_al_arena_new(2048); // 2KB
     TEST_ASSERT_TRUE(al != nx_null);
 
     const nx_usize len = 10;
@@ -87,13 +87,13 @@ static void test_nx_al_arena_realloc(void) {
 }
 
 static void test_nx_al_arena_reset(void) {
-    nx_al *al = nx_al_arena_new(1024);
+    nx_Al *al = nx_al_arena_new(1024);
     TEST_ASSERT_TRUE(al != nx_null);
 
     nx_i32 *arr1 = NX_AL_ALLOC(nx_i32, al, 100);
     TEST_ASSERT_TRUE(arr1 != nx_null);
 
-    nx_al_arena_stats stats = nx_al_arena_get_stats(al);
+    nx_AlArenaStats stats = nx_al_arena_get_stats(al);
     TEST_ASSERT_TRUE(stats.used > 0);
     TEST_ASSERT_TRUE(stats.used <= stats.cap);
 
@@ -113,10 +113,10 @@ static void test_nx_al_arena_reset(void) {
 
 static void test_nx_al_arena_stats(void) {
     const nx_usize capacity = 1024;
-    nx_al *al = nx_al_arena_new(capacity);
+    nx_Al *al = nx_al_arena_new(capacity);
     TEST_ASSERT_TRUE(al != nx_null);
 
-    nx_al_arena_stats stats = nx_al_arena_get_stats(al);
+    nx_AlArenaStats stats = nx_al_arena_get_stats(al);
     TEST_ASSERT_EQUAL_UINT(capacity, stats.cap);
     TEST_ASSERT_EQUAL_UINT(0, stats.used);
     TEST_ASSERT_EQUAL_UINT(capacity, stats.available);
@@ -132,7 +132,7 @@ static void test_nx_al_arena_stats(void) {
     void *p2 = nx_al_alloc(al, 200);
     TEST_ASSERT_TRUE(p2 != nx_null);
 
-    const nx_al_arena_stats stats2 = nx_al_arena_get_stats(al);
+    const nx_AlArenaStats stats2 = nx_al_arena_get_stats(al);
     TEST_ASSERT_TRUE(stats2.used > stats.used);
     TEST_ASSERT_EQUAL_UINT(capacity - stats2.used, stats2.available);
 
@@ -140,7 +140,7 @@ static void test_nx_al_arena_stats(void) {
 }
 
 static void test_nx_al_arena_oom(void) {
-    nx_al *al = nx_al_arena_new(128);
+    nx_Al *al = nx_al_arena_new(128);
     TEST_ASSERT_TRUE(al != nx_null);
 
     void *p1 = nx_al_alloc(al, 100);
@@ -156,7 +156,7 @@ static void test_nx_al_arena_oom(void) {
 }
 
 static void test_nx_al_arena_alignment(void) {
-    nx_al *al = nx_al_arena_new(1024);
+    nx_Al *al = nx_al_arena_new(1024);
     TEST_ASSERT_TRUE(al != nx_null);
 
     void *p1 = nx_al_alloc(al, 1);

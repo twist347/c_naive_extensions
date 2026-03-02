@@ -18,20 +18,20 @@ typedef struct {
     void *(*calloc)(void *ctx, nx_usize num, nx_usize size);
     void *(*realloc)(void *ctx, void *ptr, nx_usize old_size, nx_usize new_size);
     void (*dealloc)(void *ctx, void *ptr, nx_usize size);
-} nx_al;
+} nx_Al;
 
 /* ========== wrappers ========== */
 
-void *nx_al_alloc(nx_al *al, nx_usize size);
-void *nx_al_calloc(nx_al *al, nx_usize num, nx_usize size);
-void *nx_al_realloc(nx_al *al, void *ptr, nx_usize old_size, nx_usize new_size);
+void *nx_al_alloc(nx_Al *al, nx_usize size);
+void *nx_al_calloc(nx_Al *al, nx_usize num, nx_usize size);
+void *nx_al_realloc(nx_Al *al, void *ptr, nx_usize old_size, nx_usize new_size);
 /// no-op for null
-void nx_al_dealloc(nx_al *al, void *ptr, nx_usize size);
+void nx_al_dealloc(nx_Al *al, void *ptr, nx_usize size);
 
 /* ========== relation ========== */
 
-nx_bool nx_al_eq(const nx_al *a, const nx_al *b);
-nx_bool nx_al_neq(const nx_al *a, const nx_al *b);
+nx_bool nx_al_eq(const nx_Al *a, const nx_Al *b);
+nx_bool nx_al_neq(const nx_Al *a, const nx_Al *b);
 
 /* ========== macros ========== */
 

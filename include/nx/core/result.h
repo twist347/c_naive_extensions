@@ -6,7 +6,7 @@
 
 #define NX_DEF_RES_TYPE(name, T)    \
     typedef struct {                \
-        nx_status st;               \
+        nx_Status st;               \
         T val;                      \
     } name
 

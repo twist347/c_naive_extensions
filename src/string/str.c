@@ -7,15 +7,15 @@
 #include "nx/numeric/limit.h"
 #include "nx/mem/alloc_libc.h"
 
-struct nx_str {
+struct nx_Str {
     nx_char *data;
     nx_usize len; // excludes trailing '\0'
     nx_usize cap; // usable capacity, excludes trailing '\0'
-    nx_al *al;    // must not be null
+    nx_Al *al;    // must not be null
 };
 
 #if NX_DEBUG
-    static void str_assert_impl(const nx_str *self) {
+    static void str_assert_impl(const nx_Str *self) {
         NX_ASSERT(self != nx_null);
         NX_ASSERT(self->al != nx_null);
         NX_ASSERT(self->len <= self->cap);
@@ -32,77 +32,77 @@ struct nx_str {
 
 // internals decls
 
-static nx_status new_impl(nx_str **out, nx_usize len, nx_usize cap, nx_al *al);
-static nx_status ensure_cap(nx_str *self, nx_usize needed_cap);
-static nx_status alloc_and_copy_str(nx_char **out, nx_al *al, const nx_char *src, nx_usize len, nx_usize cap);
-static void set_fields(nx_str *self, nx_char *data, nx_usize len, nx_usize cap, nx_al *al);
+static nx_Status new_impl(nx_Str **out, nx_usize len, nx_usize cap, nx_Al *al);
+static nx_Status ensure_cap(nx_Str *self, nx_usize needed_cap);
+static nx_Status alloc_and_copy_str(nx_char **out, nx_Al *al, const nx_char *src, nx_usize len, nx_usize cap);
+static void set_fields(nx_Str *self, nx_char *data, nx_usize len, nx_usize cap, nx_Al *al);
 
 /* ========== lifetime ========== */
 
-nx_str_res nx_str_new_p(nx_str_params p) {
+nx_StrRes nx_str_new_p(nx_StrParams p) {
     NX_ASSERT(p.len <= p.cap);
     NX_ASSERT(p.al);
 
-    nx_str *s = nx_null;
-    const nx_status st = new_impl(&s, p.len, p.cap, p.al);
+    nx_Str *s = nx_null;
+    const nx_Status st = new_impl(&s, p.len, p.cap, p.al);
     if (st != NX_STATUS_OK) {
-        return NX_RES_NEW_ERR(nx_str_res, st);
+        return NX_RES_NEW_ERR(nx_StrRes, st);
     }
-    return NX_RES_NEW_OK(nx_str_res, s);
+    return NX_RES_NEW_OK(nx_StrRes, s);
 }
 
-nx_str_res nx_str_new(void) {
-    return nx_str_new_p((nx_str_params){
+nx_StrRes nx_str_new(void) {
+    return nx_str_new_p((nx_StrParams){
         .len = 0,
         .cap = 0,
         .al = nx_al_libc_default_g(),
     });
 }
 
-nx_str_res nx_str_new_len(nx_usize len) {
-    return nx_str_new_p((nx_str_params){
+nx_StrRes nx_str_new_len(nx_usize len) {
+    return nx_str_new_p((nx_StrParams){
         .len = len,
         .cap = len,
         .al = nx_al_libc_default_g(),
     });
 }
 
-nx_str_res nx_str_new_cap(nx_usize cap) {
-    return nx_str_new_p((nx_str_params){
+nx_StrRes nx_str_new_cap(nx_usize cap) {
+    return nx_str_new_p((nx_StrParams){
         .len = 0,
         .cap = cap,
         .al = nx_al_libc_default_g(),
     });
 }
 
-nx_str_res nx_str_from_cstr(const nx_char *cstr) {
+nx_StrRes nx_str_from_cstr(const nx_char *cstr) {
     NX_ASSERT(cstr);
 
     const nx_usize n = strlen(cstr);
-    nx_al *al = nx_al_libc_default_g();
+    nx_Al *al = nx_al_libc_default_g();
 
-    nx_str *s = malloc(sizeof(nx_str));
+    nx_Str *s = malloc(sizeof(nx_Str));
     if (!s) {
-        return NX_RES_NEW_ERR(nx_str_res, NX_STATUS_OUT_OF_MEMORY);
+        return NX_RES_NEW_ERR(nx_StrRes, NX_STATUS_OUT_OF_MEMORY);
     }
 
     set_fields(s, nx_null, 0, 0, al);
 
     if (n == 0) {
-        return NX_RES_NEW_OK(nx_str_res, s);
+        return NX_RES_NEW_OK(nx_StrRes, s);
     }
 
     nx_char *data = nx_null;
-    const nx_status st = alloc_and_copy_str(&data, al, cstr, n, n);
+    const nx_Status st = alloc_and_copy_str(&data, al, cstr, n, n);
     if (st != NX_STATUS_OK) {
         free(s);
-        return NX_RES_NEW_ERR(nx_str_res, st);
+        return NX_RES_NEW_ERR(nx_StrRes, st);
     }
     set_fields(s, data, n, n, al);
-    return NX_RES_NEW_OK(nx_str_res, s);
+    return NX_RES_NEW_OK(nx_StrRes, s);
 }
 
-void nx_str_drop(nx_str *self) {
+void nx_str_drop(nx_Str *self) {
     if (!self) {
         return;
     }
@@ -113,48 +113,48 @@ void nx_str_drop(nx_str *self) {
 
 /* ========== copy/move ========== */
 
-nx_str_res nx_str_copy(const nx_str *src) {
+nx_StrRes nx_str_copy(const nx_Str *src) {
     STR_ASSERT(src);
 
     return nx_str_copy_a(src, src->al);
 }
 
-nx_str_res nx_str_copy_a(const nx_str *src, nx_al *al) {
+nx_StrRes nx_str_copy_a(const nx_Str *src, nx_Al *al) {
     STR_ASSERT(src);
     NX_ASSERT(al);
 
-    nx_str *dst = malloc(sizeof(nx_str));
+    nx_Str *dst = malloc(sizeof(nx_Str));
     if (!dst) {
-        return NX_RES_NEW_ERR(nx_str_res, NX_STATUS_OUT_OF_MEMORY);
+        return NX_RES_NEW_ERR(nx_StrRes, NX_STATUS_OUT_OF_MEMORY);
     }
 
     set_fields(dst, nx_null, 0, 0, al);
 
     if (src->cap == 0) {
-        return NX_RES_NEW_OK(nx_str_res, dst);
+        return NX_RES_NEW_OK(nx_StrRes, dst);
     }
 
     nx_char *data = nx_null;
-    const nx_status st = alloc_and_copy_str(&data, al, src->data, src->len, src->cap);
+    const nx_Status st = alloc_and_copy_str(&data, al, src->data, src->len, src->cap);
     if (st != NX_STATUS_OK) {
         free(dst);
-        return NX_RES_NEW_ERR(nx_str_res, st);
+        return NX_RES_NEW_ERR(nx_StrRes, st);
     }
     set_fields(dst, data, src->len, src->cap, al);
-    return NX_RES_NEW_OK(nx_str_res, dst);
+    return NX_RES_NEW_OK(nx_StrRes, dst);
 }
 
-nx_str *nx_str_move(nx_str **src) {
+nx_Str *nx_str_move(nx_Str **src) {
     NX_ASSERT(src);
     NX_ASSERT(*src);
     STR_ASSERT(*src);
 
-    nx_str *tmp = *src;
+    nx_Str *tmp = *src;
     *src = nx_null;
     return tmp;
 }
 
-nx_status nx_str_copy_assign(nx_str *self, const nx_str *src) {
+nx_Status nx_str_copy_assign(nx_Str *self, const nx_Str *src) {
     STR_ASSERT(self);
     STR_ASSERT(src);
 
@@ -179,7 +179,7 @@ nx_status nx_str_copy_assign(nx_str *self, const nx_str *src) {
     }
 
     nx_char *data = nx_null;
-    const nx_status st = alloc_and_copy_str(&data, self->al, src->data, src->len, src->cap);
+    const nx_Status st = alloc_and_copy_str(&data, self->al, src->data, src->len, src->cap);
     if (st != NX_STATUS_OK) {
         return st;
     }
@@ -188,7 +188,7 @@ nx_status nx_str_copy_assign(nx_str *self, const nx_str *src) {
     return NX_STATUS_OK;
 }
 
-void nx_str_move_assign(nx_str *self, nx_str *src) {
+void nx_str_move_assign(nx_Str *self, nx_Str *src) {
     STR_ASSERT(self);
     STR_ASSERT(src);
     NX_ASSERT(nx_al_eq(self->al, src->al));
@@ -210,63 +210,63 @@ void nx_str_move_assign(nx_str *self, nx_str *src) {
 
 /* ========== info ========== */
 
-nx_usize nx_str_len(const nx_str *self) {
+nx_usize nx_str_len(const nx_Str *self) {
     STR_ASSERT(self);
     return self->len;
 }
 
-nx_usize nx_str_cap(const nx_str *self) {
+nx_usize nx_str_cap(const nx_Str *self) {
     STR_ASSERT(self);
     return self->cap;
 }
 
-nx_bool nx_str_empty(const nx_str *self) {
+nx_bool nx_str_empty(const nx_Str *self) {
     STR_ASSERT(self);
     return self->len == 0;
 }
 
-nx_al *nx_str_al(const nx_str *self) {
+nx_Al *nx_str_al(const nx_Str *self) {
     STR_ASSERT(self);
     return self->al;
 }
 
 /* ========== access ========== */
 
-nx_char nx_str_get(const nx_str *self, nx_usize idx) {
+nx_char nx_str_get(const nx_Str *self, nx_usize idx) {
     STR_ASSERT(self);
     NX_ASSERT(idx < self->len);
     return self->data[idx];
 }
 
-nx_char nx_str_at(const nx_str *self, nx_usize idx) {
+nx_char nx_str_at(const nx_Str *self, nx_usize idx) {
     STR_ASSERT(self);
     return idx < self->len ? self->data[idx] : '\0';
 }
 
-void nx_str_set(nx_str *self, nx_usize idx, nx_char ch) {
+void nx_str_set(nx_Str *self, nx_usize idx, nx_char ch) {
     STR_ASSERT(self);
     NX_ASSERT(idx < self->len);
     self->data[idx] = ch;
 }
 
-nx_char *nx_str_data(nx_str *self) {
+nx_char *nx_str_data(nx_Str *self) {
     STR_ASSERT(self);
     return self->data;
 }
 
-const nx_char *nx_str_data_c(const nx_str *self) {
+const nx_char *nx_str_data_c(const nx_Str *self) {
     STR_ASSERT(self);
     return self->data;
 }
 
-const nx_char *nx_str_cstr(const nx_str *self) {
+const nx_char *nx_str_cstr(const nx_Str *self) {
     STR_ASSERT(self);
     return self->data ? self->data : "";
 }
 
 /* ========== mods ========== */
 
-void nx_str_clear(nx_str *self) {
+void nx_str_clear(nx_Str *self) {
     STR_ASSERT(self);
     self->len = 0;
     if (self->data) {
@@ -274,7 +274,7 @@ void nx_str_clear(nx_str *self) {
     }
 }
 
-nx_status nx_str_reserve(nx_str *self, nx_usize new_cap) {
+nx_Status nx_str_reserve(nx_Str *self, nx_usize new_cap) {
     STR_ASSERT(self);
 
     if (new_cap <= self->cap) {
@@ -303,7 +303,7 @@ nx_status nx_str_reserve(nx_str *self, nx_usize new_cap) {
     return NX_STATUS_OK;
 }
 
-nx_status nx_str_resize(nx_str *self, nx_usize new_len) {
+nx_Status nx_str_resize(nx_Str *self, nx_usize new_len) {
     STR_ASSERT(self);
 
     if (new_len <= self->len) {
@@ -315,7 +315,7 @@ nx_status nx_str_resize(nx_str *self, nx_usize new_len) {
     }
 
     if (new_len > self->cap) {
-        const nx_status st = nx_str_reserve(self, new_len);
+        const nx_Status st = nx_str_reserve(self, new_len);
         if (st != NX_STATUS_OK) {
             return st;
         }
@@ -327,10 +327,10 @@ nx_status nx_str_resize(nx_str *self, nx_usize new_len) {
     return NX_STATUS_OK;
 }
 
-nx_status nx_str_push(nx_str *self, nx_char ch) {
+nx_Status nx_str_push(nx_Str *self, nx_char ch) {
     STR_ASSERT(self);
 
-    const nx_status st = ensure_cap(self, self->len + 1);
+    const nx_Status st = ensure_cap(self, self->len + 1);
     if (st != NX_STATUS_OK) {
         return st;
     }
@@ -341,7 +341,7 @@ nx_status nx_str_push(nx_str *self, nx_char ch) {
     return NX_STATUS_OK;
 }
 
-nx_status nx_str_append_str_view(nx_str *self, nx_str_view sv) {
+nx_Status nx_str_append_str_view(nx_Str *self, nx_StrView sv) {
     STR_ASSERT(self);
     NX_ASSERT(sv.len == 0 || sv.data != nx_null);
 
@@ -359,7 +359,7 @@ nx_status nx_str_append_str_view(nx_str *self, nx_str_view sv) {
         off = (nx_usize) (sv.data - self->data);
     }
 
-    const nx_status st = ensure_cap(self, new_len);
+    const nx_Status st = ensure_cap(self, new_len);
     if (st != NX_STATUS_OK) {
         return st;
     }
@@ -371,7 +371,7 @@ nx_status nx_str_append_str_view(nx_str *self, nx_str_view sv) {
     return NX_STATUS_OK;
 }
 
-nx_status nx_str_append_cstr(nx_str *self, const nx_char *cstr) {
+nx_Status nx_str_append_cstr(nx_Str *self, const nx_char *cstr) {
     STR_ASSERT(self);
     NX_ASSERT(cstr);
 
@@ -380,7 +380,7 @@ nx_status nx_str_append_cstr(nx_str *self, const nx_char *cstr) {
 
 /* ========== view ========== */
 
-nx_str_view nx_str_as_view(const nx_str *self) {
+nx_StrView nx_str_as_view(const nx_Str *self) {
     STR_ASSERT(self);
 
     return self->len == 0
@@ -390,13 +390,13 @@ nx_str_view nx_str_as_view(const nx_str *self) {
 
 // internals defs
 
-static nx_status new_impl(nx_str **out, nx_usize len, nx_usize cap, nx_al *al) {
+static nx_Status new_impl(nx_Str **out, nx_usize len, nx_usize cap, nx_Al *al) {
     NX_ASSERT(out);
     NX_ASSERT(len <= cap);
 
     *out = nx_null;
 
-    nx_str *s = malloc(sizeof(nx_str));
+    nx_Str *s = malloc(sizeof(nx_Str));
     if (!s) {
         return NX_STATUS_OUT_OF_MEMORY;
     }
@@ -419,7 +419,7 @@ static nx_status new_impl(nx_str **out, nx_usize len, nx_usize cap, nx_al *al) {
     return NX_STATUS_OK;
 }
 
-static nx_status ensure_cap(nx_str *self, nx_usize needed_cap) {
+static nx_Status ensure_cap(nx_Str *self, nx_usize needed_cap) {
     STR_ASSERT(self);
 
     if (needed_cap <= self->cap) {
@@ -439,7 +439,7 @@ static nx_status ensure_cap(nx_str *self, nx_usize needed_cap) {
     return nx_str_reserve(self, new_cap);
 }
 
-static nx_status alloc_and_copy_str(nx_char **out, nx_al *al, const nx_char *src, nx_usize len, nx_usize cap) {
+static nx_Status alloc_and_copy_str(nx_char **out, nx_Al *al, const nx_char *src, nx_usize len, nx_usize cap) {
     NX_ASSERT(out);
     NX_ASSERT(al);
     NX_ASSERT(len <= cap);
@@ -461,7 +461,7 @@ static nx_status alloc_and_copy_str(nx_char **out, nx_al *al, const nx_char *src
     return NX_STATUS_OK;
 }
 
-static void set_fields(nx_str *self, nx_char *data, nx_usize len, nx_usize cap, nx_al *al) {
+static void set_fields(nx_Str *self, nx_char *data, nx_usize len, nx_usize cap, nx_Al *al) {
     self->data = data;
     self->len = len;
     self->cap = cap;

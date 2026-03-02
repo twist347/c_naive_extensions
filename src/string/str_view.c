@@ -7,21 +7,21 @@
 
 /* ========== assert ========== */
 
-void nx_str_view_assert_(nx_str_view sv) {
+void nx_str_view_assert_(nx_StrView sv) {
     NX_ASSERT(sv.len == 0 || sv.data != nx_null);
 }
 
 /* ========== lifetime ========== */
 
-nx_str_view nx_str_view_new(const nx_char *data, nx_usize len) {
-    const nx_str_view sv = {.data = data, .len = len};
+nx_StrView nx_str_view_new(const nx_char *data, nx_usize len) {
+    const nx_StrView sv = {.data = data, .len = len};
 
     NX_STR_VIEW_ASSERT(sv);
 
     return sv;
 }
 
-nx_str_view nx_str_view_from_cstr(const nx_char *cstr) {
+nx_StrView nx_str_view_from_cstr(const nx_char *cstr) {
     NX_ASSERT(cstr);
 
     return nx_str_view_new(cstr, strlen(cstr));
@@ -29,7 +29,7 @@ nx_str_view nx_str_view_from_cstr(const nx_char *cstr) {
 
 /* ========== comparisons ========== */
 
-nx_bool nx_str_view_eq(nx_str_view a, nx_str_view b) {
+nx_bool nx_str_view_eq(nx_StrView a, nx_StrView b) {
     NX_STR_VIEW_ASSERT(a);
     NX_STR_VIEW_ASSERT(b);
 
@@ -44,11 +44,11 @@ nx_bool nx_str_view_eq(nx_str_view a, nx_str_view b) {
     return memcmp(a.data, b.data, a.len) == 0;
 }
 
-nx_bool nx_str_view_not_eq(nx_str_view a, nx_str_view b) {
+nx_bool nx_str_view_not_eq(nx_StrView a, nx_StrView b) {
     return !nx_str_view_eq(a, b);
 }
 
-nx_i32 nx_str_view_cmp(nx_str_view a, nx_str_view b) {
+nx_i32 nx_str_view_cmp(nx_StrView a, nx_StrView b) {
     NX_STR_VIEW_ASSERT(a);
     NX_STR_VIEW_ASSERT(b);
 
@@ -75,7 +75,7 @@ nx_i32 nx_str_view_cmp(nx_str_view a, nx_str_view b) {
 
 /* ========== prefix/suffix ========== */
 
-nx_bool nx_sv_starts_with(nx_str_view s, nx_str_view prefix) {
+nx_bool nx_sv_starts_with(nx_StrView s, nx_StrView prefix) {
     NX_STR_VIEW_ASSERT(s);
     NX_STR_VIEW_ASSERT(prefix);
 
@@ -89,7 +89,7 @@ nx_bool nx_sv_starts_with(nx_str_view s, nx_str_view prefix) {
     return memcmp(s.data, prefix.data, prefix.len) == 0;
 }
 
-nx_bool nx_sv_ends_with(nx_str_view s, nx_str_view suffix) {
+nx_bool nx_sv_ends_with(nx_StrView s, nx_StrView suffix) {
     NX_STR_VIEW_ASSERT(s);
     NX_STR_VIEW_ASSERT(suffix);
 
@@ -106,7 +106,7 @@ nx_bool nx_sv_ends_with(nx_str_view s, nx_str_view suffix) {
 
 /* ========== slice ========== */
 
-nx_str_view nx_str_view_sub(nx_str_view s, nx_usize pos, nx_usize len) {
+nx_StrView nx_str_view_sub(nx_StrView s, nx_usize pos, nx_usize len) {
     NX_STR_VIEW_ASSERT(s);
     NX_ASSERT(pos <= s.len);
 
@@ -120,7 +120,7 @@ nx_str_view nx_str_view_sub(nx_str_view s, nx_usize pos, nx_usize len) {
 
 /* ========== search ========== */
 
-nx_isize nx_str_view_find_sub(nx_str_view s, nx_str_view needle) {
+nx_isize nx_str_view_find_sub(nx_StrView s, nx_StrView needle) {
     NX_STR_VIEW_ASSERT(s);
     NX_STR_VIEW_ASSERT(needle);
 
@@ -143,7 +143,7 @@ nx_isize nx_str_view_find_sub(nx_str_view s, nx_str_view needle) {
     return -1;
 }
 
-nx_isize nx_str_view_find_char(nx_str_view s, nx_char ch) {
+nx_isize nx_str_view_find_char(nx_StrView s, nx_char ch) {
     NX_STR_VIEW_ASSERT(s);
 
     for (nx_usize i = 0; i < s.len; ++i) {
@@ -156,7 +156,7 @@ nx_isize nx_str_view_find_char(nx_str_view s, nx_char ch) {
 
 /* ========== trim ========== */
 
-nx_str_view nx_str_view_trim_start(nx_str_view s) {
+nx_StrView nx_str_view_trim_start(nx_StrView s) {
     NX_STR_VIEW_ASSERT(s);
 
     nx_usize i = 0;
@@ -167,7 +167,7 @@ nx_str_view nx_str_view_trim_start(nx_str_view s) {
     return nx_str_view_new(s.data + i, s.len - i);
 }
 
-nx_str_view nx_str_view_trim_end(nx_str_view s) {
+nx_StrView nx_str_view_trim_end(nx_StrView s) {
     NX_STR_VIEW_ASSERT(s);
 
     nx_usize i = s.len;
@@ -178,7 +178,7 @@ nx_str_view nx_str_view_trim_end(nx_str_view s) {
     return nx_str_view_new(s.data, i);
 }
 
-nx_str_view nx_str_view_trim(nx_str_view s) {
+nx_StrView nx_str_view_trim(nx_StrView s) {
     NX_STR_VIEW_ASSERT(s);
 
     return nx_str_view_trim_end(nx_str_view_trim_start(s));

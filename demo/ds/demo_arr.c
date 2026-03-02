@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static nx_arr *arr_new_or_die(nx_usize len, nx_usize tsz);
+static nx_Arr *arr_new_or_die(nx_usize len, nx_usize tsz);
 
 static void demo_lifetime(void);
 static void demo_copy_move(void);
@@ -29,8 +29,8 @@ int main(void) {
     return EXIT_SUCCESS;
 }
 
-static nx_arr *arr_new_or_die(nx_usize len, nx_usize tsz) {
-    nx_arr_res res = nx_arr_new_len(len, tsz);
+static nx_Arr *arr_new_or_die(nx_usize len, nx_usize tsz) {
+    nx_ArrRes res = nx_arr_new_len(len, tsz);
     if (!NX_RES_IS_OK(res)) {
         nx_status_fprintln(stderr, NX_RES_ERR(res));
         exit(EXIT_FAILURE);
@@ -44,12 +44,12 @@ static void demo_lifetime(void) {
     void nx_arr_drop(nx_arr *self);
     */
 
-    const nx_arr_res res = NX_ARR_NEW_LEN(nx_i32, 5);
+    const nx_ArrRes res = NX_ARR_NEW_LEN(nx_i32, 5);
     if (!NX_RES_IS_OK(res)) {
         nx_status_fprintln(stderr, NX_RES_ERR(res));
         exit(EXIT_FAILURE);
     }
-    nx_arr *arr = NX_RES_UNWRAP(res);
+    nx_Arr *arr = NX_RES_UNWRAP(res);
 
     nx_arr_drop(arr);
 }
@@ -63,16 +63,16 @@ static void demo_copy_move(void) {
     void nx_arr_move_assign(nx_arr *self, nx_arr *src);
     */
 
-    nx_arr *arr = arr_new_or_die(5, sizeof(nx_i32));
+    nx_Arr *arr = arr_new_or_die(5, sizeof(nx_i32));
 
-    nx_arr_res res1 = nx_arr_copy(arr);
+    nx_ArrRes res1 = nx_arr_copy(arr);
     if (!NX_RES_IS_OK(res1)) {
         nx_status_fprintln(stderr, NX_RES_ERR(res1));
         exit(EXIT_FAILURE);
     }
-    nx_arr *arr1 = NX_RES_UNWRAP(res1);
+    nx_Arr *arr1 = NX_RES_UNWRAP(res1);
 
-    nx_arr *arr2 = nx_arr_move(&arr);
+    nx_Arr *arr2 = nx_arr_move(&arr);
 
 
     nx_arr_drop(arr1);
@@ -87,7 +87,7 @@ static void demo_info(void) {
     nx_usize nx_arr_elem_size(const nx_arr *self);
     */
 
-    nx_arr *arr = arr_new_or_die(5, sizeof(nx_i32));
+    nx_Arr *arr = arr_new_or_die(5, sizeof(nx_i32));
 
     const nx_usize len = nx_arr_len(arr);
     NX_VERIFY(len == 5);
@@ -110,7 +110,7 @@ static void demo_access(void) {
     const void *nx_arr_data_c(const nx_arr *self);
     */
 
-    nx_arr *arr = arr_new_or_die(5, sizeof(nx_i32));
+    nx_Arr *arr = arr_new_or_die(5, sizeof(nx_i32));
 
     for (nx_usize i = 0; i < nx_arr_len(arr); ++i) {
         NX_ARR_SET_EXPR(nx_i32, arr, i, (nx_i32) i);
@@ -149,8 +149,8 @@ static void demo_mods(void) {
 
     const nx_usize len1 = 5, len2 = 3;
 
-    nx_arr *arr1 = arr_new_or_die(len1, sizeof(nx_i32));
-    nx_arr *arr2 = arr_new_or_die(len2, sizeof(nx_i32));
+    nx_Arr *arr1 = arr_new_or_die(len1, sizeof(nx_i32));
+    nx_Arr *arr2 = arr_new_or_die(len2, sizeof(nx_i32));
 
     for (nx_usize i = 0; i < len1; ++i) {
         NX_ARR_SET_EXPR(nx_i32, arr1, i, (nx_i32) (i * i));

@@ -9,8 +9,8 @@
  * This allocator has no state (ctx = NULL)
  */
 
-nx_al *nx_al_libc_new(void);
-void nx_al_libc_drop(nx_al *al);
+nx_Al *nx_al_libc_new(void);
+void nx_al_libc_drop(nx_Al *al);
 
 /**
  * Get global static libc allocator
@@ -22,4 +22,4 @@ void nx_al_libc_drop(nx_al *al);
  *
  * DO NOT modify fields.
  */
-nx_al *nx_al_libc_default_g(void);
+nx_Al *nx_al_libc_default_g(void);

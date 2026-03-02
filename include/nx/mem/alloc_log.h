@@ -16,5 +16,5 @@
  * @param stream - where to log (stdout, stderr, or file)
  * @return new logging allocator or NULL on allocation failure
  */
-nx_al *nx_al_log_new(nx_al *wrapped, FILE *stream);
-void nx_al_log_drop(nx_al *al);
+nx_Al *nx_al_log_new(nx_Al *wrapped, FILE *stream);
+void nx_al_log_drop(nx_Al *al);

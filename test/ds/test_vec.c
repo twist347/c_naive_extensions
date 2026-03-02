@@ -15,24 +15,24 @@ void setUp(void) {
 void tearDown(void) {
 }
 
-static nx_vec *vec_new_or_die(nx_usize tsz) {
-    nx_vec_res res = nx_vec_new(tsz);
+static nx_Vec *vec_new_or_die(nx_usize tsz) {
+    nx_VecRes res = nx_vec_new(tsz);
     if (!NX_RES_IS_OK(res)) {
         NX_PANIC_MSG(nx_status_to_str(NX_RES_ERR(res)));
     }
     return NX_RES_UNWRAP(res);
 }
 
-static nx_vec *vec_new_len_or_die(nx_usize len, nx_usize tsz) {
-    nx_vec_res res = nx_vec_new_len(len, tsz);
+static nx_Vec *vec_new_len_or_die(nx_usize len, nx_usize tsz) {
+    nx_VecRes res = nx_vec_new_len(len, tsz);
     if (!NX_RES_IS_OK(res)) {
         NX_PANIC_MSG(nx_status_to_str(NX_RES_ERR(res)));
     }
     return NX_RES_UNWRAP(res);
 }
 
-static nx_vec *vec_new_cap_or_die(nx_usize cap, nx_usize tsz) {
-    nx_vec_res res = nx_vec_new_cap(cap, tsz);
+static nx_Vec *vec_new_cap_or_die(nx_usize cap, nx_usize tsz) {
+    nx_VecRes res = nx_vec_new_cap(cap, tsz);
     if (!NX_RES_IS_OK(res)) {
         NX_PANIC_MSG(nx_status_to_str(NX_RES_ERR(res)));
     }
@@ -42,10 +42,10 @@ static nx_vec *vec_new_cap_or_die(nx_usize cap, nx_usize tsz) {
 /* ========== lifetime ========== */
 
 static void test_nx_vec_new(void) {
-    nx_vec_res res = NX_VEC_NEW(nx_i32);
+    nx_VecRes res = NX_VEC_NEW(nx_i32);
     TEST_ASSERT_TRUE(NX_RES_IS_OK(res));
 
-    nx_vec *vec = NX_RES_UNWRAP(res);
+    nx_Vec *vec = NX_RES_UNWRAP(res);
 
     TEST_ASSERT_NULL(nx_vec_data(vec));
     TEST_ASSERT_EQUAL_UINT64(0, nx_vec_len(vec));
@@ -56,10 +56,10 @@ static void test_nx_vec_new(void) {
 }
 
 static void test_nx_vec_new_len(void) {
-    nx_vec_res res = NX_VEC_NEW_LEN(nx_i32, 5);
+    nx_VecRes res = NX_VEC_NEW_LEN(nx_i32, 5);
     TEST_ASSERT_TRUE(NX_RES_IS_OK(res));
 
-    nx_vec *vec = NX_RES_UNWRAP(res);
+    nx_Vec *vec = NX_RES_UNWRAP(res);
 
     TEST_ASSERT_NOT_NULL(nx_vec_data(vec));
     TEST_ASSERT_EQUAL_UINT64(5, nx_vec_len(vec));
@@ -74,10 +74,10 @@ static void test_nx_vec_new_len(void) {
 }
 
 static void test_nx_vec_new_cap(void) {
-    nx_vec_res res = NX_VEC_NEW_CAP(nx_i32, 5);
+    nx_VecRes res = NX_VEC_NEW_CAP(nx_i32, 5);
     TEST_ASSERT_TRUE(NX_RES_IS_OK(res));
 
-    nx_vec *vec = NX_RES_UNWRAP(res);
+    nx_Vec *vec = NX_RES_UNWRAP(res);
 
     TEST_ASSERT_NOT_NULL(nx_vec_data(vec));
     TEST_ASSERT_EQUAL_UINT64(0, nx_vec_len(vec));
@@ -90,10 +90,10 @@ static void test_nx_vec_new_cap(void) {
 static void test_nx_vec_from_data(void) {
     const nx_i32 data[] = {1, 2, 3, 4, 5};
 
-    nx_vec_res res = NX_VEC_FROM_DATA(nx_i32, data, NX_C_ARR_LEN(data));
+    nx_VecRes res = NX_VEC_FROM_DATA(nx_i32, data, NX_C_ARR_LEN(data));
     TEST_ASSERT_TRUE(NX_RES_IS_OK(res));
 
-    nx_vec *vec = NX_RES_UNWRAP(res);
+    nx_Vec *vec = NX_RES_UNWRAP(res);
 
     TEST_ASSERT_NOT_NULL(nx_vec_data(vec));
     TEST_ASSERT_EQUAL_UINT64(NX_C_ARR_LEN(data), nx_vec_len(vec));
@@ -109,15 +109,15 @@ static void test_nx_vec_from_data(void) {
 
 
 static void test_nx_vec_new_drop(void) {
-    nx_vec_res res = NX_VEC_NEW_LEN(nx_i32, 5);
+    nx_VecRes res = NX_VEC_NEW_LEN(nx_i32, 5);
     TEST_ASSERT_TRUE(NX_RES_IS_OK(res));
 
-    nx_vec *vec = NX_RES_UNWRAP(res);
+    nx_Vec *vec = NX_RES_UNWRAP(res);
     nx_vec_drop(vec);
 }
 
 static void test_nx_vec_new_drop_null(void) {
-    nx_vec *vec = nx_null;
+    nx_Vec *vec = nx_null;
     nx_vec_drop(vec);
 }
 

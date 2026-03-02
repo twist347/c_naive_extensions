@@ -4,12 +4,12 @@
 
 #include "nx/core/type.h"
 
-typedef enum nx_status {
+typedef enum {
     NX_STATUS_OK = 0,
     NX_STATUS_OUT_OF_MEMORY,
 
     NX_STATUS__COUNT
-} nx_status;
+} nx_Status;
 
-const nx_char *nx_status_to_str(nx_status st);
-void nx_status_fprintln(FILE *stream, nx_status st);
+const nx_char *nx_status_to_str(nx_Status st);
+void nx_status_fprintln(FILE *stream, nx_Status st);

@@ -10,8 +10,8 @@ void tearDown(void) {
 }
 
 static void test_nx_al_log_alloc(void) {
-    nx_al *libc_al = nx_al_libc_default_g();
-    nx_al *al = nx_al_log_new(libc_al, stdout);
+    nx_Al *libc_al = nx_al_libc_default_g();
+    nx_Al *al = nx_al_log_new(libc_al, stdout);
 
     const nx_usize len = 10;
     nx_i32 *arr = NX_AL_ALLOC(nx_i32, al, len);
@@ -30,8 +30,8 @@ static void test_nx_al_log_alloc(void) {
 }
 
 static void test_nx_al_log_calloc(void) {
-    nx_al *libc_al = nx_al_libc_default_g();
-    nx_al *al = nx_al_log_new(libc_al, stdout);
+    nx_Al *libc_al = nx_al_libc_default_g();
+    nx_Al *al = nx_al_log_new(libc_al, stdout);
 
     const nx_usize len = 10;
     nx_i32 *arr = NX_AL_CALLOC(nx_i32, al, len);
@@ -54,8 +54,8 @@ static void test_nx_al_log_calloc(void) {
 }
 
 static void test_nx_al_log_realloc(void) {
-    nx_al *libc_al = nx_al_libc_default_g();
-    nx_al *al = nx_al_log_new(libc_al, stdout);
+    nx_Al *libc_al = nx_al_libc_default_g();
+    nx_Al *al = nx_al_log_new(libc_al, stdout);
 
     const nx_usize len = 10;
     nx_i32 *arr = NX_AL_ALLOC(nx_i32, al, len);

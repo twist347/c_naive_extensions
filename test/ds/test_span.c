@@ -11,7 +11,7 @@ void tearDown(void) {}
 
 static void test_A_B(void) {
     nx_i32 arr[] = {1, 2, 3, 4, 5};
-    const nx_span s = NX_SPAN_FROM_PTR(arr, 5);
+    const nx_Span s = NX_SPAN_FROM_PTR(arr, 5);
 
     const nx_i32 x = 100;
     nx_span_set(s, 0, &x);
