@@ -1,7 +1,7 @@
 #include "unity.h"
 
 #include "nx/numeric/sat.h"
-#include "nx/numeric/limit.h"
+#include "../../include/nx/core/limits.h"
 
 // TODO: add all cases
 

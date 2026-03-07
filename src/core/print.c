@@ -4,7 +4,7 @@
 
 #include "nx/core/assert.h"
 
-/* ========== printf wrappers ========== */
+/* ========== formated print ========== */
 
 nx_i32 nx_printf(const char *fmt, ...) {
     NX_ASSERT(fmt);
@@ -25,6 +25,29 @@ nx_i32 nx_fprintf(FILE *stream, const char *fmt, ...) {
     const nx_i32 n = vfprintf(stream, fmt, vl);
     va_end(vl);
     return n;
+}
+
+/* ========== print ========== */
+
+nx_i32 fprint(FILE *stream, const char *str) {
+    return fputs(str ? str : "null", stream);
+}
+
+nx_i32 nx_fprintln(FILE *stream, const char *str) {
+    NX_ASSERT(stream);
+    const nx_i32 n = fputs(str ? str : "null", stream);
+    if (n >= 0) {
+        fputc('\n', stream);
+    }
+    return n;
+}
+
+nx_i32 nx_print(const char *str) {
+    return fprint(stdout, str);
+}
+
+nx_i32 nx_println(const char *str) {
+    return nx_fprintln(stdout, str);
 }
 
 /* ========== typed printers ========== */
@@ -72,33 +95,4 @@ void nx_fprint_ptr(FILE *stream, const void *data) {
     NX_ASSERT(stream);
     NX_ASSERT(data);
     fprintf(stream, NX_FMT_PTR, *(void *const *) data);
-}
-
-/* ========== span printing ========== */
-
-void nx_fprintln_cspan(FILE *stream, nx_CSpan s, nx_fprint_fn f) {
-    NX_ASSERT(stream);
-    NX_SPAN_ANY_ASSERT(s);
-    NX_ASSERT(f);
-
-    fputc('[', stream);
-    for (nx_usize i = 0; i < s.len; ++i) {
-        if (i > 0) {
-            fputs(", ", stream);
-        }
-        f(stream, nx_cspan_get_c(s, i));
-    }
-    fputs("]\n", stream);
-}
-
-void nx_fprintln_span(FILE *stream, nx_Span s, nx_fprint_fn f) {
-    nx_fprintln_cspan(stream, nx_cspan_from_span(s), f);
-}
-
-void nx_println_cspan(nx_CSpan s, nx_fprint_fn f) {
-    nx_fprintln_cspan(stdout, s, f);
-}
-
-void nx_println_span(nx_Span s, nx_fprint_fn f) {
-    nx_fprintln_span(stdout, s, f);
 }

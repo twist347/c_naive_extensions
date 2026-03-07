@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdio.h>
-
 #include "nx/core/type.h"
 
 typedef enum {
@@ -12,4 +10,3 @@ typedef enum {
 } nx_Status;
 
 const nx_char *nx_status_to_str(nx_Status st);
-void nx_status_fprintln(FILE *stream, nx_Status st);

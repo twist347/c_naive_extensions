@@ -1,8 +1,8 @@
 #include "nx/ds/arr.h"
 
 #include "nx/core/print.h"
-#include "../../include/nx/ds/span.h"
-#include "nx/core/panic.h"
+#include "nx/ds/span.h"
+#include "nx/core/assert.h"
 
 #include "nx/mem/ptr.h"
 
@@ -32,7 +32,7 @@ int main(void) {
 static nx_Arr *arr_new_or_die(nx_usize len, nx_usize tsz) {
     nx_ArrRes res = nx_arr_new_len(len, tsz);
     if (!NX_RES_IS_OK(res)) {
-        nx_status_fprintln(stderr, NX_RES_ERR(res));
+        nx_fprintf(stderr, nx_status_to_str(NX_RES_ERR(res)));
         exit(EXIT_FAILURE);
     }
     return NX_RES_UNWRAP(res);
@@ -46,7 +46,7 @@ static void demo_lifetime(void) {
 
     const nx_ArrRes res = NX_ARR_NEW_LEN(nx_i32, 5);
     if (!NX_RES_IS_OK(res)) {
-        nx_status_fprintln(stderr, NX_RES_ERR(res));
+        nx_fprintf(stderr, nx_status_to_str(NX_RES_ERR(res)));
         exit(EXIT_FAILURE);
     }
     nx_Arr *arr = NX_RES_UNWRAP(res);
@@ -67,7 +67,7 @@ static void demo_copy_move(void) {
 
     nx_ArrRes res1 = nx_arr_copy(arr);
     if (!NX_RES_IS_OK(res1)) {
-        nx_status_fprintln(stderr, NX_RES_ERR(res1));
+        nx_fprintf(stderr, nx_status_to_str(NX_RES_ERR(res1)));
         exit(EXIT_FAILURE);
     }
     nx_Arr *arr1 = NX_RES_UNWRAP(res1);

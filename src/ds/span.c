@@ -3,15 +3,15 @@
 #include <string.h>
 
 #include "nx/mem/ptr.h"
-#include "../../include/nx/numeric/limit.h"
+#include "../../include/nx/core/limits.h"
 
 /* ========== assert ========== */
 
 #if NX_DEBUG
-    void nx_span_any_assert_(const void *data, nx_usize len, nx_usize tsz) {
-        NX_ASSERT(tsz > 0);
-        NX_ASSERT(len == 0 || data != nx_null);
-    }
+void nx_span_any_assert_(const void *data, nx_usize len, nx_usize tsz) {
+    NX_ASSERT(tsz > 0);
+    NX_ASSERT(len == 0 || data != nx_null);
+}
 #endif
 
 /* ========== lifetime ========== */
@@ -157,4 +157,33 @@ nx_Span nx_span_tail(nx_Span s, nx_usize offset) {
 
 nx_CSpan nx_cspan_tail(nx_CSpan s, nx_usize offset) {
     return nx_cspan_sub(s, offset, s.len - offset);
+}
+
+/* ========== span printing ========== */
+
+void nx_fprintln_cspan(FILE *stream, nx_CSpan s, nx_fprint_fn f) {
+    NX_ASSERT(stream);
+    NX_SPAN_ANY_ASSERT(s);
+    NX_ASSERT(f);
+
+    fputc('[', stream);
+    for (nx_usize i = 0; i < s.len; ++i) {
+        if (i > 0) {
+            fputs(", ", stream);
+        }
+        f(stream, nx_cspan_get_c(s, i));
+    }
+    fputs("]\n", stream);
+}
+
+void nx_fprintln_span(FILE *stream, nx_Span s, nx_fprint_fn f) {
+    nx_fprintln_cspan(stream, nx_cspan_from_span(s), f);
+}
+
+void nx_println_cspan(nx_CSpan s, nx_fprint_fn f) {
+    nx_fprintln_cspan(stdout, s, f);
+}
+
+void nx_println_span(nx_Span s, nx_fprint_fn f) {
+    nx_fprintln_span(stdout, s, f);
 }

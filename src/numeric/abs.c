@@ -3,7 +3,7 @@
 #include <math.h>
 
 #include "nx/core/assert.h"
-#include "nx/numeric/limit.h"
+#include "../../include/nx/core/limits.h"
 
 nx_i8 nx_abs_i8(nx_i8 x) {
     NX_ASSERT(x != NX_I8_MIN);

@@ -13,10 +13,3 @@ const nx_char *nx_status_to_str(nx_Status st) {
     }
     return "UNKNOWN_NX_STATUS";
 }
-
-void nx_status_fprintln(FILE *stream, nx_Status st) {
-    NX_ASSERT(stream);
-
-    fputs(nx_status_to_str(st), stream);
-    fputc('\n', stream);
-}

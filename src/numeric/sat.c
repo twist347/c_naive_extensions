@@ -1,6 +1,6 @@
 #include "nx/numeric/sat.h"
 
-#include "../../include/nx/numeric/limit.h"
+#include "../../include/nx/core/limits.h"
 
 #define NX_SAT_ADD_SIGNED(T, a, b, T_MAX, T_MIN)             \
     do {                                                     \

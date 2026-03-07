@@ -2,6 +2,8 @@
 
 #include "nx/core/type.h"
 
+// TODO: add print funcs
+
 /* Contract:
  * - Invalid usage (null, bounds) is a programmer error guarded by
  *   NX_ASSERT. Release behavior is unspecified.

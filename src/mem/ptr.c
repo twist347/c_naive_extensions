@@ -23,14 +23,6 @@ nx_isize nx_byte_diff(const void *a, const void *b) {
     return (const nx_byte *) a - (const nx_byte *) b;
 }
 
-void *nx_ptr_exchange(void **obj, void *new_val) {
-    NX_ASSERT(obj);
-
-    void *old = *obj;
-    *obj = new_val;
-    return old;
-}
-
 nx_usize nx_align_up(nx_usize val, nx_usize alignment) {
     NX_ASSERT(alignment > 0);
     NX_ASSERT((alignment & (alignment - 1)) == 0); // power of 2
@@ -51,5 +43,14 @@ nx_bool nx_is_aligned(const void *ptr, nx_usize alignment) {
     NX_ASSERT((alignment & (alignment - 1)) == 0); // power of 2
 
     return ((nx_uptr)ptr & (alignment - 1)) == 0;
+}
+
+
+void *nx_ptr_exchange(void **obj, void *new_val) {
+    NX_ASSERT(obj);
+
+    void *old = *obj;
+    *obj = new_val;
+    return old;
 }
 

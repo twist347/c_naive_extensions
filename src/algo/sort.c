@@ -3,7 +3,6 @@
 #include <stdlib.h>
 
 #include "nx/core/assert.h"
-#include "nx/core/panic.h"
 #include "nx/core/util.h"
 
 void nx_sort(nx_Span s, nx_cmp_fn cmp) {

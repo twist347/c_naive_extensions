@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-#include "nx/core/panic.h"
+#include "nx/core/util.h"
 
 void nx_fill(nx_Span s, const void *elem) {
     NX_SPAN_ANY_ASSERT(s);

@@ -1,7 +1,8 @@
 #pragma once
 
-#include "nx/core/type.h"
 #include "nx/core/assert.h"
+#include "nx/core/type.h"
+#include "nx/core/print.h"
 
 /* Contract:
  * - Invalid usage (null, bounds, invariants, type mismatch) is a programmer
@@ -78,6 +79,14 @@ nx_CSpan nx_cspan_sub(nx_CSpan s, nx_usize offset, nx_usize count);
 
 nx_Span nx_span_tail(nx_Span s, nx_usize offset);
 nx_CSpan nx_cspan_tail(nx_CSpan s, nx_usize offset);
+
+/* ========== span printing ========== */
+
+void nx_fprintln_cspan(FILE *stream, nx_CSpan s, nx_fprint_fn f);
+void nx_fprintln_span(FILE *stream, nx_Span s, nx_fprint_fn f);
+
+void nx_println_cspan(nx_CSpan s, nx_fprint_fn f);
+void nx_println_span(nx_Span s, nx_fprint_fn f);
 
 /* ========== macros ========== */
 

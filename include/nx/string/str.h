@@ -6,6 +6,8 @@
 #include "nx/string/str_view.h"
 #include "nx/mem/alloc.h"
 
+// TODO: add print funcs
+
 /* Contract:
  * - Invalid usage (null, bounds, invariants, type mismatch) is a programmer
  *   error guarded by NX_ASSERT. Release behavior is unspecified.

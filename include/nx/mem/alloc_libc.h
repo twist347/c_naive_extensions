@@ -5,7 +5,7 @@
 /**
  * Create libc allocator (malloc/calloc/realloc/free wrapper)
  *
- * Returns heap-allocated allocator that must be freed with nx_al_free()
+ * Returns heap-allocated allocator that must be freed with nx_al_dealloc()
  * This allocator has no state (ctx = NULL)
  */
 

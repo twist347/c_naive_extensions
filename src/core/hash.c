@@ -2,15 +2,15 @@
 
 #include "nx/core/assert.h"
 
-/* FNV-1a 64-bit */
-static constexpr nx_u64 NX_FNV_OFFSET_BASIS_64 = 14695981039346656037ULL;
-static constexpr nx_u64 NX_FNV_PRIME_64 = 1099511628211ULL;
+// FNV-1a 64-bit
+static constexpr nx_u64 NX_FNV_OFFSET_BASIS_64 = NX_U64_C(14695981039346656037);
+static constexpr nx_u64 NX_FNV_PRIME_64 = NX_U64_C(1099511628211);
 
-/* MurmurHash3 fmix64 constants */
-static constexpr nx_u64 NX_FMIX64_C1 = 0xff51afd7ed558ccdULL;
-static constexpr nx_u64 NX_FMIX64_C2 = 0xc4ceb9fe1a85ec53ULL;
+// MurmurHash3 fmix64 constants
+static constexpr nx_u64 NX_FMIX64_C1 = NX_U64_C(0xff51afd7ed558ccd);
+static constexpr nx_u64 NX_FMIX64_C2 = NX_U64_C(0xc4ceb9fe1a85ec53);
 
-static constexpr nx_u64 NX_HASH_GOLDEN_64 = 0x9e3779b97f4a7c15ULL;
+static constexpr nx_u64 NX_HASH_GOLDEN_64 = NX_U64_C(0x9e3779b97f4a7c15);
 
 static nx_Hash hash_mix64(nx_u64 a);
 
@@ -55,8 +55,11 @@ nx_Hash nx_hash_isize(nx_isize x) {
 }
 
 nx_Hash nx_hash_bytes(const void *data, nx_usize len) {
+    if (len == 0) {
+        return nx_hash_u64(NX_FNV_OFFSET_BASIS_64);
+    }
+
     NX_ASSERT(data);
-    NX_ASSERT(len > 0);
 
     const nx_u8 *p = data;
     nx_u64 h = NX_FNV_OFFSET_BASIS_64;
@@ -70,6 +73,8 @@ nx_Hash nx_hash_bytes(const void *data, nx_usize len) {
 }
 
 nx_Hash nx_hash_cstr(const nx_char *s) {
+    NX_ASSERT(s);
+
     const nx_u8 *p = (const nx_u8 *) s;
     nx_u64 h = NX_FNV_OFFSET_BASIS_64;
 

@@ -2,8 +2,9 @@
 
 #include "nx/core/assert.h"
 #include "nx/core/cmp.h"
+#include "nx/core/config.h"
 #include "nx/core/hash.h"
-#include "nx/core/panic.h"
+#include "nx/core/limits.h"
 #include "nx/core/print.h"
 #include "nx/core/range.h"
 #include "nx/core/result.h"

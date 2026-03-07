@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "nx/core/panic.h"
+#include "nx/core/assert.h"
 #include "nx/core/status.h"
 #include "nx/core/util.h"
 #include "nx/ds/vec.h"

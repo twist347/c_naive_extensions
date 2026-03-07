@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "nx/numeric/limit.h"
+#include "../../include/nx/core/limits.h"
 #include "nx/mem/alloc_libc.h"
 #include "nx/mem/ptr.h"
 

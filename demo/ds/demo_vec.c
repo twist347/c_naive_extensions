@@ -3,13 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../../include/nx/ds/span.h"
+#include "nx/ds/span.h"
 #include "nx/core/print.h"
 
 int main(void) {
     nx_VecRes res = NX_VEC_NEW(int);
     if (!NX_RES_IS_OK(res)) {
-        nx_status_fprintln(stderr, NX_RES_ERR(res));
+        nx_fprintf(stderr, nx_status_to_str(NX_RES_ERR(res)));
         return EXIT_FAILURE;
     }
 

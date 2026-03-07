@@ -5,11 +5,14 @@
 // TODO: aligned alloc (for the future)
 
 /**
- * Allocator interface
+ * Allocator interface.
+ *
+ * `nx_Al` is a value type: { ctx, function pointers }.
  *
  * Contract:
- * - Allocator is heap-allocated and reference-counted internally or managed by user
- * - User must ensure allocator outlives all containers using it
+ * - The allocator (ctx + callbacks) must outlive all allocations made through it.
+ * - `alloc` and `dealloc` must be provided; `calloc`/`realloc` are optional.
+ * - Wrappers do not perform runtime checks in release builds.
  */
 
 typedef struct {

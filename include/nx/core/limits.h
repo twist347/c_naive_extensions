@@ -16,16 +16,16 @@
 #define NX_I64_MIN    INT64_MIN
 #define NX_I64_MAX    INT64_MAX
 
-#define NX_U8_MIN     0
+#define NX_U8_MIN     NX_U8_C(0)
 #define NX_U8_MAX     UINT8_MAX
-#define NX_U16_MIN    0
+#define NX_U16_MIN    NX_U16_C(0)
 #define NX_U16_MAX    UINT16_MAX
-#define NX_U32_MIN    0
+#define NX_U32_MIN    NX_U32_C(0)
 #define NX_U32_MAX    UINT32_MAX
-#define NX_U64_MIN    0
+#define NX_U64_MIN    NX_U64_C(0)
 #define NX_U64_MAX    UINT64_MAX
 
-#define NX_USIZE_MIN    0
+#define NX_USIZE_MIN    NX_USIZE_C(0)
 #define NX_USIZE_MAX    SIZE_MAX
 #define NX_ISIZE_MIN    PTRDIFF_MIN
 #define NX_ISIZE_MAX    PTRDIFF_MAX

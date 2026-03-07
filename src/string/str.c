@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "nx/core/assert.h"
-#include "nx/numeric/limit.h"
+#include "../../include/nx/core/limits.h"
 #include "nx/mem/alloc_libc.h"
 
 struct nx_Str {

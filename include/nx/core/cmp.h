@@ -2,7 +2,7 @@
 
 // TODO: add generics
 
-// TODO: use this instead of int
+// TODO: use this instead of int (not sure)
 typedef enum {
     NX_ORDERING_LESS = -1,
     NX_ORDERING_EQUAL = 0,

@@ -1,13 +1,13 @@
 #pragma once
 
 #include "nx/core/status.h"
-#include "nx/core/panic.h"
+#include "nx/core/assert.h"
 #include "nx/core/util.h"
 
-#define NX_DEF_RES_TYPE(name, T)    \
-    typedef struct {                \
-        nx_Status st;               \
-        T val;                      \
+#define NX_DEF_RES_TYPE(name, T) \
+    typedef struct {             \
+        nx_Status st;            \
+        T val;                   \
     } name
 
 /* ========== constructors ========== */
