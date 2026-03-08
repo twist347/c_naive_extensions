@@ -27,29 +27,6 @@ nx_i32 nx_fprintf(FILE *stream, const char *fmt, ...) {
     return n;
 }
 
-/* ========== print ========== */
-
-nx_i32 fprint(FILE *stream, const char *str) {
-    return fputs(str ? str : "null", stream);
-}
-
-nx_i32 nx_fprintln(FILE *stream, const char *str) {
-    NX_ASSERT(stream);
-    const nx_i32 n = fputs(str ? str : "null", stream);
-    if (n >= 0) {
-        fputc('\n', stream);
-    }
-    return n;
-}
-
-nx_i32 nx_print(const char *str) {
-    return fprint(stdout, str);
-}
-
-nx_i32 nx_println(const char *str) {
-    return nx_fprintln(stdout, str);
-}
-
 /* ========== typed printers ========== */
 
 #define NX_FPRINT_DEF(NAME, TYPE, FMT)                         \

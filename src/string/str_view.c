@@ -75,67 +75,67 @@ nx_i32 nx_str_view_cmp(nx_StrView a, nx_StrView b) {
 
 /* ========== prefix/suffix ========== */
 
-nx_bool nx_sv_starts_with(nx_StrView s, nx_StrView prefix) {
-    NX_STR_VIEW_ASSERT(s);
+nx_bool nx_sv_starts_with(nx_StrView self, nx_StrView prefix) {
+    NX_STR_VIEW_ASSERT(self);
     NX_STR_VIEW_ASSERT(prefix);
 
-    if (prefix.len > s.len) {
+    if (prefix.len > self.len) {
         return false;
     }
     if (prefix.len == 0) {
         return true;
     }
 
-    return memcmp(s.data, prefix.data, prefix.len) == 0;
+    return memcmp(self.data, prefix.data, prefix.len) == 0;
 }
 
-nx_bool nx_sv_ends_with(nx_StrView s, nx_StrView suffix) {
-    NX_STR_VIEW_ASSERT(s);
+nx_bool nx_sv_ends_with(nx_StrView self, nx_StrView suffix) {
+    NX_STR_VIEW_ASSERT(self);
     NX_STR_VIEW_ASSERT(suffix);
 
-    if (suffix.len > s.len) {
+    if (suffix.len > self.len) {
         return false;
     }
     if (suffix.len == 0) {
         return true;
     }
 
-    const nx_usize offset = s.len - suffix.len;
-    return memcmp(s.data + offset, suffix.data, suffix.len) == 0;
+    const nx_usize offset = self.len - suffix.len;
+    return memcmp(self.data + offset, suffix.data, suffix.len) == 0;
 }
 
 /* ========== slice ========== */
 
-nx_StrView nx_str_view_sub(nx_StrView s, nx_usize pos, nx_usize len) {
-    NX_STR_VIEW_ASSERT(s);
-    NX_ASSERT(pos <= s.len);
+nx_StrView nx_str_view_sub(nx_StrView self, nx_usize pos, nx_usize len) {
+    NX_STR_VIEW_ASSERT(self);
+    NX_ASSERT(pos <= self.len);
 
-    const nx_usize available = s.len - pos;
+    const nx_usize available = self.len - pos;
     if (len > available) {
         len = available;
     }
 
-    return nx_str_view_new(s.data + pos, len);
+    return nx_str_view_new(self.data + pos, len);
 }
 
 /* ========== search ========== */
 
-nx_isize nx_str_view_find_sub(nx_StrView s, nx_StrView needle) {
-    NX_STR_VIEW_ASSERT(s);
+nx_isize nx_str_view_find_sub(nx_StrView self, nx_StrView needle) {
+    NX_STR_VIEW_ASSERT(self);
     NX_STR_VIEW_ASSERT(needle);
 
     if (needle.len == 0) {
         return 0;
     }
-    if (needle.len > s.len) {
+    if (needle.len > self.len) {
         return -1;
     }
 
     /* naive search */
-    const nx_usize last = s.len - needle.len;
+    const nx_usize last = self.len - needle.len;
     for (nx_usize i = 0; i <= last; ++i) {
-        if (s.data[i] == needle.data[0]) {
-            if (memcmp(s.data + i, needle.data, needle.len) == 0) {
+        if (self.data[i] == needle.data[0]) {
+            if (memcmp(self.data + i, needle.data, needle.len) == 0) {
                 return (nx_isize) i;
             }
         }
@@ -143,11 +143,11 @@ nx_isize nx_str_view_find_sub(nx_StrView s, nx_StrView needle) {
     return -1;
 }
 
-nx_isize nx_str_view_find_char(nx_StrView s, nx_char ch) {
-    NX_STR_VIEW_ASSERT(s);
+nx_isize nx_str_view_find_char(nx_StrView self, nx_char ch) {
+    NX_STR_VIEW_ASSERT(self);
 
-    for (nx_usize i = 0; i < s.len; ++i) {
-        if (s.data[i] == ch) {
+    for (nx_usize i = 0; i < self.len; ++i) {
+        if (self.data[i] == ch) {
             return (nx_isize) i;
         }
     }
@@ -156,31 +156,60 @@ nx_isize nx_str_view_find_char(nx_StrView s, nx_char ch) {
 
 /* ========== trim ========== */
 
-nx_StrView nx_str_view_trim_start(nx_StrView s) {
-    NX_STR_VIEW_ASSERT(s);
+nx_StrView nx_str_view_trim_start(nx_StrView self) {
+    NX_STR_VIEW_ASSERT(self);
 
     nx_usize i = 0;
-    while (i < s.len && isspace(s.data[i])) {
+    while (i < self.len && isspace(self.data[i])) {
         ++i;
     }
 
-    return nx_str_view_new(s.data + i, s.len - i);
+    return nx_str_view_new(self.data + i, self.len - i);
 }
 
-nx_StrView nx_str_view_trim_end(nx_StrView s) {
-    NX_STR_VIEW_ASSERT(s);
+nx_StrView nx_str_view_trim_end(nx_StrView self) {
+    NX_STR_VIEW_ASSERT(self);
 
-    nx_usize i = s.len;
-    while (i > 0 && isspace(s.data[i - 1])) {
+    nx_usize i = self.len;
+    while (i > 0 && isspace(self.data[i - 1])) {
         --i;
     }
 
-    return nx_str_view_new(s.data, i);
+    return nx_str_view_new(self.data, i);
 }
 
-nx_StrView nx_str_view_trim(nx_StrView s) {
-    NX_STR_VIEW_ASSERT(s);
+nx_StrView nx_str_view_trim(nx_StrView self) {
+    NX_STR_VIEW_ASSERT(self);
 
-    return nx_str_view_trim_end(nx_str_view_trim_start(s));
+    return nx_str_view_trim_end(nx_str_view_trim_start(self));
+}
+/* ========== trim ========== */
+
+void nx_str_view_fprint(FILE *stream, nx_StrView self) {
+    NX_ASSERT(stream);
+    NX_STR_VIEW_ASSERT(self);
+
+    const nx_usize len = self.len;
+    const nx_char *p = self.data;
+
+    if (len == 0) {
+        return;
+    }
+
+    NX_ASSERT(p);
+
+    fwrite(p, 1, len, stream);
 }
 
+void nx_str_view_fprintln(FILE *stream, nx_StrView self) {
+    nx_str_view_fprint(stream, self);
+    fputc('\n', stream);
+}
+
+void nx_str_view_print(nx_StrView self) {
+    nx_str_view_fprint(stdout, self);
+}
+
+void nx_str_view_println(nx_StrView self) {
+    nx_str_view_fprintln(stdout, self);
+}

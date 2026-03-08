@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdio.h>
+
 #include "nx/core/type.h"
 #include "nx/core/status.h"
 #include "nx/core/result.h"
@@ -86,6 +88,14 @@ nx_Status nx_str_resize(nx_Str *self, nx_usize new_len);
 nx_Status nx_str_push(nx_Str *self, nx_char ch);
 nx_Status nx_str_append_str_view(nx_Str *self, nx_StrView sv);
 nx_Status nx_str_append_cstr(nx_Str *self, const nx_char *cstr);
+
+/* ========== print ========== */
+
+void nx_str_fprint(FILE *stream, const nx_Str *self);
+void nx_str_fprintln(FILE *stream, const nx_Str *self);
+
+void nx_str_print(const nx_Str *self);
+void nx_str_println(const nx_Str *self);
 
 /* ========== view ========== */
 

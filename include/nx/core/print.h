@@ -37,19 +37,12 @@
 
 /* ========== formated print ========== */
 
-typedef void (*nx_fprint_fn)(FILE *, const void *);
-
 nx_i32 nx_printf(const char *fmt, ...);
 nx_i32 nx_fprintf(FILE *stream, const char *fmt, ...);
 
-/* ========== print ========== */
-
-nx_i32 fprint(FILE *stream, const char *str);
-nx_i32 nx_fprintln(FILE *stream, const char *str);
-nx_i32 nx_print(const char *str);
-nx_i32 nx_println(const char *str);
-
 /* ========== typed printers (void* for use as nx_fprint_fn) ========== */
+
+typedef void (*nx_fprint_fn)(FILE *, const void *);
 
 void nx_fprint_i8(FILE *stream, const void *data);
 void nx_fprint_i16(FILE *stream, const void *data);

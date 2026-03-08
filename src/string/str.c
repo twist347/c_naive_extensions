@@ -4,7 +4,8 @@
 #include <string.h>
 
 #include "nx/core/assert.h"
-#include "../../include/nx/core/limits.h"
+#include "nx/core/config.h"
+#include "nx/core/limits.h"
 #include "nx/mem/alloc_libc.h"
 
 struct nx_Str {
@@ -376,6 +377,37 @@ nx_Status nx_str_append_cstr(nx_Str *self, const nx_char *cstr) {
     NX_ASSERT(cstr);
 
     return nx_str_append_str_view(self, nx_str_view_from_cstr(cstr));
+}
+
+/* ========== print ========== */
+
+void nx_str_fprint(FILE *stream, const nx_Str *self) {
+    NX_ASSERT(stream);
+    STR_ASSERT(self);
+
+    const nx_usize len = nx_str_len(self);
+    const nx_char *p = nx_str_data_c(self);
+
+    if (len == 0) {
+        return;
+    }
+
+    NX_ASSERT(p);
+
+    fwrite(p, 1, len, stream);
+}
+
+void nx_str_fprintln(FILE *stream, const nx_Str *self) {
+    nx_str_fprint(stream, self);
+    fputc('\n', stream);
+}
+
+void nx_str_print(const nx_Str *self) {
+    nx_str_fprint(stdout, self);
+}
+
+void nx_str_println(const nx_Str *self) {
+    nx_str_fprintln(stdout, self);
 }
 
 /* ========== view ========== */

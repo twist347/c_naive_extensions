@@ -1,5 +1,8 @@
 #pragma once
 
+#include <stdio.h>
+
+#include "nx/core/config.h"
 #include "nx/core/type.h"
 
 // TODO: add print funcs
@@ -48,20 +51,28 @@ nx_i32 nx_str_view_cmp(nx_StrView a, nx_StrView b); /* lexicographic */
 
 /* ========== prefix/suffix ========== */
 
-nx_bool nx_sv_starts_with(nx_StrView s, nx_StrView prefix);
-nx_bool nx_sv_ends_with(nx_StrView s, nx_StrView suffix);
+nx_bool nx_sv_starts_with(nx_StrView self, nx_StrView prefix);
+nx_bool nx_sv_ends_with(nx_StrView self, nx_StrView suffix);
 
 /* ========== slice ========== */
 
-nx_StrView nx_str_view_sub(nx_StrView s, nx_usize pos, nx_usize len);
+nx_StrView nx_str_view_sub(nx_StrView self, nx_usize pos, nx_usize len);
 
 /* ========== search ========== */
 
-nx_isize nx_str_view_find_sub(nx_StrView s, nx_StrView needle);
-nx_isize nx_str_view_find_char(nx_StrView s, nx_char ch);
+nx_isize nx_str_view_find_sub(nx_StrView self, nx_StrView needle);
+nx_isize nx_str_view_find_char(nx_StrView self, nx_char ch);
 
 /* ========== trim ========== */
 
-nx_StrView nx_str_view_trim_start(nx_StrView s);
-nx_StrView nx_str_view_trim_end(nx_StrView s);
-nx_StrView nx_str_view_trim(nx_StrView s);
+nx_StrView nx_str_view_trim_start(nx_StrView self);
+nx_StrView nx_str_view_trim_end(nx_StrView self);
+nx_StrView nx_str_view_trim(nx_StrView self);
+
+/* ========== trim ========== */
+
+void nx_str_view_fprint(FILE *stream, nx_StrView self);
+void nx_str_view_fprintln(FILE *stream, nx_StrView self);
+
+void nx_str_view_print(nx_StrView self);
+void nx_str_view_println(nx_StrView self);

@@ -64,9 +64,8 @@ static void *log_alloc(void *ctx, nx_usize size) {
 
     const nx_al_log_ctx *log_ctx = ctx;
     NX_ASSERT(log_ctx->stream);
-    NX_ASSERT(log_ctx->wrapped->alloc);
 
-    void *p = log_ctx->wrapped->alloc(log_ctx->wrapped->ctx, size);
+    void *p = nx_al_alloc(log_ctx->wrapped, size);
     fprintf(
         log_ctx->stream,
         "[NX] alloc size = %zu -> %p\n", size, p
@@ -80,10 +79,9 @@ static void *log_calloc(void *ctx, nx_usize num, nx_usize size) {
 
     const nx_al_log_ctx *log_ctx = ctx;
     NX_ASSERT(log_ctx->stream);
-    NX_ASSERT(log_ctx->wrapped->calloc);
 
     // TODO: check overflow
-    void *p = log_ctx->wrapped->calloc(log_ctx->wrapped->ctx, num, size);
+    void *p = nx_al_calloc(log_ctx->wrapped->ctx, num, size);
     fprintf(log_ctx->stream, "[NX] calloc num = %zu size = %zu total = %zu -> %p\n", num, size, num * size, p);
     fflush(log_ctx->stream);
     return p;
@@ -94,9 +92,8 @@ static void *log_realloc(void *ctx, void *ptr, nx_usize old_size, nx_usize new_s
 
     const nx_al_log_ctx *log_ctx = ctx;
     NX_ASSERT(log_ctx->stream);
-    NX_ASSERT(log_ctx->wrapped->realloc);
 
-    void *p = log_ctx->wrapped->realloc(log_ctx->wrapped->ctx, ptr, old_size, new_size);
+    void *p = nx_al_realloc(log_ctx->wrapped->ctx, ptr, old_size, new_size);
     fprintf(log_ctx->stream, "[NX] realloc %p old_size = %zu new_size = %zu -> %p\n", ptr, old_size, new_size, p);
     fflush(log_ctx->stream);
     return p;
