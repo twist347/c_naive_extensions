@@ -1,7 +1,5 @@
 #include "nx/core/status.h"
 
-#include "nx/core/assert.h"
-
 const nx_char *nx_status_to_str(nx_Status st) {
     switch (st) {
         case NX_STATUS_OK:

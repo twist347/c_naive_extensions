@@ -32,6 +32,11 @@
         return (a < b) ? -1 : (a > b) ? 1 : 0;            \
     }
 
+#define NX_CMP_DESC_DEF(NAME)                                    \
+    int nx_cmp_desc_##NAME(const void *lhs, const void *rhs) { \
+        return nx_cmp_##NAME(rhs, lhs);                          \
+    }
+
 NX_CMP_INT_DEF(i8,    nx_i8)
 NX_CMP_INT_DEF(i16,   nx_i16)
 NX_CMP_INT_DEF(i32,   nx_i32)
@@ -70,3 +75,25 @@ int nx_cmp_cstr(const void *lhs, const void *rhs) {
     const int r = strcmp(a,b);
     return (r < 0) ? -1 : (r > 0) ? 1 : 0;
 }
+
+NX_CMP_DESC_DEF(i8)
+NX_CMP_DESC_DEF(i16)
+NX_CMP_DESC_DEF(i32)
+NX_CMP_DESC_DEF(i64)
+
+NX_CMP_DESC_DEF(u8)
+NX_CMP_DESC_DEF(u16)
+NX_CMP_DESC_DEF(u32)
+NX_CMP_DESC_DEF(u64)
+
+NX_CMP_DESC_DEF(isize)
+NX_CMP_DESC_DEF(usize)
+
+NX_CMP_DESC_DEF(bool)
+NX_CMP_DESC_DEF(byte)
+NX_CMP_DESC_DEF(char)
+
+NX_CMP_DESC_DEF(f32)
+NX_CMP_DESC_DEF(f64)
+
+NX_CMP_DESC_DEF(cstr)

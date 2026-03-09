@@ -4,6 +4,8 @@
 #include "nx/core/cmp.h"
 #include "nx/ds/span.h"
 
+// TODO: add equal_range
+
 nx_isize nx_find(nx_CSpan s, const void *key, nx_cmp_fn cmp);
 nx_bool nx_contains(nx_CSpan s, const void *key, nx_cmp_fn cmp);
 nx_usize nx_count(nx_CSpan s, const void *key, nx_cmp_fn cmp);

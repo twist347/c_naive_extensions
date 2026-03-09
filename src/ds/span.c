@@ -3,7 +3,6 @@
 #include <string.h>
 
 #include "nx/mem/ptr.h"
-#include "../../include/nx/core/limits.h"
 
 /* ========== assert ========== */
 
@@ -127,6 +126,25 @@ void nx_span_copy(nx_Span dst, nx_CSpan src) {
 
     const nx_usize bytes = dst.len * dst.tsz;
     memmove(dst.data, src.data, bytes);
+}
+
+void nx_span_swap(nx_Span s, nx_usize i, nx_usize j) {
+    NX_SPAN_ANY_ASSERT(s);
+    NX_ASSERT(i < s.len);
+    NX_ASSERT(j < s.len);
+
+    if (i == j || s.tsz == 0 || s.len == 0) {
+        return;
+    }
+
+    nx_byte *a = nx_byte_offset(s.data, s.tsz, i);
+    nx_byte *b = nx_byte_offset(s.data, s.tsz, j);
+
+    for (nx_usize k = 0; k < s.tsz; ++k) {
+        const nx_byte tmp = a[k];
+        a[k] = b[k];
+        b[k] = tmp;
+    }
 }
 
 /* ========== subspan ========== */

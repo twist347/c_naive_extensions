@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../include/nx/core/limits.h"
 #include "nx/mem/alloc_libc.h"
 #include "nx/mem/ptr.h"
 
@@ -21,7 +20,7 @@ struct nx_Arr {
         NX_ASSERT(self->al != nx_null);
         NX_ASSERT(((self->len == 0) == (self->data == nx_null)));
     }
-#define ARR_ASSERT(self)    \
+#define ARR_ASSERT(self) \
     do { arr_assert_impl((self)); } while (0)
 #else
     #define ARR_ASSERT(self)    ((void) 0)

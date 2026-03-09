@@ -84,13 +84,13 @@ nx_isize nx_bsearch(nx_CSpan s, const void *key, nx_cmp_fn cmp) {
     NX_ASSERT(key);
     NX_ASSERT(cmp);
 
-    const nx_isize pos = nx_lower_bound(s, key, cmp);
-    if ((nx_usize) pos >= s.len) {
+    const nx_usize pos = nx_lower_bound(s, key, cmp);
+    if (pos >= s.len) {
         return -1;
     }
 
     const void *p = nx_cspan_get_c(s, pos);
-    return cmp(p, key) == 0 ? pos : -1;
+    return cmp(p, key) == 0 ? (nx_isize) pos : -1;
 }
 
 nx_isize nx_find_if(nx_CSpan s, nx_predicate_fn pred) {

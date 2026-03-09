@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../include/nx/core/limits.h"
 #include "nx/mem/ptr.h"
 #include "nx/mem/alloc_libc.h"
+#include "nx/core/limits.h"
 
 struct nx_Vec {
     void *data;

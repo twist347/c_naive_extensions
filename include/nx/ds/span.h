@@ -2,6 +2,7 @@
 
 #include "nx/core/assert.h"
 #include "nx/core/type.h"
+#include "nx/core/util.h"
 #include "nx/io/print.h"
 
 /* Contract:
@@ -71,6 +72,7 @@ nx_usize nx_cspan_size_bytes(nx_CSpan self);
 
 /// handles overlapping memory correctly
 void nx_span_copy(nx_Span dst, nx_CSpan src);
+void nx_span_swap(nx_Span s, nx_usize i, nx_usize j);
 
 /* ========== subspan ========== */
 
@@ -95,6 +97,12 @@ void nx_span_println(nx_Span self, nx_fprint_fn f);
 
 #define NX_CSPAN_FROM_PTR(ptr, len) \
     nx_cspan_new((ptr), (len), sizeof((ptr)[0]))
+
+#define NX_SPAN_FROM_ARR(arr) \
+    nx_span_new((arr), (NX_C_ARR_LEN(arr)), sizeof((arr)[0]))
+
+#define NX_CSPAN_FROM_ARR(arr) \
+    nx_cspan_new((arr), (NX_C_ARR_LEN(arr)), sizeof((arr)[0]))
 
 #define NX_SPAN_GET_AS(T, s, idx)     \
     (NX_ASSERT((s).tsz == sizeof(T)), \
