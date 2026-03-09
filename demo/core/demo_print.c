@@ -1,4 +1,5 @@
-#include "nx/core/print.h"
+#include "nx/io/print.h"
+#include "nx/io/dbg.h"
 
 #include "nx/ds/span.h"
 
@@ -11,7 +12,7 @@ int main(void) {
 
     nx_CSpan cs = NX_CSPAN_FROM_PTR(arr, 5);
 
-    nx_println_cspan(cs, nx_fprint_i32);
+    nx_cspan_println(cs, nx_fprint_i32);
 
     nx_dbg(2 + 3);
 }

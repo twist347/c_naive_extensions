@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 #include "nx/ds/span.h"
-#include "nx/core/print.h"
+#include "nx/io/print.h"
 
 int main(void) {
     nx_VecRes res = NX_VEC_NEW(int);
@@ -21,7 +21,7 @@ int main(void) {
 
     const nx_CSpan s = nx_vec_to_cspan(vec);
 
-    nx_fprintln_cspan(stdout, s, nx_fprint_i32);
+    nx_cspan_fprintln(s, stdout, nx_fprint_i32);
 
     nx_vec_drop(vec);
 }

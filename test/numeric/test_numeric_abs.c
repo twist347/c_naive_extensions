@@ -1,11 +1,14 @@
 #include "unity.h"
 
-#include "nx/core/type.h"
+#include "nx/numeric/abs.h"
 
 // TODO: impl
 
-void setUp(void) {}
-void tearDown(void) {}
+void setUp(void) {
+}
+
+void tearDown(void) {
+}
 
 int main(void) {
     UNITY_BEGIN();

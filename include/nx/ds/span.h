@@ -2,7 +2,7 @@
 
 #include "nx/core/assert.h"
 #include "nx/core/type.h"
-#include "nx/core/print.h"
+#include "nx/io/print.h"
 
 /* Contract:
  * - Invalid usage (null, bounds, invariants, type mismatch) is a programmer
@@ -61,11 +61,11 @@ void nx_span_set(nx_Span s, nx_usize idx, const void *val);
 
 /* ========== info ========== */
 
-nx_bool nx_span_empty(nx_Span s);
-nx_bool nx_cspan_empty(nx_CSpan s);
+nx_bool nx_span_empty(nx_Span self);
+nx_bool nx_cspan_empty(nx_CSpan self);
 
-nx_usize nx_span_size_bytes(nx_Span s);
-nx_usize nx_cspan_size_bytes(nx_CSpan s);
+nx_usize nx_span_size_bytes(nx_Span self);
+nx_usize nx_cspan_size_bytes(nx_CSpan self);
 
 /* ========== operations ========== */
 
@@ -74,19 +74,19 @@ void nx_span_copy(nx_Span dst, nx_CSpan src);
 
 /* ========== subspan ========== */
 
-nx_Span nx_span_sub(nx_Span s, nx_usize offset, nx_usize count);
-nx_CSpan nx_cspan_sub(nx_CSpan s, nx_usize offset, nx_usize count);
+nx_Span nx_span_sub(nx_Span self, nx_usize offset, nx_usize count);
+nx_CSpan nx_cspan_sub(nx_CSpan self, nx_usize offset, nx_usize count);
 
-nx_Span nx_span_tail(nx_Span s, nx_usize offset);
-nx_CSpan nx_cspan_tail(nx_CSpan s, nx_usize offset);
+nx_Span nx_span_tail(nx_Span self, nx_usize offset);
+nx_CSpan nx_cspan_tail(nx_CSpan self, nx_usize offset);
 
-/* ========== span printing ========== */
+/* ========== print ========== */
 
-void nx_fprintln_cspan(FILE *stream, nx_CSpan s, nx_fprint_fn f);
-void nx_fprintln_span(FILE *stream, nx_Span s, nx_fprint_fn f);
+void nx_cspan_fprintln(nx_CSpan self, FILE *stream, nx_fprint_fn f);
+void nx_span_fprintln(nx_Span self, FILE *stream, nx_fprint_fn f);
 
-void nx_println_cspan(nx_CSpan s, nx_fprint_fn f);
-void nx_println_span(nx_Span s, nx_fprint_fn f);
+void nx_cspan_println(nx_CSpan self, nx_fprint_fn f);
+void nx_span_println(nx_Span self, nx_fprint_fn f);
 
 /* ========== macros ========== */
 

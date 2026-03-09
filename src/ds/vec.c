@@ -452,6 +452,18 @@ nx_CSpan nx_vec_to_cspan(const nx_Vec *self) {
     return nx_cspan_new(self->data, self->len, self->tsz);
 }
 
+/* ========== print ========== */
+
+void nx_vec_fprintln(const nx_Vec *self, FILE *stream, nx_fprint_fn f) {
+    const nx_CSpan cspan = nx_vec_to_cspan(self);
+    nx_cspan_fprintln(cspan, stream, f);
+}
+
+void nx_vec_println(const nx_Vec *self, nx_fprint_fn f) {
+    const nx_CSpan cspan = nx_vec_to_cspan(self);
+    nx_cspan_println(cspan, f);
+}
+
 // internals defs
 
 static nx_Status new_impl(nx_Vec **out, nx_usize len, nx_usize cap, nx_usize tsz, nx_Al *al) {

@@ -2,12 +2,15 @@
 
 #include <stdio.h>
 
-#include "../../include/nx/ds/span.h"
-#include "nx/core/print.h"
+#include "nx/ds/span.h"
+#include "nx/io/print.h"
 #include "nx/core/type.h"
 
-void setUp(void) {}
-void tearDown(void) {}
+void setUp(void) {
+}
+
+void tearDown(void) {
+}
 
 static void test_A_B(void) {
     nx_i32 arr[] = {1, 2, 3, 4, 5};
@@ -18,7 +21,7 @@ static void test_A_B(void) {
 
     TEST_ASSERT_EQUAL_INT32(100, arr[0]);
 
-    nx_fprintln_span(stdout, s, nx_fprint_i32);
+    nx_span_fprintln(s, stdout, nx_fprint_i32);
 }
 
 int main(void) {

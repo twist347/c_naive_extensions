@@ -1,6 +1,6 @@
 #include "nx/ds/arr.h"
 
-#include "nx/core/print.h"
+#include "nx/io/print.h"
 #include "nx/ds/span.h"
 #include "nx/core/assert.h"
 

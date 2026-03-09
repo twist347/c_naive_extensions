@@ -6,6 +6,7 @@
 #include "nx/core/result.h"
 #include "nx/ds/span.h"
 #include "nx/mem/alloc.h"
+#include "nx/io/print.h"
 
 /* Contract:
  * - Invalid usage (null, bounds, invariants, type mismatch) is a programmer
@@ -84,6 +85,11 @@ void nx_arr_swap(nx_Arr *a, nx_Arr *b);
 
 nx_Span nx_arr_to_span(nx_Arr *self);
 nx_CSpan nx_arr_to_cspan(const nx_Arr *self);
+
+/* ========== print ========== */
+
+void nx_arr_fprintln(const nx_Arr *self, FILE *stream, nx_fprint_fn f);
+void nx_arr_println(const nx_Arr *self, nx_fprint_fn f);
 
 /* ========== macros ========== */
 

@@ -97,6 +97,11 @@ void nx_vec_erase(nx_Vec *self, nx_usize idx);
 nx_Span nx_vec_to_span(nx_Vec *self);
 nx_CSpan nx_vec_to_cspan(const nx_Vec *self);
 
+/* ========== print ========== */
+
+void nx_vec_fprintln(const nx_Vec *self, FILE *stream, nx_fprint_fn f);
+void nx_vec_println(const nx_Vec *self, nx_fprint_fn f);
+
 /* ========== macros ========== */
 
 #define NX_VEC_NEW(T) \

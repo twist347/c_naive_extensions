@@ -3,12 +3,15 @@
 #include <stdio.h>
 
 #include "nx/core/hash.h"
-#include "nx/core/print.h"
+#include "nx/io/print.h"
 
 // TODO: impl
 
-void setUp(void) {}
-void tearDown(void) {}
+void setUp(void) {
+}
+
+void tearDown(void) {
+}
 
 static void test_A_B(void) {
     for (nx_i32 i = -10; i < 10; ++i) {

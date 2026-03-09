@@ -1,2 +1,2 @@
-nx_add_test(test_str test_str.c)
-nx_add_test(test_str_view test_str_view.c)
+nx_add_test(test_string_str test_string_str.c)
+nx_add_test(test_string_str_view test_string_str_view.c)

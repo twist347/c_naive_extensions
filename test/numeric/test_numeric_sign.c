@@ -1,6 +1,6 @@
 #include "unity.h"
 
-#include "nx/numeric/abs.h"
+#include "nx/numeric/sign.h"
 
 // TODO: impl
 
@@ -12,6 +12,5 @@ void tearDown(void) {
 
 int main(void) {
     UNITY_BEGIN();
-
     return UNITY_END();
 }

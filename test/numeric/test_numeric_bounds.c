@@ -1,14 +1,16 @@
 #include "unity.h"
 
-#include "nx/algo/minmax.h"
+#include "nx/numeric/bounds.h"
 
 // TODO: impl
 
-void setUp(void) {}
-void tearDown(void) {}
+void setUp(void) {
+}
+
+void tearDown(void) {
+}
 
 int main(void) {
     UNITY_BEGIN();
-
     return UNITY_END();
 }

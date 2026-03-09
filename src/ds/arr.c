@@ -296,6 +296,18 @@ nx_CSpan nx_arr_to_cspan(const nx_Arr *self) {
     return nx_cspan_new(self->data, self->len, self->tsz);
 }
 
+/* ========== print ========== */
+
+void nx_arr_fprintln(const nx_Arr *self, FILE *stream, nx_fprint_fn f) {
+    const nx_CSpan cspan = nx_arr_to_cspan(self);
+    nx_cspan_fprintln(cspan, stream, f);
+}
+
+void nx_arr_println(const nx_Arr *self, nx_fprint_fn f) {
+    const nx_CSpan cspan = nx_arr_to_cspan(self);
+    nx_cspan_println(cspan, f);
+}
+
 // internals defs
 
 static nx_Status new_impl(nx_Arr **out, nx_usize len, nx_usize tsz, nx_Al *al) {

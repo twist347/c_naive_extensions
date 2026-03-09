@@ -7,7 +7,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(NX_CORE_SOURCES
         src/core/assert.c
         src/core/cmp.c
-        src/core/print.c
         src/core/status.c
         src/core/hash.c
 )
@@ -52,6 +51,10 @@ set(NX_NUMERIC_SOURCES
         src/numeric/bounds.c
 )
 
+set(NX_IO_SOURCES
+        src/io/print.c
+)
+
 set(NX_SOURCES
         ${NX_CORE_SOURCES}
         ${NX_DS_SOURCES}
@@ -60,6 +63,7 @@ set(NX_SOURCES
         ${NX_MEM_SOURCES}
         ${NX_RAND_SOURCES}
         ${NX_NUMERIC_SOURCES}
+        ${NX_IO_SOURCES}
 )
 
 add_library(nx_api INTERFACE)

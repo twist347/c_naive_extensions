@@ -1,1 +1,1 @@
-nx_add_test(test_rand test_rand.c)
+nx_add_test(test_rand_rand test_rand_rand.c)

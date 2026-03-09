@@ -1,11 +1,14 @@
 #include "unity.h"
 
-#include "nx/core/print.h"
+#include "nx/algo/transform.h"
 
 // TODO: impl
 
-void setUp(void) {}
-void tearDown(void) {}
+void setUp(void) {
+}
+
+void tearDown(void) {
+}
 
 int main(void) {
     UNITY_BEGIN();

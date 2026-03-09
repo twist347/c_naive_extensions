@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-#include "nx/core/print.h"
+#include "nx/io/print.h"
 
 int main(void) {
     const nx_StrRes res = nx_str_new();

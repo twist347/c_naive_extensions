@@ -1,11 +1,14 @@
 #include "unity.h"
 
-#include "nx/core/status.h"
+#include "nx/algo/sort.h"
 
 // TODO: impl
 
-void setUp(void) {}
-void tearDown(void) {}
+void setUp(void) {
+}
+
+void tearDown(void) {
+}
 
 int main(void) {
     UNITY_BEGIN();

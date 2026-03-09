@@ -89,28 +89,28 @@ void nx_span_set(nx_Span s, nx_usize idx, const void *val) {
 
 /* ========== info ========== */
 
-nx_bool nx_span_empty(nx_Span s) {
-    NX_SPAN_ANY_ASSERT(s);
+nx_bool nx_span_empty(nx_Span self) {
+    NX_SPAN_ANY_ASSERT(self);
 
-    return s.len == 0;
+    return self.len == 0;
 }
 
-nx_bool nx_cspan_empty(nx_CSpan s) {
-    NX_SPAN_ANY_ASSERT(s);
+nx_bool nx_cspan_empty(nx_CSpan self) {
+    NX_SPAN_ANY_ASSERT(self);
 
-    return s.len == 0;
+    return self.len == 0;
 }
 
-nx_usize nx_span_size_bytes(nx_Span s) {
-    NX_SPAN_ANY_ASSERT(s);
+nx_usize nx_span_size_bytes(nx_Span self) {
+    NX_SPAN_ANY_ASSERT(self);
 
-    return s.len * s.tsz;
+    return self.len * self.tsz;
 }
 
-nx_usize nx_cspan_size_bytes(nx_CSpan s) {
-    NX_SPAN_ANY_ASSERT(s);
+nx_usize nx_cspan_size_bytes(nx_CSpan self) {
+    NX_SPAN_ANY_ASSERT(self);
 
-    return s.len * s.tsz;
+    return self.len * self.tsz;
 }
 
 /* ========== operations ========== */
@@ -131,59 +131,59 @@ void nx_span_copy(nx_Span dst, nx_CSpan src) {
 
 /* ========== subspan ========== */
 
-nx_Span nx_span_sub(nx_Span s, nx_usize offset, nx_usize count) {
-    NX_SPAN_ANY_ASSERT(s);
-    NX_ASSERT(offset <= s.len);
-    NX_ASSERT(count <= s.len - offset);
+nx_Span nx_span_sub(nx_Span self, nx_usize offset, nx_usize count) {
+    NX_SPAN_ANY_ASSERT(self);
+    NX_ASSERT(offset <= self.len);
+    NX_ASSERT(count <= self.len - offset);
 
-    void *p = s.data == nx_null ? nx_null : nx_byte_offset(s.data, s.tsz, offset);
+    void *p = self.data == nx_null ? nx_null : nx_byte_offset(self.data, self.tsz, offset);
 
-    return nx_span_new(p, count, s.tsz);
+    return nx_span_new(p, count, self.tsz);
 }
 
-nx_CSpan nx_cspan_sub(nx_CSpan s, nx_usize offset, nx_usize count) {
-    NX_SPAN_ANY_ASSERT(s);
-    NX_ASSERT(offset <= s.len);
-    NX_ASSERT(count <= s.len - offset);
+nx_CSpan nx_cspan_sub(nx_CSpan self, nx_usize offset, nx_usize count) {
+    NX_SPAN_ANY_ASSERT(self);
+    NX_ASSERT(offset <= self.len);
+    NX_ASSERT(count <= self.len - offset);
 
-    const void *p = s.data == nx_null ? nx_null : nx_byte_offset_c(s.data, s.tsz, offset);
+    const void *p = self.data == nx_null ? nx_null : nx_byte_offset_c(self.data, self.tsz, offset);
 
-    return nx_cspan_new(p, count, s.tsz);
+    return nx_cspan_new(p, count, self.tsz);
 }
 
-nx_Span nx_span_tail(nx_Span s, nx_usize offset) {
-    return nx_span_sub(s, offset, s.len - offset);
+nx_Span nx_span_tail(nx_Span self, nx_usize offset) {
+    return nx_span_sub(self, offset, self.len - offset);
 }
 
-nx_CSpan nx_cspan_tail(nx_CSpan s, nx_usize offset) {
-    return nx_cspan_sub(s, offset, s.len - offset);
+nx_CSpan nx_cspan_tail(nx_CSpan self, nx_usize offset) {
+    return nx_cspan_sub(self, offset, self.len - offset);
 }
 
-/* ========== span printing ========== */
+/* ========== print ========== */
 
-void nx_fprintln_cspan(FILE *stream, nx_CSpan s, nx_fprint_fn f) {
+void nx_cspan_fprintln(nx_CSpan self, FILE *stream, nx_fprint_fn f) {
     NX_ASSERT(stream);
-    NX_SPAN_ANY_ASSERT(s);
+    NX_SPAN_ANY_ASSERT(self);
     NX_ASSERT(f);
 
     fputc('[', stream);
-    for (nx_usize i = 0; i < s.len; ++i) {
+    for (nx_usize i = 0; i < self.len; ++i) {
         if (i > 0) {
             fputs(", ", stream);
         }
-        f(stream, nx_cspan_get_c(s, i));
+        f(stream, nx_cspan_get_c(self, i));
     }
     fputs("]\n", stream);
 }
 
-void nx_fprintln_span(FILE *stream, nx_Span s, nx_fprint_fn f) {
-    nx_fprintln_cspan(stream, nx_cspan_from_span(s), f);
+void nx_span_fprintln(nx_Span self, FILE *stream, nx_fprint_fn f) {
+    nx_cspan_fprintln(nx_cspan_from_span(self), stream, f);
 }
 
-void nx_println_cspan(nx_CSpan s, nx_fprint_fn f) {
-    nx_fprintln_cspan(stdout, s, f);
+void nx_cspan_println(nx_CSpan self, nx_fprint_fn f) {
+    nx_cspan_fprintln(self, stdout, f);
 }
 
-void nx_println_span(nx_Span s, nx_fprint_fn f) {
-    nx_fprintln_span(stdout, s, f);
+void nx_span_println(nx_Span self, nx_fprint_fn f) {
+    nx_span_fprintln(self, stdout, f);
 }

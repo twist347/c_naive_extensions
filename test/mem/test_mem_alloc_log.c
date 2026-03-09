@@ -93,6 +93,7 @@ static void test_nx_al_log_realloc(void) {
 }
 
 int main(void) {
+    UNITY_BEGIN();
     RUN_TEST(test_nx_al_log_alloc);
     RUN_TEST(test_nx_al_log_calloc);
     RUN_TEST(test_nx_al_log_realloc);
