@@ -20,13 +20,13 @@ jobs:
           restore-prefixes-first-match: nix-gcc-${{ runner.os }}-
 
       - name: Configure
-        run: nix develop .#gcc --command cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+        run: nix develop --command cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 
       - name: Build
-        run: nix develop .#gcc --command cmake --build build --parallel
+        run: nix develop --command cmake --build build --parallel
 
       - name: Test
-        run: nix develop .#gcc --command ctest --test-dir build --output-on-failure --no-tests=error
+        run: nix develop --command ctest --test-dir build --output-on-failure --no-tests=error
 
   build-clang:
     runs-on: ubuntu-24.04
