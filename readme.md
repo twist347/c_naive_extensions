@@ -24,9 +24,14 @@ basic containers, allocator interfaces, and algorithms built around `span`.
 - `nx/io` — minimal input/output facilities
 
 ---
-
 ## Build
+
+```bash
+nix develop          # GCC (default)
+nix develop .#clang  # Clang
+```
 
 ```bash
 cmake -S . -B build
 cmake --build build
+```
