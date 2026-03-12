@@ -137,14 +137,11 @@ void nx_span_swap(nx_Span s, nx_usize i, nx_usize j) {
         return;
     }
 
-    nx_byte *a = nx_byte_offset(s.data, s.tsz, i);
-    nx_byte *b = nx_byte_offset(s.data, s.tsz, j);
-
-    for (nx_usize k = 0; k < s.tsz; ++k) {
-        const nx_byte tmp = a[k];
-        a[k] = b[k];
-        b[k] = tmp;
-    }
+    nx_memswap(
+        nx_byte_offset(s.data, s.tsz, i),
+        nx_byte_offset(s.data, s.tsz, j),
+        s.tsz
+    );
 }
 
 /* ========== subspan ========== */

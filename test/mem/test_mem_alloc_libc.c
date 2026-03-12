@@ -108,6 +108,8 @@ static void test_nx_default_allocator(void) {
 }
 
 int main(void) {
+    UNITY_BEGIN();
+
     RUN_TEST(test_nx_al_libc_alloc);
     RUN_TEST(test_nx_al_libc_calloc);
     RUN_TEST(test_nx_al_libc_realloc);

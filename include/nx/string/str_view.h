@@ -69,7 +69,7 @@ nx_StrView nx_str_view_trim_start(nx_StrView self);
 nx_StrView nx_str_view_trim_end(nx_StrView self);
 nx_StrView nx_str_view_trim(nx_StrView self);
 
-/* ========== trim ========== */
+/* ========== print ========== */
 
 void nx_str_view_fprint(FILE *stream, nx_StrView self);
 void nx_str_view_fprintln(FILE *stream, nx_StrView self);

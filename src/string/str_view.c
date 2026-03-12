@@ -183,7 +183,7 @@ nx_StrView nx_str_view_trim(nx_StrView self) {
 
     return nx_str_view_trim_end(nx_str_view_trim_start(self));
 }
-/* ========== trim ========== */
+/* ========== print ========== */
 
 void nx_str_view_fprint(FILE *stream, nx_StrView self) {
     NX_ASSERT(stream);

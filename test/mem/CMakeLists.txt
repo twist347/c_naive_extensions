@@ -1,4 +1,5 @@
 nx_add_test(test_mem_alloc_arena test_mem_alloc_arena.c)
 nx_add_test(test_mem_alloc_libc test_mem_alloc_libc.c)
 nx_add_test(test_mem_alloc_log test_mem_alloc_log.c)
+nx_add_test(test_mem_alloc_pool test_mem_alloc_pool.c)
 nx_add_test(test_mem_ptr test_mem_ptr.c)

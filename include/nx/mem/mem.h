@@ -3,4 +3,6 @@
 #include "nx/mem/alloc.h"
 #include "nx/mem/alloc_arena.h"
 #include "nx/mem/alloc_libc.h"
+#include "nx/mem/alloc_log.h"
+#include "nx/mem/alloc_pool.h"
 #include "nx/mem/ptr.h"

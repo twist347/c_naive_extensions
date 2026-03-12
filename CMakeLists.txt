@@ -13,6 +13,7 @@ set(NX_CORE_SOURCES
 
 set(NX_DS_SOURCES
         src/ds/arr.c
+        src/ds/hash_map.c
         src/ds/vec.c
         src/ds/span.c
 )
@@ -35,6 +36,7 @@ set(NX_MEM_SOURCES
         src/mem/alloc_arena.c
         src/mem/alloc_libc.c
         src/mem/alloc_log.c
+        src/mem/alloc_pool.c
         src/mem/ptr.c
 )
 
