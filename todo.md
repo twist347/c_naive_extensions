@@ -1,15 +1,11 @@
 - [ ] think about move semantics without allocation
 - [ ] add docs (check doxygen)
-- [ ] add hash
 - [ ] add map (hash table)
 - [ ] add container adapters
 - [ ] add rand
-- [ ] add io
-- [ ] add optional
-- [ ] make OBJECT in cmakelists instead of two builds (static/shared)
 - [ ] add overflow funcs (do not use from C23 because of C++)
 - [ ] split algo_numeric into min_max, sat, ckd
 - [ ] add _Generic wrapper under unity asserts
 - [ ] think about duplicates between nx and libc
-- [ ] use fn postfix for pointers to funcs
 - [ ] add macro func for var names in macros (name + line)
+- [ ] range?

@@ -1,5 +1,8 @@
 #include "nx/core/hash.h"
 
+#include <math.h>
+#include <string.h>
+
 #include "nx/core/assert.h"
 
 // FNV-1a 64-bit
@@ -12,7 +15,11 @@ static constexpr nx_u64 NX_FMIX64_C2 = NX_U64_C(0xc4ceb9fe1a85ec53);
 
 static constexpr nx_u64 NX_HASH_GOLDEN_64 = NX_U64_C(0x9e3779b97f4a7c15);
 
+// internal decls
+
 static nx_Hash hash_mix64(nx_u64 a);
+
+/* ========== integer hashing ========== */
 
 nx_Hash nx_hash_i8(nx_i8 x) {
     return hash_mix64((nx_u8) x);
@@ -54,6 +61,40 @@ nx_Hash nx_hash_isize(nx_isize x) {
     return hash_mix64((nx_u64) x);
 }
 
+/* ========== float hashing ========== */
+
+nx_Hash nx_hash_f32(nx_f32 x) {
+    // normalize: +0 == -0, all NaN -> canonical
+
+    // collapse -0 -> +0
+    if (x == 0.0f) {
+        x = 0.0f;
+    }
+    // canonical NaN bits
+    if (isnan(x)) {
+        x = NX_F32_C(0.0);
+    }
+
+    nx_u32 bits;
+    memcpy(&bits, &x, sizeof(bits));
+    return hash_mix64(bits);
+}
+
+nx_Hash nx_hash_f64(nx_f64 x) {
+    if (x == 0.0) {
+        x = 0.0;
+    }
+    if (isnan(x)) {
+        x = NX_F64_C(0.0);
+    }
+
+    nx_u64 bits;
+    memcpy(&bits, &x, sizeof(bits));
+    return hash_mix64(bits);
+}
+
+/* ========== byte / string / pointer hashing ========== */
+
 nx_Hash nx_hash_bytes(const void *data, nx_usize len) {
     if (len == 0) {
         return nx_hash_u64(NX_FNV_OFFSET_BASIS_64);
@@ -89,11 +130,15 @@ nx_Hash nx_hash_ptr(const void *ptr) {
     return hash_mix64((nx_uptr) ptr);
 }
 
+/* ========== combine ========== */
+
 nx_Hash nx_hash_combine(nx_Hash h, nx_Hash x) {
     nx_Hash v = h;
     v ^= x + NX_HASH_GOLDEN_64 + (v << 6) + (v >> 2);
     return hash_mix64(v);
 }
+
+// internal defs
 
 static nx_Hash hash_mix64(nx_u64 a) {
     a ^= a >> 33;

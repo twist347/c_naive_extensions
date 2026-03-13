@@ -23,8 +23,8 @@
          (void)((expr) || (nx_assert_fail("Assertion failed", #expr, __FILE__, __LINE__, __func__, (msg)), 0)))
 
 #else
-    #define NX_ASSERT(expr)    ((void)(0 && (expr)))
-    #define NX_ASSERT_MSG(expr, msg) ((void)(0 && (expr)), (void)(0 && (msg)))
+    #define NX_ASSERT(expr)             ((void)(0 && (expr)))
+    #define NX_ASSERT_MSG(expr, msg)    ((void)(0 && (expr)), (void)(0 && (msg)))
 #endif
 
 #define NX_VERIFY(cond)   \

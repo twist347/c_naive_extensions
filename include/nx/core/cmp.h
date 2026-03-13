@@ -1,18 +1,6 @@
 #pragma once
 
-// TODO: add generics
-
-// TODO: use this instead of int (not sure)
-typedef enum {
-    NX_ORDERING_LESS = -1,
-    NX_ORDERING_EQUAL = 0,
-    NX_ORDERING_GREATER = 1,
-} nx_Ordering;
-
-typedef int (*nx_cmp_fn)(const void *, const void *);
-
-// TODO: not used
-typedef int (*nx_cmp_ctx_fn)(const void *, const void *, void *);
+#include "nx/core/fn.h"
 
 /* ========== ascending order ========== */
 
