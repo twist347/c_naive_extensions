@@ -71,6 +71,12 @@ nx_ArrRes nx_arr_from_data(const void *data, nx_usize len, nx_usize tsz) {
     return NX_RES_NEW_OK(nx_ArrRes, arr);
 }
 
+nx_ArrRes nx_arr_from_span(nx_CSpan s) {
+    NX_SPAN_ANY_ASSERT(s);
+
+    return nx_arr_from_data(s.data, s.len, s.tsz);
+}
+
 void nx_arr_drop(nx_Arr *self) {
     if (!self) {
         return;

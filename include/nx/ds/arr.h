@@ -47,6 +47,7 @@ typedef struct {
 nx_ArrRes nx_arr_new_p(nx_ArrParams p);
 nx_ArrRes nx_arr_new_len(nx_usize len, nx_usize tsz);
 nx_ArrRes nx_arr_from_data(const void *data, nx_usize len, nx_usize tsz);
+nx_ArrRes nx_arr_from_span(nx_CSpan s);
 void nx_arr_drop(nx_Arr *self);
 
 /* ========== copy/move semantic ========== */

@@ -49,6 +49,7 @@ nx_VecRes nx_vec_new(nx_usize tsz);
 nx_VecRes nx_vec_new_len(nx_usize len, nx_usize tsz);
 nx_VecRes nx_vec_new_cap(nx_usize cap, nx_usize tsz);
 nx_VecRes nx_vec_from_data(const void *data, nx_usize len, nx_usize tsz);
+nx_VecRes nx_vec_from_span(nx_CSpan s);
 void nx_vec_drop(nx_Vec *self);
 
 /* ========== copy/move semantic ========== */
@@ -91,6 +92,8 @@ nx_Status nx_vec_shrink_to_fit(nx_Vec *self);
 void nx_vec_swap(nx_Vec *a, nx_Vec *b);
 nx_Status nx_vec_insert(nx_Vec *self, nx_usize idx, const void *val);
 void nx_vec_erase(nx_Vec *self, nx_usize idx);
+/// append all elements from span. tsz must match.
+nx_Status nx_vec_extend(nx_Vec *self, nx_CSpan s);
 
 /* ========== to span ========== */
 

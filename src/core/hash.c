@@ -138,6 +138,35 @@ nx_Hash nx_hash_combine(nx_Hash h, nx_Hash x) {
     return hash_mix64(v);
 }
 
+/* ========== nx_hash_fn-compatible callbacks ========== */
+
+#define NX_HASHFN_DEF(NAME, TYPE)                   \
+    nx_Hash nx_hash_fn_##NAME(const void *key) {     \
+        NX_ASSERT(key);                             \
+        return nx_hash_##NAME(*(const TYPE *) key); \
+    }
+
+NX_HASHFN_DEF(i8,    nx_i8)
+NX_HASHFN_DEF(i16,   nx_i16)
+NX_HASHFN_DEF(i32,   nx_i32)
+NX_HASHFN_DEF(i64,   nx_i64)
+
+NX_HASHFN_DEF(u8,    nx_u8)
+NX_HASHFN_DEF(u16,   nx_u16)
+NX_HASHFN_DEF(u32,   nx_u32)
+NX_HASHFN_DEF(u64,   nx_u64)
+
+NX_HASHFN_DEF(usize, nx_usize)
+NX_HASHFN_DEF(isize, nx_isize)
+
+NX_HASHFN_DEF(f32,   nx_f32)
+NX_HASHFN_DEF(f64,   nx_f64)
+
+nx_Hash nx_hash_fn_cstr(const void *key) {
+    NX_ASSERT(key);
+    return nx_hash_cstr(*(const nx_char *const *) key);
+}
+
 // internal defs
 
 static nx_Hash hash_mix64(nx_u64 a) {

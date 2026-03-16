@@ -97,6 +97,12 @@ nx_VecRes nx_vec_from_data(const void *data, nx_usize len, nx_usize tsz) {
     return NX_RES_NEW_OK(nx_VecRes, vec);
 }
 
+nx_VecRes nx_vec_from_span(nx_CSpan s) {
+    NX_SPAN_ANY_ASSERT(s);
+
+    return nx_vec_from_data(s.data, s.len, s.tsz);
+}
+
 void nx_vec_drop(nx_Vec *self) {
     if (!self) {
         return;
@@ -130,7 +136,7 @@ nx_VecRes nx_vec_copy_a(const nx_Vec *src, nx_Al *al) {
     void *data = nx_null;
     const nx_Status st = alloc_and_copy_data(&data, src, al);
     if (st != NX_STATUS_OK) {
-        nx_al_dealloc(al, dst, sizeof(nx_Vec));
+        free(dst);
         return NX_RES_NEW_ERR(nx_VecRes, st);
     }
 
@@ -436,6 +442,29 @@ void nx_vec_erase(nx_Vec *self, nx_usize idx) {
 
     shift_left(self, idx);
     --self->len;
+}
+
+nx_Status nx_vec_extend(nx_Vec *self, nx_CSpan s) {
+    VEC_ASSERT(self);
+    NX_SPAN_ANY_ASSERT(s);
+    NX_ASSERT(self->tsz == s.tsz);
+
+    if (s.len == 0) {
+        return NX_STATUS_OK;
+    }
+
+    const nx_Status st = ensure_cap(self, self->len + s.len);
+    if (st != NX_STATUS_OK) {
+        return st;
+    }
+
+    memcpy(
+        nx_byte_offset(self->data, self->tsz, self->len),
+        s.data,
+        s.len * s.tsz
+    );
+    self->len += s.len;
+    return NX_STATUS_OK;
 }
 
 /* ========== to span ========== */

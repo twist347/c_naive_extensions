@@ -27,6 +27,17 @@ nx_i32 nx_fprintf(FILE *stream, const char *fmt, ...) {
     return n;
 }
 
+nx_i32 nx_snprintf(nx_char *buf, nx_usize size, const char *fmt, ...) {
+    NX_ASSERT(buf || size == 0);
+    NX_ASSERT(fmt);
+
+    va_list vl;
+    va_start(vl, fmt);
+    const nx_i32 n = vsnprintf(buf, size, fmt, vl);
+    va_end(vl);
+    return n;
+}
+
 /* ========== typed printers ========== */
 
 #define NX_FPRINT_DEF(NAME, TYPE, FMT)                         \

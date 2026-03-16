@@ -54,6 +54,7 @@ set(NX_NUMERIC_SOURCES
 )
 
 set(NX_IO_SOURCES
+        src/io/dbg.c
         src/io/print.c
 )
 

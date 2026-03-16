@@ -35,6 +35,34 @@ nx_Hash nx_hash_ptr(const void *ptr);
 
 nx_Hash nx_hash_combine(nx_Hash h, nx_Hash x);
 
+/* ========== callback ========== */
+
+/// Type-erased hash function: hash the key pointed to by key.
+typedef nx_Hash (*nx_hash_fn)(const void *key);
+
+/* ========== nx_hash_fn-compatible callbacks (dereference key and hash) ========== */
+
+nx_Hash nx_hash_fn_i8(const void *key);
+nx_Hash nx_hash_fn_i16(const void *key);
+nx_Hash nx_hash_fn_i32(const void *key);
+nx_Hash nx_hash_fn_i64(const void *key);
+
+nx_Hash nx_hash_fn_u8(const void *key);
+nx_Hash nx_hash_fn_u16(const void *key);
+nx_Hash nx_hash_fn_u32(const void *key);
+nx_Hash nx_hash_fn_u64(const void *key);
+
+nx_Hash nx_hash_fn_usize(const void *key);
+nx_Hash nx_hash_fn_isize(const void *key);
+
+nx_Hash nx_hash_fn_f32(const void *key);
+nx_Hash nx_hash_fn_f64(const void *key);
+
+/// key is `const char **` (pointer to string pointer)
+nx_Hash nx_hash_fn_cstr(const void *key);
+
+/* ========== generic ========== */
+
 #define nx_hash(x) _Generic((x), \
     nx_i8:    nx_hash_i8,        \
     nx_i16:   nx_hash_i16,       \

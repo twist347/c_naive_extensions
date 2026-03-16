@@ -97,3 +97,32 @@ NX_CMP_DESC_DEF(f32)
 NX_CMP_DESC_DEF(f64)
 
 NX_CMP_DESC_DEF(cstr)
+
+/* ========== nx_eq_fn-compatible equality callbacks ========== */
+
+#define NX_EQ_DEF(NAME)                                  \
+    nx_bool nx_eq_fn_##NAME(const void *a, const void *b) { \
+        return nx_cmp_##NAME(a, b) == 0;                 \
+    }
+
+NX_EQ_DEF(i8)
+NX_EQ_DEF(i16)
+NX_EQ_DEF(i32)
+NX_EQ_DEF(i64)
+
+NX_EQ_DEF(u8)
+NX_EQ_DEF(u16)
+NX_EQ_DEF(u32)
+NX_EQ_DEF(u64)
+
+NX_EQ_DEF(usize)
+NX_EQ_DEF(isize)
+
+NX_EQ_DEF(bool)
+NX_EQ_DEF(byte)
+NX_EQ_DEF(char)
+
+NX_EQ_DEF(f32)
+NX_EQ_DEF(f64)
+
+NX_EQ_DEF(cstr)

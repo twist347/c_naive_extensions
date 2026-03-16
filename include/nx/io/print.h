@@ -9,6 +9,7 @@
 
 nx_i32 nx_printf(const char *fmt, ...);
 nx_i32 nx_fprintf(FILE *stream, const char *fmt, ...);
+nx_i32 nx_snprintf(nx_char *buf, nx_usize size, const char *fmt, ...);
 
 /* ========== typed printers (void* for use as nx_fprint_fn) ========== */
 
