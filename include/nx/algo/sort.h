@@ -8,6 +8,7 @@
 
 void nx_sort(nx_Span s, nx_cmp_fn cmp);
 
+// O(n) memory
 void nx_sort_stable(nx_Span s, nx_cmp_fn cmp);
 
 void nx_partial_sort(nx_Span s, nx_usize k, nx_cmp_fn cmp);

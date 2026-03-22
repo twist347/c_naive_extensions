@@ -1,6 +1,7 @@
 nx_add_test(test_numeric_abs test_numeric_abs.c)
 nx_add_test(test_numeric_bounds test_numeric_bounds.c)
 nx_add_test(test_numeric_ckd test_numeric_ckd.c)
+nx_add_test(test_numeric_fp test_numeric_fp.c)
 nx_add_test(test_numeric_constants test_numeric_constants.c)
 nx_add_test(test_numeric_sat test_numeric_sat.c)
 nx_add_test(test_numeric_sign test_numeric_sign.c)

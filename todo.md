@@ -1,9 +1,9 @@
 - [ ] think about move semantics without allocation
 - [ ] add docs (check doxygen)
-- [ ] add map (hash table)
+- [x] add map (hash table)
 - [ ] add container adapters
-- [ ] add rand
-- [ ] add overflow funcs (do not use from C23 because of C++)
+- [x] add rand
+- [x] add overflow funcs (do not use from C23 because of C++)
 - [ ] split algo_numeric into min_max, sat, ckd
 - [ ] add _Generic wrapper under unity asserts
 - [ ] think about duplicates between nx and libc

@@ -1,6 +1,7 @@
 #include "nx/algo/sort.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "nx/core/assert.h"
 #include "nx/core/util.h"
@@ -24,9 +25,69 @@ void nx_sort(nx_Span s, nx_cmp_fn cmp) {
 }
 
 void nx_sort_stable(nx_Span s, nx_cmp_fn cmp) {
-    NX_UNUSED(s);
-    NX_UNUSED(cmp);
-    NX_UNIMPLEMENTED();
+    NX_SPAN_ANY_ASSERT(s);
+    NX_ASSERT(cmp);
+
+    if (s.len < 2) {
+        return;
+    }
+
+    const nx_usize tsz = s.tsz;
+    const nx_usize len = s.len;
+    const nx_usize bytes = len * tsz;
+
+    nx_byte *buf = malloc(bytes);
+    NX_VERIFY(buf); // merge sort needs O(n) temp space
+
+    nx_byte *src = s.data;
+    nx_byte *dst = buf;
+
+    // bottom-up merge sort: merge runs of width 1, 2, 4, ...
+    for (nx_usize width = 1; width < len; width *= 2) {
+        for (nx_usize i = 0; i < len; i += 2 * width) {
+            // merge [i, i+width) and [i+width, i+2*width) into dst
+            nx_usize left = i;
+            nx_usize right = i + width;
+            const nx_usize left_end = right < len ? right : len;
+            const nx_usize right_end = i + 2 * width < len ? i + 2 * width : len;
+            nx_usize out = i;
+
+            while (left < left_end && right < right_end) {
+                const void *l = src + left * tsz;
+                const void *r = src + right * tsz;
+                if (cmp(l, r) <= 0) {
+                    memcpy(dst + out * tsz, l, tsz);
+                    ++left;
+                } else {
+                    memcpy(dst + out * tsz, r, tsz);
+                    ++right;
+                }
+                ++out;
+            }
+
+            // copy remaining left
+            if (left < left_end) {
+                memcpy(dst + out * tsz, src + left * tsz, (left_end - left) * tsz);
+            }
+
+            // copy remaining right
+            if (right < right_end) {
+                memcpy(dst + out * tsz, src + right * tsz, (right_end - right) * tsz);
+            }
+        }
+
+        // swap src and dst for next pass
+        nx_byte *tmp = src;
+        src = dst;
+        dst = tmp;
+    }
+
+    // if result ended up in buf, copy back to original
+    if (src != (nx_byte *) s.data) {
+        memcpy(s.data, src, bytes);
+    }
+
+    free(buf);
 }
 
 void nx_partial_sort(nx_Span s, nx_usize k, nx_cmp_fn cmp) {
@@ -34,7 +95,7 @@ void nx_partial_sort(nx_Span s, nx_usize k, nx_cmp_fn cmp) {
     NX_ASSERT(cmp);
     NX_ASSERT(k <= s.len);
 
-    if (k <= 1 || s.len < 2) {
+    if (k == 0 || s.len < 2) {
         return;
     }
 
@@ -90,7 +151,7 @@ nx_bool nx_is_sorted(nx_CSpan s, nx_cmp_fn cmp) {
 
     for (nx_usize i = 1; i < s.len; ++i) {
         const void *prev = nx_cspan_get_c(s, i - 1);
-        const void *cur  = nx_cspan_get_c(s, i);
+        const void *cur = nx_cspan_get_c(s, i);
 
         // "sorted" means: prev <= cur according to cmp
         if (cmp(prev, cur) > 0) {

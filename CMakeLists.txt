@@ -48,6 +48,7 @@ set(NX_NUMERIC_SOURCES
         src/numeric/abs.c
         src/numeric/bit.c
         src/numeric/ckd.c
+        src/numeric/fp.c
         src/numeric/sat.c
         src/numeric/sign.c
         src/numeric/bounds.c
@@ -95,6 +96,7 @@ option(NX_BUILD_DEMO "Build demos" ON)
 if (NX_BUILD_TEST)
     set(UNITY_DIR ${PROJECT_SOURCE_DIR}/thirdparty/Unity-2.6.1)
     add_subdirectory(${UNITY_DIR})
+    target_compile_definitions(unity PUBLIC UNITY_INCLUDE_DOUBLE UNITY_INCLUDE_FLOAT)
 
     enable_testing()
     add_subdirectory(test)

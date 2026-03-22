@@ -16,7 +16,7 @@ static nx_u64 splitmix64(nx_u64 *state);
 
 /* ========== xoshiro256** core ========== */
 
-static nx_u64 rotl(nx_u64 x, int k);
+static nx_u64 rotl(nx_u64 x, nx_i32 k);
 
 static nx_u64 next(nx_Rng *self);
 
@@ -173,7 +173,7 @@ static nx_u64 splitmix64(nx_u64 *state) {
     return z ^ (z >> 31);
 }
 
-static nx_u64 rotl(nx_u64 x, int k) {
+static nx_u64 rotl(nx_u64 x, nx_i32 k) {
     return (x << k) | (x >> (64 - k));
 }
 
