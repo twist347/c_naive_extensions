@@ -553,6 +553,8 @@ static nx_Status ensure_cap(nx_Vec *self, nx_usize needed_cap) {
 
 static nx_Status alloc_and_copy_data(void **out, const nx_Vec *src, nx_Al *al) {
     NX_ASSERT(out);
+    NX_ASSERT(src);
+    NX_ASSERT(al);
     *out = nx_null;
 
     if (src->cap == 0) {

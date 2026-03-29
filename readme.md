@@ -35,6 +35,7 @@ basic containers, allocator interfaces, and algorithms built around `span`.
     - abs, sign, bounds (min/max/clamp)
     - floating point (lerp, inverse lerp, approximate equality)
     - mathematical constants
+- `nx/fs` — file system utilities (read file to string/bytes, write, append, exists, file size)
 - `nx/rand` — PRNG (integers, floats, ranges, shuffle)
 - `nx/io` — input/output:
     - `print` — formatted and typed printers

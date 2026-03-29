@@ -6,6 +6,7 @@
 typedef enum {
     NX_STATUS_OK = 0,
     NX_STATUS_OUT_OF_MEMORY,
+    NX_STATUS_IO_ERROR,
 
     NX_STATUS__COUNT
 } nx_Status;

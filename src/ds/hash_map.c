@@ -6,6 +6,7 @@
 
 #include "nx/core/assert.h"
 #include "nx/core/limits.h"
+#include "nx/numeric/ckd.h"
 #include "nx/mem/alloc_libc.h"
 #include "nx/mem/ptr.h"
 
@@ -247,8 +248,11 @@ nx_Status nx_hash_map_reserve(nx_HashMap *self, nx_usize cap) {
     // compute needed table capacity for `cap` entries at max load
     nx_usize table_cap = self->cap == 0 ? DEFAULT_CAP : self->cap;
     while (cap * LOAD_DEN >= table_cap * LOAD_NUM) {
-        // TODO: check overflow
-        table_cap *= 2;
+        nx_usize new_cap;
+        if (nx_ckd_mul_usize(&new_cap, table_cap, 2)) {
+            return NX_STATUS_OUT_OF_MEMORY;
+        }
+        table_cap = new_cap;
     }
 
     if (table_cap <= self->cap) {

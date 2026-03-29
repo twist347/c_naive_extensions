@@ -52,6 +52,18 @@ nx_bool nx_ckd_add_u64(nx_u64 *res, nx_u64 a, nx_u64 b) {
     return ckd_add(res, a, b);
 }
 
+nx_bool nx_ckd_add_usize(nx_usize *res, nx_usize a, nx_usize b) {
+    NX_ASSERT(res);
+
+    return ckd_add(res, a, b);
+}
+
+nx_bool nx_ckd_add_isize(nx_isize *res, nx_isize a, nx_isize b) {
+    NX_ASSERT(res);
+
+    return ckd_add(res, a, b);
+}
+
 nx_bool nx_ckd_sub_i8(nx_i8 *res, nx_i8 a, nx_i8 b) {
     NX_ASSERT(res);
 
@@ -100,6 +112,18 @@ nx_bool nx_ckd_sub_u64(nx_u64 *res, nx_u64 a, nx_u64 b) {
     return ckd_sub(res, a, b);
 }
 
+nx_bool nx_ckd_sub_usize(nx_usize *res, nx_usize a, nx_usize b) {
+    NX_ASSERT(res);
+
+    return ckd_sub(res, a, b);
+}
+
+nx_bool nx_ckd_sub_isize(nx_isize *res, nx_isize a, nx_isize b) {
+    NX_ASSERT(res);
+
+    return ckd_sub(res, a, b);
+}
+
 nx_bool nx_ckd_mul_i8(nx_i8 *res, nx_i8 a, nx_i8 b) {
     NX_ASSERT(res);
 
@@ -143,6 +167,18 @@ nx_bool nx_ckd_mul_u32(nx_u32 *res, nx_u32 a, nx_u32 b) {
 }
 
 nx_bool nx_ckd_mul_u64(nx_u64 *res, nx_u64 a, nx_u64 b) {
+    NX_ASSERT(res);
+
+    return ckd_mul(res, a, b);
+}
+
+nx_bool nx_ckd_mul_usize(nx_usize *res, nx_usize a, nx_usize b) {
+    NX_ASSERT(res);
+
+    return ckd_mul(res, a, b);
+}
+
+nx_bool nx_ckd_mul_isize(nx_isize *res, nx_isize a, nx_isize b) {
     NX_ASSERT(res);
 
     return ckd_mul(res, a, b);

@@ -6,6 +6,7 @@
 
 #include "nx/core/assert.h"
 #include "nx/core/util.h"
+#include "nx/numeric/ckd.h"
 #include "nx/mem/ptr.h"
 
 constexpr nx_usize DEFAULT_ALIGNMENT = alignof(max_align_t);
@@ -103,7 +104,8 @@ static void *arena_alloc(void *ctx, nx_usize size) {
     }
 
     const nx_usize aligned_size = nx_align_up(size, DEFAULT_ALIGNMENT);
-    if (arena->offset + aligned_size > arena->cap) {
+    nx_usize end;
+    if (aligned_size < size || nx_ckd_add_usize(&end, arena->offset, aligned_size) || end > arena->cap) {
         return nx_null;
     }
 
@@ -114,9 +116,12 @@ static void *arena_alloc(void *ctx, nx_usize size) {
 }
 
 static void *arena_calloc(void *ctx, nx_usize num, nx_usize size) {
-    // TODO: check overflow
+    NX_ASSERT(ctx);
 
-    const nx_usize total = num * size;
+    nx_usize total;
+    if (nx_ckd_mul_usize(&total, num, size)) {
+        return nx_null;
+    }
     void *ptr = arena_alloc(ctx, total);
 
     if (ptr) {

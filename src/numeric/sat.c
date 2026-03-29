@@ -71,6 +71,14 @@ nx_u64 nx_sat_add_u64(nx_u64 a, nx_u64 b) {
     NX_SAT_ADD_UNSIGNED(nx_u64, a, b, NX_U64_MAX);
 }
 
+nx_usize nx_sat_add_usize(nx_usize a, nx_usize b) {
+    NX_SAT_ADD_UNSIGNED(nx_usize, a, b, NX_USIZE_MAX);
+}
+
+nx_isize nx_sat_add_isize(nx_isize a, nx_isize b) {
+    NX_SAT_ADD_SIGNED(nx_isize, a, b, NX_ISIZE_MAX, NX_ISIZE_MIN);
+}
+
 nx_i8 nx_sat_sub_i8(nx_i8 a, nx_i8 b) {
     NX_SAT_SUB_SIGNED(nx_i8, a, b, NX_I8_MAX, NX_I8_MIN);
 }
@@ -101,6 +109,14 @@ nx_u32 nx_sat_sub_u32(nx_u32 a, nx_u32 b) {
 
 nx_u64 nx_sat_sub_u64(nx_u64 a, nx_u64 b) {
     NX_SAT_SUB_UNSIGNED(nx_u64, a, b);
+}
+
+nx_usize nx_sat_sub_usize(nx_usize a, nx_usize b) {
+    NX_SAT_SUB_UNSIGNED(nx_usize, a, b);
+}
+
+nx_isize nx_sat_sub_isize(nx_isize a, nx_isize b) {
+    NX_SAT_SUB_SIGNED(nx_isize, a, b, NX_ISIZE_MAX, NX_ISIZE_MIN);
 }
 
 nx_i8 nx_sat_mul_i8(nx_i8 a, nx_i8 b) {
@@ -167,5 +183,48 @@ nx_u64 nx_sat_mul_u64(nx_u64 a, nx_u64 b) {
     if (a > NX_U64_MAX / b) {
         return NX_U64_MAX;
     }
+    return a * b;
+}
+
+nx_usize nx_sat_mul_usize(nx_usize a, nx_usize b) {
+    if (a == 0 || b == 0) {
+        return 0;
+    }
+    if (a > NX_USIZE_MAX / b) {
+        return NX_USIZE_MAX;
+    }
+    return a * b;
+}
+
+nx_isize nx_sat_mul_isize(nx_isize a, nx_isize b) {
+    if (a == 0 || b == 0) {
+        return 0;
+    }
+
+    if (a > 0) {
+        if (b > 0) {
+            if (a > NX_ISIZE_MAX / b) {
+                return NX_ISIZE_MAX;
+            }
+        } else {
+            if (b < NX_ISIZE_MIN / a) {
+                return NX_ISIZE_MIN;
+            }
+        }
+    } else {
+        if (b > 0) {
+            if (a < NX_ISIZE_MIN / b) {
+                return NX_ISIZE_MIN;
+            }
+        } else {
+            if (a == NX_ISIZE_MIN || b == NX_ISIZE_MIN) {
+                return NX_ISIZE_MAX;
+            }
+            if (-a > NX_ISIZE_MAX / -b) {
+                return NX_ISIZE_MAX;
+            }
+        }
+    }
+
     return a * b;
 }

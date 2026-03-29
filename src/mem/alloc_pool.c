@@ -6,6 +6,7 @@
 
 #include "nx/core/assert.h"
 #include "nx/core/util.h"
+#include "nx/numeric/ckd.h"
 #include "nx/mem/ptr.h"
 
 constexpr nx_usize POOL_ALIGNMENT = alignof(max_align_t);
@@ -49,9 +50,12 @@ nx_Al *nx_al_pool_new(nx_usize block_size, nx_usize block_count) {
         return nx_null;
     }
 
-    // TODO: check overflow
     // allocate backing buffer
-    const nx_usize total_bytes = block_size * block_count;
+    nx_usize total_bytes;
+    if (nx_ckd_mul_usize(&total_bytes, block_size, block_count)) {
+        free(ctx);
+        return nx_null;
+    }
 
     nx_byte *data = malloc(total_bytes);
     if (!data) {
@@ -146,9 +150,10 @@ static void *pool_alloc(void *ctx, nx_usize size) {
 static void *pool_calloc(void *ctx, nx_usize num, nx_usize size) {
     NX_ASSERT(ctx);
 
-    // TODO: overflow check
-
-    const nx_usize total = num * size;
+    nx_usize total;
+    if (nx_ckd_mul_usize(&total, num, size)) {
+        return nx_null;
+    }
     void *ptr = pool_alloc(ctx, total);
     if (ptr) {
         memset(ptr, 0, total);
@@ -177,6 +182,7 @@ static void pool_dealloc(void *ctx, void *ptr, nx_usize size) {
 }
 
 static void pool_build_free_list(nx_AlPoolCtx *ctx) {
+    NX_ASSERT(ctx);
     ctx->free_head = nx_null;
 
     // build list in reverse so that first alloc returns the first block

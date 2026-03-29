@@ -55,6 +55,10 @@ set(NX_NUMERIC_SOURCES
         src/numeric/bounds.c
 )
 
+set(NX_FS_SOURCES
+        src/fs/fs.c
+)
+
 set(NX_IO_SOURCES
         src/io/dbg.c
         src/io/log.c
@@ -66,6 +70,7 @@ set(NX_SOURCES
         ${NX_DS_SOURCES}
         ${NX_ALGO_SOURCES}
         ${NX_STRING_SOURCES}
+        ${NX_FS_SOURCES}
         ${NX_MEM_SOURCES}
         ${NX_RAND_SOURCES}
         ${NX_NUMERIC_SOURCES}
