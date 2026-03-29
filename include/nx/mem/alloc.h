@@ -25,14 +25,21 @@ typedef struct {
 
 /* ========== wrappers ========== */
 
+/// returns null on failure. size == 0 returns null.
 void *nx_al_alloc(nx_Al *al, nx_usize size);
+
+/// zero-initialized allocation. falls back to alloc + memset if calloc is null.
 void *nx_al_calloc(nx_Al *al, nx_usize num, nx_usize size);
+
+/// falls back to alloc + memcpy + dealloc if realloc is null.
 void *nx_al_realloc(nx_Al *al, void *ptr, nx_usize old_size, nx_usize new_size);
-/// no-op for null
+
+/// no-op if ptr is null.
 void nx_al_dealloc(nx_Al *al, void *ptr, nx_usize size);
 
 /* ========== relation ========== */
 
+/// two allocators are equal if they share the same ctx and function pointers.
 nx_bool nx_al_eq(const nx_Al *a, const nx_Al *b);
 nx_bool nx_al_neq(const nx_Al *a, const nx_Al *b);
 

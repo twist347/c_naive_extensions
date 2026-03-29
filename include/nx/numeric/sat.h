@@ -2,6 +2,7 @@
 
 #include "nx/core/type.h"
 
+/// saturating arithmetic: clamps to T_MIN/T_MAX on overflow instead of wrapping.
 nx_i8 nx_sat_add_i8(nx_i8 a, nx_i8 b);
 nx_i16 nx_sat_add_i16(nx_i16 a, nx_i16 b);
 nx_i32 nx_sat_add_i32(nx_i32 a, nx_i32 b);

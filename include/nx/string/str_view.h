@@ -40,7 +40,10 @@ typedef struct {
 
 /* ========== lifetime ========== */
 
+/// creates view over [data, data+len). data is NOT assumed null-terminated.
 nx_StrView nx_str_view_new(const nx_char *data, nx_usize len);
+
+/// creates view from a null-terminated C string. len = strlen(cstr).
 nx_StrView nx_str_view_from_cstr(const nx_char *cstr);
 
 /* ========== comparisons ========== */
@@ -60,11 +63,13 @@ nx_StrView nx_str_view_sub(nx_StrView self, nx_usize pos, nx_usize len);
 
 /* ========== search ========== */
 
+/// returns index of first occurrence, or -1 if not found.
 nx_isize nx_str_view_find_sub(nx_StrView self, nx_StrView needle);
 nx_isize nx_str_view_find_char(nx_StrView self, nx_char ch);
 
 /* ========== trim ========== */
 
+/// removes leading/trailing whitespace. returns narrowed view (no allocation).
 nx_StrView nx_str_view_trim_start(nx_StrView self);
 nx_StrView nx_str_view_trim_end(nx_StrView self);
 nx_StrView nx_str_view_trim(nx_StrView self);

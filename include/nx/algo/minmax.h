@@ -9,6 +9,9 @@ typedef struct {
     nx_isize max;
 } nx_MinMax;
 
+/// returns index of minimum element, or -1 if span is empty.
 nx_isize nx_min_element(nx_CSpan s, nx_cmp_fn cmp);
 nx_isize nx_max_element(nx_CSpan s, nx_cmp_fn cmp);
+
+/// finds both min and max indices in a single pass.
 nx_MinMax nx_minmax_element(nx_CSpan s, nx_cmp_fn cmp);

@@ -43,16 +43,19 @@ typedef struct {
 
 /* ========== lifetime ========== */
 
+/// creates a span over [data, data + len * tsz). does not own memory.
 nx_Span nx_span_new(void *data, nx_usize len, nx_usize tsz);
 nx_CSpan nx_cspan_new(const void *data, nx_usize len, nx_usize tsz);
 nx_CSpan nx_cspan_from_span(nx_Span s);
 
 /* ========== access ========== */
 
+/// get: unchecked in release (asserts in debug). returns pointer to element.
 void *nx_span_get(nx_Span s, nx_usize idx);
 const void *nx_span_get_c(nx_Span s, nx_usize idx);
 const void *nx_cspan_get_c(nx_CSpan s, nx_usize idx);
 
+/// at: returns null if idx is out of bounds.
 void *nx_span_at(nx_Span s, nx_usize idx);
 const void *nx_span_at_c(nx_Span s, nx_usize idx);
 const void *nx_cspan_at_c(nx_CSpan s, nx_usize idx);
@@ -76,9 +79,11 @@ void nx_span_swap(nx_Span s, nx_usize i, nx_usize j);
 
 /* ========== subspan ========== */
 
+/// sub: returns view of [offset, offset+count). asserts bounds.
 nx_Span nx_span_sub(nx_Span self, nx_usize offset, nx_usize count);
 nx_CSpan nx_cspan_sub(nx_CSpan self, nx_usize offset, nx_usize count);
 
+/// tail: returns view of [offset, len). asserts offset <= len.
 nx_Span nx_span_tail(nx_Span self, nx_usize offset);
 nx_CSpan nx_cspan_tail(nx_CSpan self, nx_usize offset);
 

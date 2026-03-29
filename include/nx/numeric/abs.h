@@ -2,6 +2,7 @@
 
 #include "nx/core/type.h"
 
+/// absolute value. asserts that x != T_MIN for signed types (negation is UB).
 nx_i8 nx_abs_i8(nx_i8 x);
 nx_i16 nx_abs_i16(nx_i16 x);
 nx_i32 nx_abs_i32(nx_i32 x);

@@ -7,11 +7,13 @@ typedef struct nx_Rng nx_Rng;
 
 /* ========== lifetime ========== */
 
+/// creates a new PRNG seeded with seed. seed == 0 is valid.
 nx_Rng *nx_rng_new(nx_u64 seed);
 void nx_rng_drop(nx_Rng *self);
 
 /* ========== raw generation ========== */
 
+/// returns a uniformly distributed value across the full range.
 nx_u64 nx_rng_u64(nx_Rng *self);
 nx_u32 nx_rng_u32(nx_Rng *self);
 

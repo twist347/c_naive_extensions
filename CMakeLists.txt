@@ -20,6 +20,7 @@ set(NX_DS_SOURCES
 
 set(NX_ALGO_SOURCES
         src/algo/compare.c
+        src/algo/merge.c
         src/algo/sort.c
         src/algo/search.c
         src/algo/transform.c
@@ -56,6 +57,7 @@ set(NX_NUMERIC_SOURCES
 
 set(NX_IO_SOURCES
         src/io/dbg.c
+        src/io/log.c
         src/io/print.c
 )
 

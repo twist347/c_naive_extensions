@@ -44,18 +44,32 @@ typedef struct {
 
 /* ========== lifetime ========== */
 
+/// create with full params. zero-initialized data.
 nx_ArrRes nx_arr_new_p(nx_ArrParams p);
 nx_ArrRes nx_arr_new_len(nx_usize len, nx_usize tsz);
+
+/// copies len elements from data.
 nx_ArrRes nx_arr_from_data(const void *data, nx_usize len, nx_usize tsz);
 nx_ArrRes nx_arr_from_span(nx_CSpan s);
+
+/// frees memory. safe to call with null.
 void nx_arr_drop(nx_Arr *self);
 
 /* ========== copy/move semantic ========== */
 
+/// deep copy with same allocator. returns new arr.
 nx_ArrRes nx_arr_copy(const nx_Arr *src);
+
+/// deep copy using a different allocator.
 nx_ArrRes nx_arr_copy_a(const nx_Arr *src, nx_Al *al);
+
+/// transfers ownership: returns *src, sets *src to null.
 nx_Arr *nx_arr_move(nx_Arr **src);
+
+/// deep copy into existing arr. reallocates if lengths differ.
 nx_Status nx_arr_copy_assign(nx_Arr *self, const nx_Arr *src);
+
+/// transfers src's data into self. src becomes empty. same allocator required.
 void nx_arr_move_assign(nx_Arr *self, nx_Arr *src);
 
 /* ========== info ========== */
@@ -67,8 +81,11 @@ nx_Al *nx_arr_al(const nx_Arr *self);
 
 /* ========== access ========== */
 
+/// get: unchecked in release (asserts in debug).
 void *nx_arr_get(nx_Arr *self, nx_usize idx);
 const void *nx_arr_get_c(const nx_Arr *self, nx_usize idx);
+
+/// at: returns null if idx is out of bounds.
 void *nx_arr_at(nx_Arr *self, nx_usize idx);
 const void *nx_arr_at_c(const nx_Arr *self, nx_usize idx);
 
@@ -80,15 +97,18 @@ const void *nx_arr_data_c(const nx_Arr *self);
 
 /* ========== mods ========== */
 
+/// swaps contents of a and b (pointer swap, O(1)). tsz must match.
 void nx_arr_swap(nx_Arr *a, nx_Arr *b);
 
 /* ========== to span ========== */
 
+/// returns non-owning view into the array's data.
 nx_Span nx_arr_to_span(nx_Arr *self);
 nx_CSpan nx_arr_to_cspan(const nx_Arr *self);
 
 /* ========== print ========== */
 
+/// prints all elements using f, separated by ", ", enclosed in [].
 void nx_arr_fprintln(const nx_Arr *self, FILE *stream, nx_fprint_fn f);
 void nx_arr_println(const nx_Arr *self, nx_fprint_fn f);
 

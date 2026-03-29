@@ -2,6 +2,7 @@
 
 #include "nx/core/config.h"
 
+/// prints diagnostic and aborts. do not call directly — use the macros below.
 [[noreturn]] void nx_assert_fail(
     const char *type,
     const char *assertion,
@@ -10,6 +11,10 @@
     const char *func,
     const char *msg
 );
+
+/// NX_ASSERT: checked in debug, compiled out in release.
+/// NX_VERIFY: always checked, even in release.
+/// NX_PANIC: unconditional abort.
 
 #if NX_DEBUG
 

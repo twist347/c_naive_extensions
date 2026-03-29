@@ -9,19 +9,37 @@ basic containers, allocator interfaces, and algorithms built around `span`.
 
 ## Modules
 
-- `nx/core` — base types (`type.h`), `status`, `result`, `assert`, `cmp`, `hash`, misc utilities
+- `nx/core` — base types (`type.h`), `status`, `result`, `optional`, `assert`, `cmp`, `hash`, function pointer types (`fn.h`), misc utilities
 - `nx/mem` — allocator interface `nx_Al` + implementations:
     - `alloc_libc` (malloc/calloc/realloc/free)
     - `alloc_arena` (bump arena)
+    - `alloc_pool` (fixed-size block pool)
     - `alloc_log` (logging wrapper)
+    - `ptr` (pointer arithmetic, alignment, memory operations)
 - `nx/ds` — data structures:
-    - `span` (non-owning view)
-    - `vec`, `arr`
-- `nx/string` — `str` (owning string) and `str_view` (non-owning)
-- `nx/algo` — algorithms on `span`: sort/search/transform/minmax/compare
-- `nx/numeric` — bit/checked/saturating helpers
-- `nx/rand` — minimal PRNG
-- `nx/io` — minimal input/output facilities
+    - `span` / `cspan` (non-owning mutable/const views)
+    - `vec` (dynamic array)
+    - `arr` (fixed-length array)
+    - `hash_map` (robin hood open addressing)
+- `nx/string` — `str` (owning, null-terminated) and `str_view` (non-owning)
+- `nx/algo` — algorithms on `span`:
+    - sort (quicksort, stable merge sort, partial sort, nth element)
+    - search (linear, binary, lower/upper bound, predicates)
+    - transform (fill, reverse, rotate, copy, replace, remove, unique)
+    - merge (sorted merge, in-place merge)
+    - compare, minmax
+- `nx/numeric` — numeric utilities:
+    - checked arithmetic (`ckd`) — overflow detection
+    - saturating arithmetic (`sat`)
+    - bit operations (count, rotate, swap, extract, deposit)
+    - abs, sign, bounds (min/max/clamp)
+    - floating point (lerp, inverse lerp, approximate equality)
+    - mathematical constants
+- `nx/rand` — PRNG (integers, floats, ranges, shuffle)
+- `nx/io` — input/output:
+    - `print` — formatted and typed printers
+    - `dbg` — debug expression printing (file, line, value)
+    - `log` — leveled logging (DEBUG/INFO/WARN/ERROR) with compile-time and runtime filtering
 
 ---
 ## Build

@@ -2,6 +2,7 @@
 
 #include "nx/core/type.h"
 
+/// 64-bit hash value. Uses FNV-1a for bytes, MurmurHash3 fmix64 for integers.
 typedef nx_u64 nx_Hash;
 
 /* ========== integer hashing ========== */
@@ -27,12 +28,16 @@ nx_Hash nx_hash_f64(nx_f64 x);
 
 /* ========== byte / string / pointer hashing ========== */
 
+/// FNV-1a over raw bytes.
 nx_Hash nx_hash_bytes(const void *data, nx_usize len);
 nx_Hash nx_hash_cstr(const nx_char *s);
+
+/// hashes the pointer address, not the pointee.
 nx_Hash nx_hash_ptr(const void *ptr);
 
 /* ========== combine ========== */
 
+/// combines two hashes into one (order-dependent).
 nx_Hash nx_hash_combine(nx_Hash h, nx_Hash x);
 
 /* ========== callback ========== */

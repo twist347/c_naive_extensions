@@ -4,7 +4,7 @@
 
 #include "nx/core/assert.h"
 
-/* ========== formated print ========== */
+/* ========== formatted print ========== */
 
 nx_i32 nx_printf(const char *fmt, ...) {
     NX_ASSERT(fmt);

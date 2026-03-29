@@ -50,18 +50,37 @@ typedef struct {
 /* ========== lifetime ========== */
 
 nx_StrRes nx_str_new_p(nx_StrParams p);
+
+/// empty string, no allocation until first push/append.
 nx_StrRes nx_str_new(void);
+
+/// zero-initialized string of length len.
 nx_StrRes nx_str_new_len(nx_usize len);
+
+/// empty string with pre-allocated capacity.
 nx_StrRes nx_str_new_cap(nx_usize cap);
+
+/// copies from null-terminated C string.
 nx_StrRes nx_str_from_cstr(const nx_char *cstr);
+
+/// frees memory. safe to call with null.
 void nx_str_drop(nx_Str *self);
 
 /* ========== copy/move ========== */
 
+/// deep copy with same allocator.
 nx_StrRes nx_str_copy(const nx_Str *src);
+
+/// deep copy using a different allocator.
 nx_StrRes nx_str_copy_a(const nx_Str *src, nx_Al *al);
+
+/// transfers ownership: returns *src, sets *src to null.
 nx_Str *nx_str_move(nx_Str **src);
+
+/// deep copy into existing str. reuses buffer if it fits.
 nx_Status nx_str_copy_assign(nx_Str *self, const nx_Str *src);
+
+/// transfers src's data into self. src becomes empty. same allocator required.
 void nx_str_move_assign(nx_Str *self, nx_Str *src);
 
 /* ========== info ========== */
@@ -73,7 +92,10 @@ nx_Al *nx_str_al(const nx_Str *self);
 
 /* ========== access ========== */
 
+/// get: unchecked in release (asserts in debug).
 nx_char nx_str_get(const nx_Str *self, nx_usize idx);
+
+/// at: returns '\0' if idx is out of bounds.
 nx_char nx_str_at(const nx_Str *self, nx_usize idx);
 void nx_str_set(nx_Str *self, nx_usize idx, nx_char ch);
 nx_char *nx_str_data(nx_Str *self);                  /* may be NULL if cap==0 */
@@ -82,11 +104,22 @@ const nx_char *nx_str_cstr(const nx_Str *self);      /* never NULL: returns "" f
 
 /* ========== mods ========== */
 
+/// sets len to 0 without freeing memory. data[0] = '\0'.
 void nx_str_clear(nx_Str *self);
+
+/// ensures capacity >= new_cap. no-op if already sufficient.
 nx_Status nx_str_reserve(nx_Str *self, nx_usize new_cap);
+
+/// sets len to new_len. new chars are zero-filled. may reallocate.
 nx_Status nx_str_resize(nx_Str *self, nx_usize new_len);
+
+/// appends single char.
 nx_Status nx_str_push(nx_Str *self, nx_char ch);
+
+/// appends contents of str_view.
 nx_Status nx_str_append_str_view(nx_Str *self, nx_StrView sv);
+
+/// appends null-terminated C string.
 nx_Status nx_str_append_cstr(nx_Str *self, const nx_char *cstr);
 
 /* ========== print ========== */

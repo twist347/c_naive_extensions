@@ -4,6 +4,7 @@
 
 /* ========== lerp ========== */
 
+/// linear interpolation: a + t * (b - a). t=0 returns a, t=1 returns b.
 nx_f32 nx_lerp_f32(nx_f32 a, nx_f32 b, nx_f32 t);
 nx_f32 nx_lerp_f64(nx_f64 a, nx_f64 b, nx_f64 t);
 
@@ -14,6 +15,7 @@ nx_f32 nx_lerp_f64(nx_f64 a, nx_f64 b, nx_f64 t);
 
 /* ========== inverse lerp ========== */
 
+/// inverse lerp: returns t such that lerp(a, b, t) == val. a must != b.
 nx_f32 nx_inv_lerp_f32(nx_f32 a, nx_f32 b, nx_f32 val);
 nx_f64 nx_inv_lerp_f64(nx_f64 a, nx_f64 b, nx_f64 val);
 

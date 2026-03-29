@@ -47,11 +47,16 @@ typedef struct {
 
 nx_HashMapRes nx_hash_map_new_p(nx_HashMapParams p);
 nx_HashMapRes nx_hash_map_new(nx_usize tsz_key, nx_usize tsz_val, nx_hash_fn hash, nx_eq_fn eq);
+
+/// frees memory. safe to call with null.
 void nx_hash_map_drop(nx_HashMap *self);
 
 /* ========== info ========== */
 
+/// number of stored entries.
 nx_usize nx_hash_map_len(const nx_HashMap *self);
+
+/// number of allocated slots (always power of 2).
 nx_usize nx_hash_map_cap(const nx_HashMap *self);
 nx_bool nx_hash_map_empty(const nx_HashMap *self);
 
@@ -78,9 +83,11 @@ nx_Status nx_hash_map_reserve(nx_HashMap *self, nx_usize cap);
 
 /* ========== iteration ========== */
 
+/// iteration callback. ctx is user data passed through from for_each.
 typedef void (*nx_hash_map_iter_fn)(const void *key, void *val, void *ctx);
 typedef void (*nx_hash_map_iter_c_fn)(const void *key, const void *val, void *ctx);
 
+/// calls fn for each entry. iteration order is unspecified.
 void nx_hash_map_for_each(nx_HashMap *self, nx_hash_map_iter_fn fn, void *ctx);
 void nx_hash_map_for_each_c(const nx_HashMap *self, nx_hash_map_iter_c_fn fn, void *ctx);
 

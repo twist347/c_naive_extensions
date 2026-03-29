@@ -2,6 +2,8 @@
 
 #include "nx/core/type.h"
 
+/// checked arithmetic: returns true if overflow occurred, result stored in *res.
+/// on overflow, *res contains the wrapped value.
 nx_bool nx_ckd_add_i8(nx_i8 *res, nx_i8 a, nx_i8 b);
 nx_bool nx_ckd_add_i16(nx_i16 *res, nx_i16 a, nx_i16 b);
 nx_bool nx_ckd_add_i32(nx_i32 *res, nx_i32 a, nx_i32 b);

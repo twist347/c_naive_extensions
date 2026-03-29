@@ -1,4 +1,5 @@
 nx_add_test(test_algo_compare test_algo_compare.c)
+nx_add_test(test_algo_merge test_algo_merge.c)
 nx_add_test(test_algo_minmax test_algo_minmax.c)
 nx_add_test(test_algo_search test_algo_search.c)
 nx_add_test(test_algo_sort test_algo_sort.c)

@@ -4,4 +4,5 @@
 #include "nx/algo/minmax.h"
 #include "nx/algo/search.h"
 #include "nx/algo/sort.h"
+#include "nx/algo/merge.h"
 #include "nx/algo/transform.h"

@@ -9,3 +9,4 @@
 - [ ] think about duplicates between nx and libc
 - [ ] add macro func for var names in macros (name + line)
 - [ ] range?
+- [ ] add to hash map
